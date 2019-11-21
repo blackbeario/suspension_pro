@@ -1,0 +1,169 @@
+// import 'dart:developer';
+import 'package:flutter/material.dart';
+import './services/auth_service.dart'; // iOS
+import 'package:flutter/cupertino.dart';
+import 'package:flare_flutter/flare_actor.dart';
+import './main.dart';
+
+class LoginPage extends StatefulWidget {
+  createState() => LoginPageState();
+}
+
+class LoginPageState extends State<LoginPage> {
+  bool _hidePassword = true;
+  String animationName = 'flash';
+
+  // Toggles the password show status
+  void _toggle() {
+    setState(() {
+      _hidePassword = !_hidePassword;
+    });
+  }
+
+  // final bool kIsWeb = identical(0, 0.0);
+  TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+  TextEditingController _email;
+  TextEditingController _password;
+  final _formKey = GlobalKey<FormState>();
+  final _key = GlobalKey<ScaffoldState>();
+  AuthService auth = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    _email = TextEditingController(text: "");
+    _password = TextEditingController(text: "");
+    // iOS
+    // if (!kIsWeb) {
+      auth.getUser.then(
+        (user) {
+          if (user == null) {
+            return CupertinoActivityIndicator(animating: true);
+          }
+          return AppHomePage();
+        },
+      );
+    // }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final user = Provider.of<AuthService>(context);
+    return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.darkBackgroundGray,
+      key: _key,
+      child: Container(
+        padding: EdgeInsets.all(30),
+        decoration: BoxDecoration(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        
+          children: <Widget>[
+            Expanded(
+              child: FlareActor(
+                'assets/bolt2.flr',
+                alignment: Alignment.center,
+                fit: BoxFit.contain,
+                animation: animationName
+              ),
+            ),
+            SafeArea(
+              child: Form(
+                key: _formKey,
+                child: Center(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CupertinoTextField(
+                          controller: _email,
+                          padding: EdgeInsets.all(10.0),
+                          // validator: (value) =>
+                              // (value.isEmpty) ? "Please Enter Email" : null,
+                          placeholder: "email",
+                          style: style.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold
+                              ),
+                          // style: TextStyle(color: CupertinoColors.white),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CupertinoTextField(
+                          padding: EdgeInsets.all(10.0),
+                          controller: _password,
+                          placeholder: "password",
+                          obscureText: _hidePassword,
+                          // style: TextStyle(color: CupertinoColors.white),
+                          style: style.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold
+                              ),
+                          suffix: FlatButton(
+                            onPressed: _toggle,
+                            child: Icon(_hidePassword ? Icons.lock : Icons.lock_open, color: CupertinoColors.inactiveGray)
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 16.0),
+                        child: Material(
+                          elevation: 5.0,
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: Colors.orange[400],
+                          child: CupertinoButton(
+                            onPressed: () async {
+                              // if (!kIsWeb) {
+                                if (_formKey.currentState.validate()) {
+                                  var user = await auth.signIn(
+                                    _email.text, _password.text);
+                                  if (user == null) {
+                                    return CupertinoActivityIndicator(animating: true);
+                                  }
+                                }
+                                return AppHomePage();
+                              // }
+                              // Web
+                              // if (_formKey.currentState.validate()) {
+                              //   var user = await fb.auth().signInWithEmailAndPassword(
+                              //     _email.text, _password.text);
+                              //   if (user == null) {
+                              //     return CupertinoActivityIndicator(animating: true);
+                              //   }
+                              //   print(user ?? user.toString());
+                              // }
+                              
+                              // return AppHomePage();
+                            },
+                            child: Text(
+                              "Sign In",
+                              style: style.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+}
