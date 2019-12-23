@@ -38,8 +38,6 @@ class MyApp extends StatelessWidget {
 class AppHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // iOS
-    // if (!kIsWeb) {
     var user = Provider.of<FirebaseUser>(context);
     bool loggedIn = user != null;
       if (loggedIn) {
@@ -50,10 +48,6 @@ class AppHomePage extends StatelessWidget {
                 icon: Icon(CupertinoIcons.settings),
                 title: Text('Settings'),
               ),
-              // BottomNavigationBarItem(
-              //   icon: Icon(CupertinoIcons.home),
-              //   title: Text('Customers'),
-              // ),
               BottomNavigationBarItem(
                 icon: Icon(CupertinoIcons.profile_circled),
                 title: Text('Profile'),
@@ -74,17 +68,11 @@ class AppHomePage extends StatelessWidget {
                   builder: (BuildContext context) => Profile(),
                 );
                 break;
-              // case 2:
-              //   return CupertinoTabView(
-              //     builder: (BuildContext context) => Profile(),
-              //   );
-              //   break;
               }
               return null;
           },
         );
       }
       else return LoginPage();
-    // }
   }
 }

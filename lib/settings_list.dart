@@ -2,30 +2,51 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:suspension_pro/setting_detail.dart';
 import './services/auth_service.dart';
 import './services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 import './models/user.dart';
+import 'models/setting.dart';
 
 class Settings extends StatelessWidget {
   final db = DatabaseService();
   final AuthService auth = AuthService();
 
   // Custom widget for user bikes display.
-  Widget _getBikes(List<dynamic> bikes){
-    return Column(
-      children: bikes.map((bike) {
-        return GestureDetector(
-          child: Material(
-            child: ListTile(
-              contentPadding: EdgeInsets.fromLTRB(40, 0, 40, 0),
-              leading: Icon(Icons.check_circle_outline, color: Colors.green[300]),
-              title: Text(bike["bike"]),
-              trailing: Icon(Icons.arrow_forward_ios),
+    Widget _getSettings(uid, settings, context){
+      return ListView.builder(
+        reverse: true,
+        shrinkWrap: true,
+        itemCount: settings.length,
+        itemBuilder: (context, index) {
+          var fork = settings[index].fork ?? null;
+          var shock = settings[index].shock ?? null;
+          return Dismissible(
+            background: ListTile(
+              trailing: Icon(Icons.delete, color: CupertinoColors.systemRed),
             ),
-          ),
-        );
-      }).toList()
+            direction: DismissDirection.horizontal,
+            // onDismissed: _dismissBike(uid, bikes[index]),
+            key: PageStorageKey(settings[index]),
+            child: GestureDetector(
+              key: PageStorageKey(settings[index]),
+              child: ListTile(
+                title: Text(settings[index].id),
+                subtitle: Text(settings[index].bike),
+                trailing: Icon(Icons.arrow_forward_ios),
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                  CupertinoPageRoute(builder: (context) {
+                    // Return the settings detail form screen. 
+                    return SettingDetails(uid: uid, setting: settings[index].id, bike: settings[index].bike, fork: fork, shock: shock);
+                  })
+                );
+              }
+            ),
+          );
+        },
     );
   }
 
@@ -63,13 +84,19 @@ class Settings extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                myUser.bikes != null ? _getBikes(myUser.bikes) : 
-                  ListTile(
-                    title: Text(
-                      'Add some bikes!',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                StreamBuilder<List<Setting>>(
+                  stream: db.streamSettings(user.uid),
+                  builder: (context, snapshot) {
+                    var settings = snapshot.data;
+                    if (settings == null) {
+                      return Center(
+                        child: Text('Loading...',
+                        style: CupertinoTheme.of(context).textTheme.navTitleTextStyle),
+                      );
+                    }
+                    return _getSettings(user.uid, settings, context);
+                  }
+                ),
               ],
             ),
           )
