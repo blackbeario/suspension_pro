@@ -20,12 +20,10 @@ class _BikeFormState extends State<BikeForm> {
   final _bikeController = TextEditingController();
   bool _isVisibleFork = true;
   bool _isVisibleShock = false;
-  Map forkMap = {};
   
   void showForkForm(val) {
     setState(() {
       widget.fork = val;
-      this.forkMap = val;
       _isVisibleFork = !_isVisibleFork;
       _isVisibleShock = !_isVisibleShock;
     });
@@ -33,7 +31,6 @@ class _BikeFormState extends State<BikeForm> {
 
   void showShockForm(fork, val) {
     setState(() {
-      widget.fork = this.forkMap;
       widget.shock = val;
       print({widget.fork, widget.shock});
       _isVisibleShock = !_isVisibleShock;
@@ -85,12 +82,14 @@ class _BikeFormState extends State<BikeForm> {
                 ),
                 SizedBox(height: 10),
                 Visibility(
+                  visible: _isVisibleFork,
                   maintainState: true,
                   child: ForkForm(uid: widget.uid, bike: widget.bike, fork: widget.fork, forkCallback: (val) {
                     showForkForm(val);
                   }),
                 ),
                 Visibility(
+                  maintainState: true,
                   visible: _isVisibleShock,
                   child: ShockForm(uid: widget.uid, bike: widget.bike, shock: widget.shock, shockCallback: (val) => showShockForm(widget.fork, val)),
                 ),
