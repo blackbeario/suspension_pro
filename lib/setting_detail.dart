@@ -3,11 +3,11 @@ import './services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 
 class SettingDetails extends StatefulWidget {
-  SettingDetails({@required this.uid, @required this.setting, @required this.bike, this.fork, this.shock});
+  SettingDetails({@required this.uid, this.setting, this.bike, this.fork, this.shock});
 
   final uid;
   final String setting;
-  final String bike;
+  final bike;
   final Map fork;
   final Map shock;
 
@@ -17,6 +17,7 @@ class SettingDetails extends StatefulWidget {
 
 class _SettingDetailsState extends State<SettingDetails> {
   final db = DatabaseService();
+  final _settingNameController = TextEditingController();
   final _hscForkController = TextEditingController();
   final _lscForkController = TextEditingController();
   final _hsrForkController = TextEditingController();
@@ -31,16 +32,36 @@ class _SettingDetailsState extends State<SettingDetails> {
   @override
   void initState() {
     super.initState();
-      _hscForkController.text = widget.fork['HSC'].toString();
-      _lscForkController.text = widget.fork['LSC'].toString();
-      _hsrForkController.text = widget.fork['HSR'].toString();
-      _lsrForkController.text = widget.fork['LSR'].toString();
-      _springRateForkController.text = widget.fork['springRate'].toString();
-      _hscShockController.text = widget.shock['HSC'].toString();
-      _lscShockController.text = widget.shock['LSC'].toString();
-      _hsrShockController.text = widget.shock['HSR'].toString();
-      _lsrShockController.text = widget.shock['LSR'].toString();
-      _springRateShockController.text = widget.shock['springRate'].toString();
+    var $setting = widget.setting;
+    var $fork = widget.fork;
+    var $shock = widget.shock;
+    _settingNameController.text = $setting != null ? $setting : '';
+    if ($fork != null) {
+      _hscForkController.text = $fork['HSC'] ?? '';
+      _lscForkController.text = $fork['LSC'] ?? '';
+      _hsrForkController.text = $fork['HSR'] ?? '';
+      _lsrForkController.text = $fork['LSR'] ?? '';
+      _springRateForkController.text = $fork['springRate'] ?? '';
+    }
+    if ($shock != null) {
+      _hscShockController.text = $shock['HSC'] ?? '';
+      _lscShockController.text = $shock['LSC'] ?? '';
+      _hsrShockController.text = $shock['HSR'] ?? '';
+      _lsrShockController.text = $shock['LSR'] ?? '';
+      _springRateShockController.text = $shock['springRate'] ?? '';
+    }
+    else {
+      _hscForkController.text = '';
+      _lscForkController.text = '';
+      _hsrForkController.text = '';
+      _lsrForkController.text = '';
+      _springRateForkController.text = '';
+      _hscShockController.text = '';
+      _lscShockController.text = '';
+      _hsrShockController.text = '';
+      _lsrShockController.text = '';
+      _springRateShockController.text = '';
+    }
   }
 
   @override
@@ -55,13 +76,14 @@ class _SettingDetailsState extends State<SettingDetails> {
     _hsrShockController.dispose();
     _lsrShockController.dispose();
     _springRateShockController.dispose();
+    _settingNameController.dispose();
     super.dispose();
   }
 
   Future<bool> _updateSetting(bike, BuildContext context) {
     Navigator.pop(context);
     db.updateSetting(
-      widget.uid, widget.setting, widget.bike, _hscForkController.text, _lscForkController.text, 
+      widget.uid, _settingNameController.text, bike, _hscForkController.text, _lscForkController.text, 
       _hsrForkController.text, _lsrForkController.text, _springRateForkController.text,
       _hscShockController.text, _lscShockController.text, 
       _hsrShockController.text, _lsrShockController.text, _springRateShockController.text
@@ -71,146 +93,165 @@ class _SettingDetailsState extends State<SettingDetails> {
 
   @override
   Widget build(BuildContext context) {
+    var $fork = widget.bike != null ? widget.bike.fork : null;
+    var $shock = widget.bike != null ? widget.bike.shock : null;
     return CupertinoPageScaffold(
       resizeToAvoidBottomInset: true,
       navigationBar: CupertinoNavigationBar(
-        middle: Text(widget.setting + ' / ' + widget.bike),
+        middle: Text(widget.setting != null ? widget.setting : 'New Setting'),
       ),
       child: Material(
-        child: Column(
+        child: ListView(
+          // reverse: true,
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              // mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      Image.asset('assets/fox36-black.jpg', height: 50),
-                      // year
-                      TextField(
-                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(10),
-                          hintText: 'HSC',
-                          labelText: 'HSC',
-                        ),
-                        controller: _hscForkController,
-                        keyboardType: TextInputType.text
-                      ),
-                      // travel
-                      TextField(
-                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(10),
-                          hintText: 'LSC',
-                          labelText: 'LSC',
-                        ),
-                        controller: _lscForkController,
-                        keyboardType: TextInputType.text
-                      ),
-                      TextField(
-                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(10),
-                          hintText: 'HSR',
-                          labelText: 'HSR',
-                        ),
-                        controller: _hsrForkController,
-                        keyboardType: TextInputType.text
-                      ),
-                      TextField(
-                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(10),
-                          hintText: 'LSR',
-                          labelText: 'LSR',
-                        ),
-                        controller: _lsrForkController,
-                        keyboardType: TextInputType.text
-                      ),
-                      TextField(
-                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(10),
-                          hintText: 'SPRING / PSI',
-                          labelText: 'SPRING / PSI',
-                        ),
-                        controller: _springRateForkController,
-                        keyboardType: TextInputType.text
-                      ),
-                    ]
-                  ),
+            Column(
+              children: <Widget>[
+                CupertinoTextField(
+                  padding: EdgeInsets.all(10),
+                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                  controller: _settingNameController,
+                  placeholder: 'Setting Name',
+                  keyboardType: TextInputType.text
                 ),
-                Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      Image.asset('assets/fox-dpx2.png', height: 50),
-                      TextField(
-                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(10),
-                          hintText: 'HSC',
-                          labelText: 'HSC',
-                        ),
-                        controller: _hscShockController,
-                        keyboardType: TextInputType.text
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: <Widget>[
+                          Text($fork != null ? $fork['brand'] + ' ' + $fork['model'] : 'No fork saved'),
+                          Image.asset('assets/fox36-black.jpg', height: 50),
+                          SizedBox(height: 20),
+                          TextField(
+                            style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(10),
+                              hintText: 'HSC',
+                              labelText: 'HSC',
+                            ),
+                            controller: _hscForkController,
+                            keyboardType: TextInputType.text
+                          ),
+                          TextField(
+                            style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(10),
+                              hintText: 'LSC',
+                              labelText: 'LSC',
+                            ),
+                            controller: _lscForkController,
+                            keyboardType: TextInputType.text
+                          ),
+                          TextField(
+                            style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(10),
+                              hintText: 'HSR',
+                              labelText: 'HSR',
+                            ),
+                            controller: _hsrForkController,
+                            keyboardType: TextInputType.text
+                          ),
+                          TextField(
+                            style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(10),
+                              hintText: 'LSR',
+                              labelText: 'LSR',
+                            ),
+                            controller: _lsrForkController,
+                            keyboardType: TextInputType.text
+                          ),
+                          TextField(
+                            style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(10),
+                              hintText: 'SPRING / PSI',
+                              labelText: 'SPRING / PSI',
+                            ),
+                            controller: _springRateForkController,
+                            keyboardType: TextInputType.text
+                          ),
+                        ]
                       ),
-                      TextField(
-                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(10),
-                          hintText: 'LSC',
-                          labelText: 'LSC',
-                        ),
-                        controller: _lscShockController,
-                        keyboardType: TextInputType.text
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: <Widget>[
+                          Text($shock != null ? $shock['brand'] + ' ' + $shock['model'] : 'No shock saved'),
+                          Image.asset('assets/fox-dpx2.png', height: 50),
+                          SizedBox(height: 20),
+                          TextField(
+                            style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(10),
+                              hintText: 'HSC',
+                              labelText: 'HSC',
+                            ),
+                            controller: _hscShockController,
+                            keyboardType: TextInputType.text
+                          ),
+                          TextField(
+                            style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(10),
+                              hintText: 'LSC',
+                              labelText: 'LSC',
+                            ),
+                            controller: _lscShockController,
+                            keyboardType: TextInputType.text
+                          ),
+                          TextField(
+                            style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(10),
+                              hintText: 'HSR',
+                              labelText: 'HSR',
+                            ),
+                            controller: _hsrShockController,
+                            keyboardType: TextInputType.text
+                          ),
+                          TextField(
+                            style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(10),
+                              hintText: 'LSR',
+                              labelText: 'LSR',
+                            ),
+                            controller: _lsrShockController,
+                            keyboardType: TextInputType.text
+                          ),
+                          TextField(
+                            style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(10),
+                              hintText: 'SPRING / PSI',
+                              labelText: 'SPRING / PSI',
+                            ),
+                            controller: _springRateShockController,
+                            keyboardType: TextInputType.text
+                          ),
+                        ],
                       ),
-                      TextField(
-                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(10),
-                          hintText: 'HSR',
-                          labelText: 'HSR',
-                        ),
-                        controller: _lscShockController,
-                        keyboardType: TextInputType.text
-                      ),
-                      TextField(
-                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(10),
-                          hintText: 'LSR',
-                          labelText: 'LSR',
-                        ),
-                        controller: _lscShockController,
-                        keyboardType: TextInputType.text
-                      ),
-                      TextField(
-                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(10),
-                          hintText: 'SPRING / PSI',
-                          labelText: 'SPRING / PSI',
-                        ),
-                        controller: _springRateShockController,
-                        keyboardType: TextInputType.text
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+                SizedBox(height: 20),
+                CupertinoButton(
+                  // padding: EdgeInsets.all(10),
+                  color: CupertinoColors.quaternaryLabel,
+                  child: Text('Save'),
+                  onPressed: () => 
+                    _updateSetting(widget.bike.id, context)
+                ),
+                // Expanded(child: Container())
               ],
             ),
-            SizedBox(height: 20),
-            CupertinoButton(
-              // padding: EdgeInsets.all(10),
-              color: CupertinoColors.quaternaryLabel,
-              child: Text('Save'),
-              onPressed: () => 
-                _updateSetting(widget.bike, context)
-            ),
-            Expanded(child: Container())
           ],
         ),
       ),

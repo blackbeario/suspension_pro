@@ -9,14 +9,15 @@ import 'package:flutter/cupertino.dart';
 import './models/user.dart';
 import 'models/setting.dart';
 
-class Settings extends StatelessWidget {
+class SettingsList extends StatelessWidget {
+  SettingsList({@required this.bike});
+  final bike;
   final db = DatabaseService();
   final AuthService auth = AuthService();
 
   // Custom widget for user bikes display.
-    Widget _getSettings(uid, settings, context){
+    Widget _getSettings(uid, bike, settings, context){
       return ListView.builder(
-        reverse: true,
         shrinkWrap: true,
         itemCount: settings.length,
         itemBuilder: (context, index) {
@@ -33,14 +34,19 @@ class Settings extends StatelessWidget {
               key: PageStorageKey(settings[index]),
               child: ListTile(
                 title: Text(settings[index].id),
-                subtitle: Text(settings[index].bike),
+                subtitle: Text(this.bike.id),
                 trailing: Icon(Icons.arrow_forward_ios),
               ),
               onTap: () {
                 Navigator.of(context).push(
-                  CupertinoPageRoute(builder: (context) {
+                  CupertinoPageRoute(
+                    fullscreenDialog: true, // loads form from bottom
+                    builder: (context) {
                     // Return the settings detail form screen. 
-                    return SettingDetails(uid: uid, setting: settings[index].id, bike: settings[index].bike, fork: fork, shock: shock);
+                    return SettingDetails(
+                      uid: uid, bike: this.bike, setting: settings[index].id, 
+                      fork: fork, shock: shock
+                    );
                   })
                 );
               }
@@ -73,7 +79,7 @@ class Settings extends StatelessWidget {
         return CupertinoPageScaffold(
           resizeToAvoidBottomInset: true,
           navigationBar: CupertinoNavigationBar(
-            middle: Text('Settings'),
+            middle: Text('Settings / ' + this.bike.id),
             trailing: CupertinoButton(
               child: Icon(Icons.power_settings_new),
               onPressed: () => _requestPop(context)
@@ -85,18 +91,39 @@ class Settings extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 StreamBuilder<List<Setting>>(
-                  stream: db.streamSettings(user.uid),
+                  stream: db.streamSettings(user.uid, this.bike.id.toString()),
                   builder: (context, snapshot) {
                     var settings = snapshot.data;
+                    // var fork = settings[index].fork ?? null;
+                    // var shock = settings[index].shock ?? null;
                     if (settings == null) {
                       return Center(
                         child: Text('Loading...',
                         style: CupertinoTheme.of(context).textTheme.navTitleTextStyle),
                       );
                     }
-                    return _getSettings(user.uid, settings, context);
+                    if (snapshot.error != null) {
+                      return Center(
+                        child: Text('Error...',
+                        style: CupertinoTheme.of(context).textTheme.navTitleTextStyle),
+                      );
+                    }
+                    return _getSettings(user.uid, this.bike, settings, context);
                   }
                 ),
+                CupertinoButton(
+                  color: CupertinoColors.systemFill,
+                  child: Text('Add Setting'),
+                  onPressed: () => Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      fullscreenDialog: true, // loads form from bottom
+                      builder: (context) {
+                      // We need to return the shock detail screen here.
+                      return SettingDetails(uid: user.uid, bike: this.bike);
+                    })
+                  ),
+                ),
+                Expanded(child: Container())
               ],
             ),
           )

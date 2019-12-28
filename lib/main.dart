@@ -7,7 +7,7 @@ import './services/db_service.dart';
 import './services/auth_service.dart';
 import './login.dart';
 import './profile.dart';
-import './settings_list.dart';
+import './settings.dart';
 
 void main() => runApp(MyApp());
 
@@ -18,11 +18,16 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiProvider( 
+    return MultiProvider(
         providers: [
           StreamProvider<FirebaseUser>(builder: (_) => AuthService().user),
         ],
         child: CupertinoApp(
+          localizationsDelegates: [
+            DefaultMaterialLocalizations.delegate,
+            DefaultCupertinoLocalizations.delegate,
+            DefaultWidgetsLocalizations.delegate,
+          ],
           debugShowCheckedModeBanner: false,
           theme: CupertinoThemeData(
             primaryColor: Color(0xFF007AFF),
