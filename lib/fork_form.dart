@@ -4,7 +4,7 @@ import './services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 
 class ForkForm extends StatefulWidget {
-  ForkForm({@required this.uid, this.bike, this.fork, @required this.forkCallback});
+  ForkForm({@required this.uid, this.bike, this.fork, this.forkCallback});
 
   final uid;
   final String bike;

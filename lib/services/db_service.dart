@@ -57,9 +57,7 @@ class DatabaseService {
   Future<void> deleteBike(
     String uid, String bikeid
   ) async {
-    return await _db.collection('users').document(uid).updateData({
-      'bikes': FieldValue.delete()
-    });
+    return await _db.collection('users').document(uid).collection('bikes').document(bikeid).delete();
   }
 
   Future<void> updateFork(

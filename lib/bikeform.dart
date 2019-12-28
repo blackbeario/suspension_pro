@@ -32,7 +32,6 @@ class _BikeFormState extends State<BikeForm> {
   void showShockForm(fork, val) {
     setState(() {
       widget.shock = val;
-      print({widget.fork, widget.shock});
       _isVisibleShock = !_isVisibleShock;
       _addUpdateBike(widget.fork, widget.shock);
     });

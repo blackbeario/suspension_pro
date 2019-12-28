@@ -18,18 +18,11 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   final db = DatabaseService();
   final AuthService auth = AuthService();
-  List <Map<dynamic, dynamic>>_bikes;
+  List <Bike>_bikes = [];
 
   @override
   void initState() {
     super.initState();
-  }
-  
-  _dismissBike(uid, bike) {
-    setState(() {
-      _bikes.remove(bike);
-      // db.deleteBike(uid, bike);
-    });
   }
 
   Widget _getBikes(uid, bikes, context){
@@ -38,15 +31,18 @@ class _SettingsState extends State<Settings> {
       scrollDirection: Axis.vertical,
       itemCount: bikes.length,
       itemBuilder: (context, index) {
-        var $bike = bikes[index];
+        Bike $bike = bikes[index];
         var fork = $bike.fork ?? null;
         var shock = $bike.shock ?? null;
         return Dismissible(
           background: ListTile(
             trailing: Icon(Icons.delete, color: CupertinoColors.systemRed),
           ),
-          direction: DismissDirection.horizontal,
-          // onDismissed: _dismissBike(uid, bikes[index]),
+          direction: DismissDirection.endToStart,
+          onDismissed: (direction) => setState(() {
+            bikes.removeAt(index);
+            db.deleteBike(uid, $bike.id);
+          }),
           key: PageStorageKey($bike),
           child: ExpansionTile(
             initiallyExpanded: index == 0 ? true : false,

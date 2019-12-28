@@ -4,7 +4,7 @@ import './services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 
 class ShockForm extends StatefulWidget {
-  ShockForm({@required this.uid, this.bike, this.shock, @required this.shockCallback});
+  ShockForm({@required this.uid, this.bike, this.shock, this.shockCallback});
 
   final uid;
   final String bike;

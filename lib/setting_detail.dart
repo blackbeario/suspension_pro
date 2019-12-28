@@ -102,7 +102,6 @@ class _SettingDetailsState extends State<SettingDetails> {
       ),
       child: Material(
         child: ListView(
-          // reverse: true,
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
           children: <Widget>[
@@ -124,7 +123,10 @@ class _SettingDetailsState extends State<SettingDetails> {
                     Expanded(
                       child: Column(
                         children: <Widget>[
-                          Text($fork != null ? $fork['brand'] + ' ' + $fork['model'] : 'No fork saved'),
+                          SizedBox(
+                            child: Text($fork != null ? $fork['brand'] + ' ' + $fork['model'] : 'No fork saved'),
+                            height: 40,
+                          ),
                           Image.asset('assets/fox36-black.jpg', height: 50),
                           SizedBox(height: 20),
                           TextField(
@@ -183,7 +185,10 @@ class _SettingDetailsState extends State<SettingDetails> {
                     Expanded(
                       child: Column(
                         children: <Widget>[
-                          Text($shock != null ? $shock['brand'] + ' ' + $shock['model'] : 'No shock saved'),
+                          SizedBox(
+                            child: Text($shock != null ? $shock['brand'] + ' ' + $shock['model'] : 'No shock saved'),
+                            height: 40,
+                          ),
                           Image.asset('assets/fox-dpx2.png', height: 50),
                           SizedBox(height: 20),
                           TextField(
