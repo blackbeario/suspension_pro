@@ -9,13 +9,19 @@ import 'package:flutter/cupertino.dart';
 import './models/user.dart';
 import 'models/setting.dart';
 
-class SettingsList extends StatelessWidget {
+class SettingsList extends StatefulWidget {
   SettingsList({@required this.bike});
   final bike;
+
+  @override
+  _SettingsListState createState() => _SettingsListState();
+}
+
+class _SettingsListState extends State<SettingsList> {
   final db = DatabaseService();
+
   final AuthService auth = AuthService();
 
-  // Custom widget for user bikes display.
     Widget _getSettings(uid, bike, settings, context){
       return ListView.builder(
         shrinkWrap: true,
@@ -28,13 +34,16 @@ class SettingsList extends StatelessWidget {
               trailing: Icon(Icons.delete, color: CupertinoColors.systemRed),
             ),
             direction: DismissDirection.horizontal,
-            // onDismissed: _dismissBike(uid, bikes[index]),
+            onDismissed: (direction) => setState(() {
+              db.deleteSetting(uid, bike.id, settings[index].id);
+              settings.removeAt(index);
+            }),
             key: PageStorageKey(settings[index]),
             child: GestureDetector(
               key: PageStorageKey(settings[index]),
               child: ListTile(
                 title: Text(settings[index].id),
-                subtitle: Text(this.bike.id),
+                subtitle: Text(this.widget.bike.id),
                 trailing: Icon(Icons.arrow_forward_ios),
               ),
               onTap: () {
@@ -44,7 +53,7 @@ class SettingsList extends StatelessWidget {
                     builder: (context) {
                     // Return the settings detail form screen. 
                     return SettingDetails(
-                      uid: uid, bike: this.bike, setting: settings[index].id, 
+                      uid: uid, bike: this.widget.bike, setting: settings[index].id, 
                       fork: fork, shock: shock
                     );
                   })
@@ -79,7 +88,7 @@ class SettingsList extends StatelessWidget {
         return CupertinoPageScaffold(
           resizeToAvoidBottomInset: true,
           navigationBar: CupertinoNavigationBar(
-            middle: Text('Settings / ' + this.bike.id),
+            middle: Text('Settings / ' + this.widget.bike.id),
             trailing: CupertinoButton(
               child: Icon(Icons.power_settings_new),
               onPressed: () => _requestPop(context)
@@ -91,7 +100,7 @@ class SettingsList extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 StreamBuilder<List<Setting>>(
-                  stream: db.streamSettings(user.uid, this.bike.id.toString()),
+                  stream: db.streamSettings(user.uid, this.widget.bike.id.toString()),
                   builder: (context, snapshot) {
                     var settings = snapshot.data;
                     // var fork = settings[index].fork ?? null;
@@ -108,7 +117,7 @@ class SettingsList extends StatelessWidget {
                         style: CupertinoTheme.of(context).textTheme.navTitleTextStyle),
                       );
                     }
-                    return _getSettings(user.uid, this.bike, settings, context);
+                    return _getSettings(user.uid, this.widget.bike, settings, context);
                   }
                 ),
                 CupertinoButton(
@@ -119,7 +128,7 @@ class SettingsList extends StatelessWidget {
                       fullscreenDialog: true, // loads form from bottom
                       builder: (context) {
                       // We need to return the shock detail screen here.
-                      return SettingDetails(uid: user.uid, bike: this.bike);
+                      return SettingDetails(uid: user.uid, bike: this.widget.bike);
                     })
                   ),
                 ),

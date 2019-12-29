@@ -60,6 +60,12 @@ class DatabaseService {
     return await _db.collection('users').document(uid).collection('bikes').document(bikeid).delete();
   }
 
+  Future<void> deleteSetting(
+    String uid, String bikeid, String sid
+  ) async {
+    return await _db.collection('users').document(uid).collection('bikes').document(bikeid).collection('settings').document(sid).delete();
+  }
+
   Future<void> updateFork(
     String uid, String bikeid, String year, String travel, String damper, String offset, String wheelsize,
     String brand, String model, String spacers, String spacing
