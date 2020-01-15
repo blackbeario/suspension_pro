@@ -83,9 +83,7 @@ class _BikeFormState extends State<BikeForm> {
                 Visibility(
                   visible: _isVisibleFork,
                   maintainState: true,
-                  child: ForkForm(uid: widget.uid, bike: widget.bike, fork: widget.fork, forkCallback: (val) {
-                    showForkForm(val);
-                  }),
+                  child: ForkForm(uid: widget.uid, bike: widget.bike, fork: widget.fork, forkCallback: (val) => showForkForm(val)), 
                 ),
                 Visibility(
                   maintainState: true,

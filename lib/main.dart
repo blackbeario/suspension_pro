@@ -30,8 +30,8 @@ class MyApp extends StatelessWidget {
           ],
           debugShowCheckedModeBanner: false,
           theme: CupertinoThemeData(
-            primaryColor: Color(0xFF007AFF),
-            primaryContrastingColor: Color(0xFF007AFF), // iOS 10's default blue 
+            primaryColor: Color(0xFF007AFF), // iOS 10's default blue
+            primaryContrastingColor: Color(0xFFFFFFFF), // iOS 10's default blue 
             barBackgroundColor: Color(0xFFE5E5EA)
           ),
           home: AppHomePage(),
@@ -70,7 +70,7 @@ class AppHomePage extends StatelessWidget {
                 break;
               case 1:
                 return CupertinoTabView(
-                  builder: (BuildContext context) => Profile(),
+                  builder: (BuildContext context) => Profile(uid: user.uid),
                 );
                 break;
               }

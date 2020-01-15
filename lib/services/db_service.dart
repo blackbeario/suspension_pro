@@ -25,13 +25,22 @@ class DatabaseService {
   }
 
   Future<void> updateUser(
-    String uid, String username, String role, String email, Map bikes
+    String uid, String username, String email
   ) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;
     return await _db.collection('users').document(uid).setData({
-      'updated': $updated, 'username': username, 
-      'email': email  ?? '', 'bikes': {bikes}
+      'updated': $updated, 'username': username, 'email': email  ?? '',
+    }, merge: true);
+  }
+
+  Future<void> setProfilePic(
+    String uid, String filePath
+  ) async {
+    var $now = DateTime.now();
+    var $updated = $now.millisecondsSinceEpoch;
+    return await _db.collection('users').document(uid).setData({
+      'updated': $updated, 'profilePic': filePath
     }, merge: true);
   }
 

@@ -121,7 +121,7 @@ class _SettingsListState extends State<SettingsList> {
                   }
                 ),
                 CupertinoButton(
-                  color: CupertinoColors.systemFill,
+                  color: CupertinoColors.activeBlue,
                   child: Text('Add Setting'),
                   onPressed: () => Navigator.of(context).push(
                     CupertinoPageRoute(

@@ -18,7 +18,6 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   final db = DatabaseService();
   final AuthService auth = AuthService();
-  List <Bike>_bikes = [];
 
   @override
   void initState() {
@@ -35,6 +34,7 @@ class _SettingsState extends State<Settings> {
         var fork = $bike.fork ?? null;
         var shock = $bike.shock ?? null;
         return Container(
+          decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1))),
           margin: EdgeInsets.only(bottom: 10),
           child: Dismissible(
             background: ListTile(
@@ -49,14 +49,23 @@ class _SettingsState extends State<Settings> {
             child: ExpansionTile(
               initiallyExpanded: index == 0 ? true : false,
               key: PageStorageKey($bike),
-              title: Text($bike.id),
+              title: Text($bike.id, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
               children: <Widget>[
                 fork != null ? 
                   GestureDetector(
                     child: ListTile(
-                      leading: Image.asset('assets/fox36-black.jpg', height: 40),
-                      title: Text(fork["year"].toString() + ' ' + fork["brand"] + ' ' + fork["model"]),
-                      subtitle: Text(fork["travel"].toString() + 'mm / ' + fork["damper"] + ' / ' + fork["offset"].toString() + 'mm / ' + fork["wheelsize"].toString() + '"'),
+                      leading: Container(
+                        padding: EdgeInsets.all(2),
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.white60,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Image.asset('assets/fox36-black.png')
+                      ),
+                      title: Text(fork["year"].toString() + ' ' + fork["brand"] + ' ' + fork["model"], style: TextStyle(color: Colors.white)),
+                      subtitle: Text(fork["travel"].toString() + 'mm / ' + fork["damper"] + ' / ' + fork["offset"].toString() + 'mm / ' + fork["wheelsize"].toString() + '"', style: TextStyle(color: Colors.white)),
                     ),
                     onTap: () {
                       Navigator.of(context).push(
@@ -76,16 +85,25 @@ class _SettingsState extends State<Settings> {
                     }
                   )
                   : ListTile(
-                      leading: Image.asset('assets/fox36-black.jpg', height: 35),
+                      leading: Image.asset('assets/fox36-black.png', height: 35),
                       title: Text('No fork info'),
                     ),
                     // If shock data exists populate info and link to settings.
                     shock != null ?
                     GestureDetector(
                       child: ListTile(
-                        leading: Image.asset('assets/fox-dpx2.png', height: 40),
-                        title: Text(shock["year"].toString() + ' ' + shock["brand"] + ' ' + shock["model"]),
-                        subtitle: Text(shock["stroke"] ?? ''),
+                        leading: Container(
+                          padding: EdgeInsets.all(2),
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.white60,
+                            shape: BoxShape.circle,
+                          ),
+                        child: Image.asset('assets/fox-dpx2.png'),
+                        ),
+                        title: Text(shock["year"].toString() + ' ' + shock["brand"] + ' ' + shock["model"], style: TextStyle(color: Colors.white)),
+                        subtitle: Text(shock["stroke"] ?? '', style: TextStyle(color: Colors.white)),
                       ),
                       onTap: () {
                         Navigator.of(context).push(
@@ -107,14 +125,23 @@ class _SettingsState extends State<Settings> {
                       }
                     ) 
                   : ListTile(
-                      leading: Image.asset('assets/fox-dpx2.png', height: 35),
+                    leading: Container(
+                        padding: EdgeInsets.all(2),
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.white60,
+                          shape: BoxShape.circle,
+                        ),
+                      child: Image.asset('assets/fox-dpx2.png'),
+                      ),
                       title: Text('No shock info'),
                     ),
                     GestureDetector(
                       child: ListTile(
-                        leading: Icon(CupertinoIcons.settings),
-                        title: Text('Suspension Settings'),
-                        trailing: Icon(Icons.arrow_forward_ios),
+                        leading: Icon(CupertinoIcons.settings, color: Colors.white60),
+                        title: Text('Suspension Settings', style: TextStyle(color: Colors.white)),
+                        trailing: Icon(Icons.arrow_forward_ios, color: Colors.white30),
                       ),
                       onTap: () {
                         Navigator.of(context).push(
@@ -136,7 +163,7 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    var user = Provider.of<FirebaseUser>(context);
+    var user = Provider.of<FirebaseUser>(context, listen: false);
     if (user == null) {
       return Center(
         child: CupertinoActivityIndicator(
@@ -169,26 +196,27 @@ class _SettingsState extends State<Settings> {
             duration: Duration(milliseconds: 250),
             curve: Curves.fastOutSlowIn,
             height: height,
-            padding: EdgeInsets.fromLTRB(10, 160, 10, 10),
+            padding: EdgeInsets.fromLTRB(10, 100, 10, 10),
             decoration: BoxDecoration(
-              // backgroundBlendMode: BlendMode.softLight,
-              color: Colors.grey,
+              color: CupertinoColors.darkBackgroundGray,
               image: DecorationImage(
                 image: AssetImage("assets/roost.jpg"),
                 fit: BoxFit.contain,
                 alignment: Alignment.topLeft
               ),
             ),
-            child: Card(
-              color: Colors.white70,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(16))
-              ),
+            child: Align(
+              alignment: Alignment.center,
               child: ListView(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 children: <Widget>[
-                  Column(
+                  Card(
+                    color: Colors.white24,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(16))
+                    ),
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
@@ -218,13 +246,15 @@ class _SettingsState extends State<Settings> {
                           })
                         ),
                       ),
+                      SizedBox(height: 20),
                       // Expanded(child: Container())
                     ],
+                  ),
                   ),
                 ],
               ),
             ),
-          )
+          ),
         );
       }
     );
