@@ -115,7 +115,7 @@ class _SettingDetailsState extends State<SettingDetails> {
             trailing: FlatButton.icon(
               label: Text('Share'),
               icon: Icon(CupertinoIcons.share, size: 20), 
-              onPressed: () => _share(context, myUser, widget.setting, widget.bike.fork, widget.bike.shock),
+              onPressed: () => _share(context, myUser, widget.setting, $fork, widget.fork, $shock, widget.shock),
             ),
           ),
           child: Material(
@@ -283,8 +283,8 @@ class _SettingDetailsState extends State<SettingDetails> {
     );
   }
 
-  void _share(context, User user, String setting, fork, shock) {
-    final String text = "Suspension Pro setting '$setting' from ${user.username}";
+  void _share(context, User user, String setting, fork, forkSettings, shock, shockSettings) {
+    final text = "Suspension Pro setting '$setting' from ${user.username} \n Fork:$fork, \n Fork Settings:$forkSettings, \n Shock:$shock, \n Shock Settings:$shockSettings";
     print(text);
     Share.share(text, subject: setting);
   }
