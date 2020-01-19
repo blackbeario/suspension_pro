@@ -49,7 +49,7 @@ class _SettingsListState extends State<SettingsList> {
               onTap: () {
                 Navigator.of(context).push(
                   CupertinoPageRoute(
-                    fullscreenDialog: true, // loads form from bottom
+                    fullscreenDialog: true,
                     builder: (context) {
                     // Return the settings detail form screen. 
                     return SettingDetails(
@@ -88,7 +88,10 @@ class _SettingsListState extends State<SettingsList> {
         return CupertinoPageScaffold(
           resizeToAvoidBottomInset: true,
           navigationBar: CupertinoNavigationBar(
-            middle: Text('Settings / ' + this.widget.bike.id),
+            leading: CupertinoButton(child: BackButtonIcon(),
+              onPressed:() => Navigator.pop(context, widget.bike.id)
+            ),
+            middle: Text('Settings / ' + widget.bike.id),
             trailing: CupertinoButton(
               child: Icon(Icons.power_settings_new),
               onPressed: () => _requestPop(context)
@@ -103,8 +106,6 @@ class _SettingsListState extends State<SettingsList> {
                   stream: db.streamSettings(user.uid, this.widget.bike.id.toString()),
                   builder: (context, snapshot) {
                     var settings = snapshot.data;
-                    // var fork = settings[index].fork ?? null;
-                    // var shock = settings[index].shock ?? null;
                     if (settings == null) {
                       return Center(
                         child: Text('Loading...',
@@ -125,7 +126,7 @@ class _SettingsListState extends State<SettingsList> {
                   child: Text('Add Setting'),
                   onPressed: () => Navigator.of(context).push(
                     CupertinoPageRoute(
-                      fullscreenDialog: true, // loads form from bottom
+                      fullscreenDialog: true,
                       builder: (context) {
                       // We need to return the shock detail screen here.
                       return SettingDetails(uid: user.uid, bike: this.widget.bike);

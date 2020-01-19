@@ -11,6 +11,9 @@ import 'bikeform.dart';
 import 'fork_form.dart';
 
 class Settings extends StatefulWidget {
+  Settings({this.bike});
+
+  final String bike;
   @override
   _SettingsState createState() => _SettingsState();
 }
@@ -18,6 +21,8 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   final db = DatabaseService();
   final AuthService auth = AuthService();
+  String selected;
+  bool _expanded;
 
   @override
   void initState() {
@@ -47,7 +52,7 @@ class _SettingsState extends State<Settings> {
             }),
             key: PageStorageKey($bike),
             child: ExpansionTile(
-              initiallyExpanded: index == 0 ? true : false,
+              initiallyExpanded: selected == $bike.id ? true : false,
               key: PageStorageKey($bike),
               title: Text($bike.id, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
               children: <Widget>[
@@ -67,14 +72,20 @@ class _SettingsState extends State<Settings> {
                       title: Text(fork["year"].toString() + ' ' + fork["brand"] + ' ' + fork["model"], style: TextStyle(color: Colors.white)),
                       subtitle: Text(fork["travel"].toString() + 'mm / ' + fork["damper"] + ' / ' + fork["offset"].toString() + 'mm / ' + fork["wheelsize"].toString() + '"', style: TextStyle(color: Colors.white)),
                     ),
-                    onTap: () {
-                      Navigator.of(context).push(
+                    onTap: () async {
+                      /// Await the bike return value from the fork form back button, 
+                      var bike = await Navigator.push(context,
                         CupertinoPageRoute(
                           fullscreenDialog: true,
                           builder: (context) {
                             return CupertinoPageScaffold(
                               resizeToAvoidBottomInset: true,
                               navigationBar: CupertinoNavigationBar(
+                                /// This should allow me to pass the $bike argument back to the Setting
+                                /// screen so we can expand the appropriate expansion panel.
+                                leading: CupertinoButton(child: BackButtonIcon(),
+                                  onPressed:() => Navigator.pop(context, $bike.id)
+                                ),
                                 middle: Text(fork != null ? fork['brand'] + ' ' + fork['model'] : 'Add fork'),
                               ),
                               child: ForkForm(uid: uid, bike: $bike.id, fork: fork),
@@ -82,6 +93,9 @@ class _SettingsState extends State<Settings> {
                           }
                         ),
                       );
+                      setState(() {
+                        selected = "$bike";
+                      });
                     }
                   )
                   : ListTile(
@@ -105,16 +119,20 @@ class _SettingsState extends State<Settings> {
                         title: Text(shock["year"].toString() + ' ' + shock["brand"] + ' ' + shock["model"], style: TextStyle(color: Colors.white)),
                         subtitle: Text(shock["stroke"] ?? '', style: TextStyle(color: Colors.white)),
                       ),
-                      onTap: () {
-                        Navigator.of(context).push(
+                      onTap: () async {
+                        /// Await the bike return value from the shock form back button.
+                        var bike = await Navigator.push(context,
                           CupertinoPageRoute(
                             fullscreenDialog: true,
                             builder: (context) {
-                              // var $bike = widget.bike;
-                              // var $shock = widget.shock;
                               return CupertinoPageScaffold(
                                 resizeToAvoidBottomInset: true,
                                 navigationBar: CupertinoNavigationBar(
+                                  /// This should allow me to pass the $bike argument back to the Setting
+                                  /// screen so we can expand the appropriate expansion panel.
+                                  leading: CupertinoButton(child: BackButtonIcon(),
+                                    onPressed:() => Navigator.pop(context, $bike.id)
+                                  ),
                                   middle: Text($bike != null ? shock['brand'] + ' ' + shock['model'] : ''),
                                 ),
                                 child: ShockForm(uid: uid, bike: $bike.id, shock: shock),
@@ -122,6 +140,9 @@ class _SettingsState extends State<Settings> {
                             },
                           )
                         );
+                        setState(() {
+                          selected = "$bike";
+                        });
                       }
                     ) 
                   : ListTile(
@@ -143,18 +164,21 @@ class _SettingsState extends State<Settings> {
                         title: Text('Suspension Settings', style: TextStyle(color: Colors.white)),
                         trailing: Icon(Icons.arrow_forward_ios, color: Colors.white30),
                       ),
-                      onTap: () {
-                        Navigator.of(context).push(
+                      onTap: () async {
+                        var bike = await Navigator.of(context).push(
                           CupertinoPageRoute(builder: (context) {
                             // Return the shock detail form screen here.
                             return SettingsList(bike: $bike);
                           })
                         );
+                        setState(() {
+                          selected = "$bike";
+                        });
                       }
                     ),
                   ],
-                ),
             ),
+          ),
         );
         },
     );

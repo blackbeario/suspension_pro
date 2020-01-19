@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import './services/auth_service.dart';
@@ -81,91 +82,85 @@ class _ProfileEditState extends State<ProfileEdit> {
         ),
       ),
       child: Material(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: ListView(
+          shrinkWrap: true,
           children: <Widget>[
-            ListView(
-              shrinkWrap: true,
-              children: <Widget>[
-                GestureDetector(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
+            GestureDetector(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Stack(
+                    alignment: AlignmentDirectional.topStart,
                     children: <Widget>[
-                      Stack(
-                        alignment: AlignmentDirectional.topStart,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.all(20),
-                            child: CircleAvatar(
-                              backgroundColor: CupertinoColors.activeBlue,
-                              radius: 80,
-                              child: CircleAvatar(
-                                radius: 76,
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                backgroundImage: widget.myUser.profilePic.length > 0 ? 
-                                  NetworkImage(widget.myUser.profilePic) : AssetImage("assets/roost.jpg"),
-                              ),
-                            ),
+                      Padding(
+                        padding: EdgeInsets.all(20),
+                        child: CircleAvatar(
+                          backgroundColor: CupertinoColors.activeBlue,
+                          radius: 80,
+                          child: CircleAvatar(
+                            radius: 76,
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.black,
+                            backgroundImage: widget.myUser.profilePic.length > 0 ? 
+                              NetworkImage(widget.myUser.profilePic) : AssetImage("assets/roost.jpg"),
                           ),
-                          Positioned(
-                            right: 88,
-                            bottom: 30,
-                            child: Icon(CupertinoIcons.photo_camera, color: Colors.white70)
-                          ),
-                        ],
+                        ),
+                      ),
+                      Positioned(
+                        right: 88,
+                        bottom: 30,
+                        child: Icon(CupertinoIcons.photo_camera, color: Colors.white70)
                       ),
                     ],
                   ),
-                  onTap: () => showCupertinoModalPopup(
-                    useRootNavigator: true,
-                    context: context,
-                    builder: (context) => ImageActionSheet(uid: widget.uid)
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.person),
-                  title: CupertinoTextField(
-                    // decoration: BoxDecoration(),
-                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                    padding: EdgeInsets.all(10),
-                    placeholder: 'username',
-                    controller: _usernameController,
-                    keyboardType: TextInputType.text
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.email),
-                  title: CupertinoTextField(
-                    // decoration: BoxDecoration(),
-                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                    padding: EdgeInsets.all(10),
-                    placeholder: 'email',
-                    controller: _emailController,
-                    keyboardType: TextInputType.text
-                  ),
-                ),
-                // Show the role if user is admin. No sense in showing 'regular' user or whatevs.
-                // If we elect to have tiered user pricing etc, we can easily show that status here.
-                widget.myUser.role == 'admin' ? ListTile(
-                  leading: Icon(Icons.settings),
-                  title: Text(widget.myUser.role),
-                ) : Container(),           
-                // Expanded(child: Container()),
-                SizedBox(height: 30),
-                Container(
-                  padding: EdgeInsets.only(left: 80, right: 80),
-                  child: CupertinoButton(
-                    disabledColor: CupertinoColors.quaternarySystemFill,
-                    color: CupertinoColors.activeBlue,
-                    child: Text('Save', style: TextStyle(color: Colors.white)),
-                    // TODO: Set a validation check and disable the save button unless valid.
-                    onPressed: ()=> _updateUser(widget.uid, context)
-                  ),
-                ),
-              ],
+                ],
+              ),
+              onTap: () => showCupertinoModalPopup(
+                useRootNavigator: true,
+                context: context,
+                builder: (context) => ImageActionSheet(uid: widget.uid)
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: CupertinoTextField(
+                // decoration: BoxDecoration(),
+                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                padding: EdgeInsets.all(10),
+                placeholder: 'username',
+                controller: _usernameController,
+                keyboardType: TextInputType.text
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.email),
+              title: CupertinoTextField(
+                // decoration: BoxDecoration(),
+                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                padding: EdgeInsets.all(10),
+                placeholder: 'email',
+                controller: _emailController,
+                keyboardType: TextInputType.text
+              ),
+            ),
+            // Show the role if user is admin. No sense in showing 'regular' user or whatevs.
+            // If we elect to have tiered user pricing etc, we can easily show that status here.
+            widget.myUser.role == 'admin' ? ListTile(
+              leading: Icon(Icons.settings),
+              title: Text(widget.myUser.role),
+            ) : Container(),           
+            // Expanded(child: Container()),
+            SizedBox(height: 30),
+            Container(
+              padding: EdgeInsets.only(left: 80, right: 80),
+              child: CupertinoButton(
+                disabledColor: CupertinoColors.quaternarySystemFill,
+                color: CupertinoColors.activeBlue,
+                child: Text('Save', style: TextStyle(color: Colors.white)),
+                // TODO: Set a validation check and disable the save button unless valid.
+                onPressed: ()=> _updateUser(widget.uid, context)
+              ),
             ),
           ],
         ),
@@ -273,21 +268,6 @@ class _ImageCaptureState extends State<ImageCapture> {
   /// Active image file
   File _imageFile;
 
-  /// Cropper plugin
-  Future<void> _cropImage() async {
-    File cropped = await ImageCropper.cropImage(
-        sourcePath: _imageFile.path,
-        maxWidth: 80,
-        maxHeight: 80,
-        aspectRatio: CropAspectRatio(ratioX: 20, ratioY: 20),
-        cropStyle: CropStyle.circle,
-        compressQuality: 50
-      );
-    setState(() {
-      _imageFile = cropped ?? _imageFile;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -296,16 +276,33 @@ class _ImageCaptureState extends State<ImageCapture> {
 
   /// Select an image via gallery or camera
   void _pickImage(ImageSource source) async {
-    File selected = await ImagePicker.pickImage(source: source);
+    File selected = await ImagePicker.pickImage(
+      source: source,
+      maxWidth: 300,
+      maxHeight: 300,
+      imageQuality: 80
+    );
     setState(() {
       _imageFile = selected;
+    });
+    /// Cropper plugin
+    File cropped = await ImageCropper.cropImage(
+      sourcePath: _imageFile.path,
+      maxWidth: 100,
+      maxHeight: 100,
+      aspectRatio: CropAspectRatio(ratioX: 20, ratioY: 20),
+      cropStyle: CropStyle.circle,
+      // compressQuality: 50
+    );
+    setState(() {
+      _imageFile = cropped;
     });
   }
 
   /// Remove image
-  void _clear() {
-    setState(() => _imageFile = null);
-  }
+  // void _clear() {
+  //   setState(() => _imageFile = null);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -328,18 +325,6 @@ class _ImageCaptureState extends State<ImageCapture> {
                 ],
                 if (_imageFile != null) ...[
                   Image.file(_imageFile),
-                  Row(
-                    children: <Widget>[
-                      FlatButton(
-                        child: Icon(Icons.crop),
-                        onPressed: _cropImage,
-                      ),
-                      FlatButton(
-                        child: Icon(Icons.refresh),
-                        onPressed: _clear,
-                      ),
-                    ],
-                  ),
                   Uploader(uid: widget.uid, file: _imageFile)
                 ],
               ],

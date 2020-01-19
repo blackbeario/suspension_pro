@@ -75,7 +75,10 @@ class _ForkFormState extends State<ForkForm> {
             Column(
               children: <Widget>[
                 widget.fork != null ? 
-                  Image.asset('assets/fox36-black.jpg', height: 150) 
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 20),
+                    child: Image.asset('assets/fox36-black.jpg', height: 150) 
+                  )
                 : Padding(
                     padding: EdgeInsets.all(10),
                     child: Text('Fork Details')

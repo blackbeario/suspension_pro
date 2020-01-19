@@ -63,7 +63,10 @@ class _ShockFormState extends State<ShockForm> {
             Column(
               children: <Widget>[
                 widget.shock != null ? 
-                  Image.asset('assets/fox-dpx2.png', height: 150)
+                Padding(
+                    padding: EdgeInsets.only(bottom: 20),
+                    child: Image.asset('assets/fox-dpx2.png', height: 150)
+                  )
                 : Padding(
                     padding: EdgeInsets.all(10),
                     child: Text('Shock Details')
