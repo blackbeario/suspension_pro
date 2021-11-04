@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:suspension_pro/fork_form.dart';
-import 'package:suspension_pro/shock_form.dart';
+import 'fork_form.dart';
+import 'shock_form.dart';
 import './services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 
+// ignore: must_be_immutable
 class BikeForm extends StatefulWidget {
-  BikeForm({Key key, @required this.uid, this.bike, this.fork, this.shock}) : super(key: key);
+  BikeForm({Key? key, @required this.uid, this.bike, this.fork, this.shock})
+      : super(key: key);
   final uid;
   final bike;
-  Map fork;
-  Map shock;
+  Map? fork;
+  Map? shock;
 
   @override
   _BikeFormState createState() => _BikeFormState();
@@ -20,7 +22,7 @@ class _BikeFormState extends State<BikeForm> {
   final _bikeController = TextEditingController();
   bool _isVisibleFork = true;
   bool _isVisibleShock = false;
-  
+
   void showForkForm(val) {
     setState(() {
       widget.fork = val;
@@ -31,7 +33,10 @@ class _BikeFormState extends State<BikeForm> {
 
   void showShockForm(fork, val) {
     setState(() {
-      widget.shock = val;
+      if (val['year'] == '' && val['brand'] == '' && val['model'] == '') {
+        widget.shock = null;
+      } else
+        widget.shock = val;
       _isVisibleShock = !_isVisibleShock;
       _addUpdateBike(widget.fork, widget.shock);
     });
@@ -40,7 +45,7 @@ class _BikeFormState extends State<BikeForm> {
   @override
   void initState() {
     super.initState();
-      _bikeController.text = widget.bike != null ? widget.bike : '';
+    _bikeController.text = widget.bike != null ? widget.bike : '';
   }
 
   @override
@@ -72,32 +77,41 @@ class _BikeFormState extends State<BikeForm> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 CupertinoTextField(
-                  padding: EdgeInsets.all(10),
-                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                  placeholder: widget.bike != null ? widget.bike.id : 'Bike Name',
-                  showCursor: true,
-                  controller: _bikeController,
-                  keyboardType: TextInputType.text
-                ),
+                    padding: EdgeInsets.all(10),
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    placeholder:
+                        widget.bike != null ? widget.bike.id : 'Bike Name',
+                    showCursor: true,
+                    controller: _bikeController,
+                    keyboardType: TextInputType.text),
                 SizedBox(height: 10),
                 Visibility(
                   visible: _isVisibleFork,
                   maintainState: true,
-                  child: ForkForm(uid: widget.uid, bike: widget.bike, fork: widget.fork, forkCallback: (val) => showForkForm(val)), 
+                  child: ForkForm(
+                      uid: widget.uid,
+                      bike: widget.bike,
+                      fork: widget.fork,
+                      forkCallback: (val) => showForkForm(val)),
                 ),
                 Visibility(
                   maintainState: true,
                   visible: _isVisibleShock,
-                  child: ShockForm(uid: widget.uid, bike: widget.bike, shock: widget.shock, shockCallback: (val) => showShockForm(widget.fork, val)),
+                  child: ShockForm(
+                      uid: widget.uid,
+                      bike: widget.bike,
+                      shock: widget.shock,
+                      shockCallback: (val) => showShockForm(widget.fork, val)),
                 ),
                 SizedBox(height: 20),
-                widget.bike != null ?
-                CupertinoButton(
-                  color: CupertinoColors.quaternaryLabel,
-                  child: Text('Save'),
-                  onPressed: () => 
-                    _addUpdateBike(widget.fork, widget.shock)
-                ) : Container(),
+                widget.bike != null
+                    ? CupertinoButton(
+                        color: CupertinoColors.quaternaryLabel,
+                        child: Text('Save'),
+                        onPressed: _bikeController.text.isEmpty
+                            ? () => null
+                            : () => _addUpdateBike(widget.fork, widget.shock))
+                    : Container(),
               ],
             ),
           ],

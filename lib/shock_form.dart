@@ -7,15 +7,16 @@ class ShockForm extends StatefulWidget {
   ShockForm({@required this.uid, this.bike, this.shock, this.shockCallback});
 
   final uid;
-  final String bike;
-  final Map shock;
-  final Function(Map val) shockCallback;
+  final String? bike;
+  final Map? shock;
+  final Function(Map val)? shockCallback;
 
   @override
   _ShockFormState createState() => _ShockFormState();
 }
 
 class _ShockFormState extends State<ShockForm> {
+  final _formKey = GlobalKey<FormState>();
   final db = DatabaseService();
   final _yearController = TextEditingController();
   final _brandController = TextEditingController();
@@ -26,12 +27,12 @@ class _ShockFormState extends State<ShockForm> {
   @override
   void initState() {
     super.initState();
-      var $shock = widget.shock;
-      _yearController.text = $shock != null ? $shock['year'].toString() : '';
-      _brandController.text = $shock != null ? $shock['brand'] ?? '' : '';
-      _modelController.text = $shock != null ? $shock['model'] ?? '' : '';
-      _spacersController.text = $shock != null ? $shock['spacers'].toString() : '';
-      _strokeController.text = $shock != null ? $shock['stroke'] : '';
+    var $shock = widget.shock;
+    _yearController.text = $shock?['year'] ?? '';
+    _brandController.text = $shock?['brand'] ?? '';
+    _modelController.text = $shock?['model'] ?? '';
+    _spacersController.text = $shock?['spacers'] ?? '';
+    _strokeController.text = $shock?['stroke'] ?? '';
   }
 
   @override
@@ -47,97 +48,112 @@ class _ShockFormState extends State<ShockForm> {
   Future<bool> _updateShock(bike, BuildContext context) {
     Navigator.pop(context);
     db.updateShock(
-      widget.uid, widget.bike, _yearController.text, _strokeController.text, 
-      _brandController.text, _modelController.text, _spacersController.text
-    );
+        widget.uid,
+        widget.bike!,
+        _yearController.text,
+        _strokeController.text,
+        _brandController.text,
+        _modelController.text,
+        _spacersController.text);
     return Future.value(false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ListView(
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical,
+    return Material(
+      child: Form(
+        key: _formKey,
+        child: Column(
           children: <Widget>[
-            Column(
-              children: <Widget>[
-                widget.shock != null ? 
-                Padding(
+            widget.shock != null
+                ? Padding(
                     padding: EdgeInsets.only(bottom: 20),
-                    child: Image.asset('assets/fox-dpx2.png', height: 150)
-                  )
+                    child: Image.asset('assets/float_x2.png', height: 100))
                 : Padding(
                     padding: EdgeInsets.all(10),
-                    child: Text('Shock Details')
-                  ),
-                CupertinoTextField(
-                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                  padding: EdgeInsets.all(10),
-                  placeholder: 'Shock Year',
-                  controller: _yearController,
-                  keyboardType: TextInputType.text
-                ),
-                CupertinoTextField(
-                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                  padding: EdgeInsets.all(10),
-                  placeholder: 'Shock Brand',
-                  controller: _brandController,
-                  keyboardType: TextInputType.text
-                ),
-                CupertinoTextField(
-                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                  padding: EdgeInsets.all(10),
-                  placeholder: 'Shock Model',
-                  controller: _modelController,
-                  keyboardType: TextInputType.text
-                ),
-                CupertinoTextField(
-                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                  padding: EdgeInsets.all(10),
-                  placeholder: 'Shock Stroke (ex: 210x52.5)',
-                  controller: _strokeController,
-                  keyboardType: TextInputType.text
-                ),
-                CupertinoTextField(
-                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                  padding: EdgeInsets.all(10),
-                  placeholder: 'Shock Volume Spacers', 
-                  controller: _spacersController,
-                  keyboardType: TextInputType.text
-                ),
-                SizedBox(height: 30),
-                widget.bike != null ? Container(
-                  padding: EdgeInsets.only(left: 80, right: 80),
-                  child: CupertinoButton(
-                    disabledColor: CupertinoColors.quaternarySystemFill,
-                    color: CupertinoColors.activeBlue,
-                    child: Text('Save', style: TextStyle(color: Colors.white)),
-                    // TODO: Set a validation check and disable the save button unless valid.
-                    onPressed: ()=> _updateShock(widget.bike, context)
-                  ),
-                ) :
-                Container(
-                  padding: EdgeInsets.only(left: 80, right: 80),
-                  child: CupertinoButton(
-                    disabledColor: CupertinoColors.quaternarySystemFill,
-                    color: CupertinoColors.activeBlue,
-                    child: Text('Save', style: TextStyle(color: Colors.white)),
-                    // TODO: Set a validation check and disable the save button unless valid.
-                    // Passing the shock form values back to the BikeForm state.
-                    onPressed: () => widget.shockCallback({
-                      'year': _yearController.text,
-                      'brand': _brandController.text,
-                      'model': _modelController.text,
-                      'spacers': _spacersController.text,
-                      'stroke': _strokeController.text
-                    })
-                  ),
-                ),
-              ],
-            ),
-        ],
+                    child: Column(
+                      children: [
+                        Text('Shock Details', style: TextStyle(fontSize: 18)),
+                        SizedBox(height: 10),
+                        Text(
+                            'Leave shock form details blank to \nsave without a rear shock', textAlign: TextAlign.center),
+                      ],
+                    )),
+            TextFormField(
+                // validator: (_yearController) {
+                //   if (_yearController == null || _yearController.isEmpty)
+                //     return 'Please enter fork year';
+                //   return null;
+                // },
+                decoration: _decoration('Shock Year'),
+                controller: _yearController,
+                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                keyboardType: TextInputType.text),
+            TextFormField(
+                // validator: (_brandController) {
+                //   if (_brandController == null || _brandController.isEmpty)
+                //     return 'Enter fork brand';
+                //   return null;
+                // },
+                decoration: _decoration('Shock Brand'),
+                controller: _brandController,
+                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                keyboardType: TextInputType.text),
+            TextFormField(
+                // validator: (_modelController) {
+                //   if (_modelController == null || _modelController.isEmpty)
+                //     return 'Enter fork model';
+                //   return null;
+                // },
+                decoration: _decoration('Shock Model'),
+                controller: _modelController,
+                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                keyboardType: TextInputType.text),
+            TextFormField(
+                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                decoration: _decoration('Shock Stroke (ex: 210x52.5)'),
+                controller: _strokeController,
+                keyboardType: TextInputType.text),
+            TextFormField(
+                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                decoration: _decoration('Shock Volume Spacers'),
+                controller: _spacersController,
+                keyboardType: TextInputType.text),
+            SizedBox(height: 30),
+            Container(
+              padding: EdgeInsets.only(left: 80, right: 80),
+              child: CupertinoButton(
+                  disabledColor: CupertinoColors.quaternarySystemFill,
+                  color: CupertinoColors.activeBlue,
+                  child: Text('Save', style: TextStyle(color: Colors.white)),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      widget.bike != null
+                          ? _updateShock(widget.bike, context)
+                          :  widget.shockCallback!({
+                              'year': _yearController.text,
+                              'brand': _brandController.text,
+                              'model': _modelController.text,
+                              'spacers': _spacersController.text,
+                              'stroke': _strokeController.text
+                            });
+                    }
+                  }),
+            )
+          ],
+        ),
       ),
+    );
+  }
+
+  InputDecoration _decoration(String label) {
+    return InputDecoration(
+      hintText: label,
+      hintStyle: TextStyle(fontSize: 18, color: Colors.grey[400]),
+      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+      fillColor: Colors.white,
+      filled: true,
+      border: UnderlineInputBorder(borderRadius: BorderRadius.zero),
     );
   }
 }

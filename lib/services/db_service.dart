@@ -4,115 +4,229 @@ import '../models/user.dart';
 import '../models/setting.dart';
 
 class DatabaseService {
-  final Firestore _db = Firestore.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+
+  // /// Settings collection stream.
+  // Stream<List<Setting>> streamSettings(String uid, String bikeid) {
+  //   var ref = _db
+  //       .collection('users')
+  //       .doc(uid)
+  //       .collection('bikes')
+  //       .doc(bikeid)
+  //       .collection('settings');
+  //   return ref.snapshots().map(
+  //       (list) => list.docs.map((doc) => Setting.fromSnapshot(doc.data())).toList());
+  // }
 
   /// Settings collection stream.
   Stream<List<Setting>> streamSettings(String uid, String bikeid) {
-    var ref = _db.collection('users').document(uid).collection('bikes').document(bikeid).collection('settings');
+    var ref = _db.collection('users').doc(uid).collection('bikes').doc(bikeid).collection('settings');
     return ref.snapshots().map((list) =>
-      list.documents.map((doc) => Setting.fromFirestore(doc)).toList());
+      list.docs.map((doc) => Setting.fromFirestore(doc)).toList());
   }
 
   /// Bikes collection stream.
   Stream<List<Bike>> streamBikes(String uid) {
-    var ref = _db.collection('users').document(uid).collection('bikes').orderBy('created');
+    var ref = _db.collection('users').doc(uid).collection('bikes').orderBy('created');
     return ref.snapshots().map((list) =>
-      list.documents.map((doc) => Bike.fromFirestore(doc)).toList());
+      list.docs.map((doc) => Bike.fromFirestore(doc)).toList());
   }
 
-  Stream<User> streamUser(String id) {
-    return _db.collection('users').document(id).snapshots().map((snap) => User.fromMap(snap.data));
+  // /// Bikes collection stream.
+  // Stream<List<Bike>> streamBikes(String uid) {
+  //   var ref =
+  //       _db.collection('users').doc(uid).collection('bikes').orderBy('created');
+  //   return ref.snapshots().map(
+  //       (list) => list.docs.map((doc) => Bike.fromSnapshot(doc)).toList());
+  // }
+
+  Stream<AppUser> streamUser(String id) {
+    return _db
+        .collection('users')
+        .doc(id)
+        .snapshots()
+        .map((snap) => AppUser.fromSnapshot(snap.data()!));
   }
 
-  Future<void> updateUser(
-    String uid, String username, String email
-  ) async {
+  Future<void> updateUser(String uid, String username, String email) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;
-    return await _db.collection('users').document(uid).setData({
-      'updated': $updated, 'username': username, 'email': email  ?? '',
-    }, merge: true);
+    return await _db.collection('users').doc(uid).set({
+      'updated': $updated,
+      'username': username,
+      'email': email,
+    }, SetOptions(merge: true));
   }
 
-  Future<void> setProfilePic(
-    String uid, String filePath
-  ) async {
+  Future<void> setProfilePic(String uid, String filePath) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;
-    return await _db.collection('users').document(uid).setData({
-      'updated': $updated, 'profilePic': filePath
-    }, merge: true);
+    return await _db.collection('users').doc(uid).set(
+        {'updated': $updated, 'profilePic': filePath}, SetOptions(merge: true));
   }
 
   /// Need to add required fork and shock fields with values.
   Future<void> addUpdateBike(
-    String uid, String bikeid, Map fork, Map shock 
-  ) async {
+      String uid, String bikeid, Map fork, Map shock) async {
     var $now = DateTime.now();
     var $created = $now.millisecondsSinceEpoch;
-    return await _db.collection('users').document(uid).collection('bikes').document(bikeid).setData({
-      'created': $created, 
-      'fork': {
-        'year': fork['year'], 'travel': fork['travel'], 'damper': fork['damper'], 'offset': fork['offset'], 
-        'wheelsize': fork['wheelsize'], 'brand': fork['brand'], 'model': fork['model'], 'spacers': fork['spacers'], 'spacing': fork['spacing']
-      },
-      'shock': {
-        'year': shock['year'], 'stroke': shock['stroke'],
-        'brand': shock['brand'], 'model': shock['model'], 'spacers': shock['spacers']
-      }
-    }, merge: true);
+    return await _db
+        .collection('users')
+        .doc(uid)
+        .collection('bikes')
+        .doc(bikeid)
+        .set({
+      'created': $created,
+      if (fork != null)
+        'fork': {
+          'year': fork['year'],
+          'travel': fork['travel'],
+          'damper': fork['damper'],
+          'offset': fork['offset'],
+          'wheelsize': fork['wheelsize'],
+          'brand': fork['brand'],
+          'model': fork['model'],
+          'spacers': fork['spacers'],
+          'spacing': fork['spacing']
+        },
+      if (shock != null)
+        'shock': {
+          'year': shock['year'],
+          'stroke': shock['stroke'],
+          'brand': shock['brand'],
+          'model': shock['model'],
+          'spacers': shock['spacers']
+        }
+    }, SetOptions(merge: true));
   }
 
-  Future<void> deleteBike(
-    String uid, String bikeid
-  ) async {
-    return await _db.collection('users').document(uid).collection('bikes').document(bikeid).delete();
+  Future<void> deleteBike(String uid, String bikeid) async {
+    return await _db
+        .collection('users')
+        .doc(uid)
+        .collection('bikes')
+        .doc(bikeid)
+        .delete();
   }
 
-  Future<void> deleteSetting(
-    String uid, String bikeid, String sid
-  ) async {
-    return await _db.collection('users').document(uid).collection('bikes').document(bikeid).collection('settings').document(sid).delete();
+  Future<void> deleteSetting(String uid, String bikeid, String sid) async {
+    return await _db
+        .collection('users')
+        .doc(uid)
+        .collection('bikes')
+        .doc(bikeid)
+        .collection('settings')
+        .doc(sid)
+        .delete();
   }
 
   Future<void> updateFork(
-    String uid, String bikeid, String year, String travel, String damper, String offset, String wheelsize,
-    String brand, String model, String spacers, String spacing
-  ) async {
+      String uid,
+      String bikeid,
+      String year,
+      String travel,
+      String damper,
+      String offset,
+      String wheelsize,
+      String brand,
+      String model,
+      String spacers,
+      String spacing) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
-    return await _db.collection('users').document(uid).collection('bikes').document(bikeid).setData({
+    return await _db
+        .collection('users')
+        .doc(uid)
+        .collection('bikes')
+        .doc(bikeid)
+        .set({
       'fork': {
-        'updated': updated, 'year': year, 'travel': travel, 'damper': damper  ?? '', 'offset': offset  ?? '', 'wheelsize': wheelsize ?? '',
-        'brand': brand, 'model': model  ?? '', 'spacers': spacers  ?? '', 'spacing': spacing ?? ''
+        'updated': updated,
+        'year': year,
+        'travel': travel,
+        'damper': damper,
+        'offset': offset,
+        'wheelsize': wheelsize,
+        'brand': brand,
+        'model': model,
+        'spacers': spacers,
+        'spacing': spacing
       }
-    }, merge: true);
+    }, SetOptions(merge: true));
   }
 
-  Future<void> updateShock(
-    String uid, String bikeid, String year, String stroke,
-    String brand, String model, String spacers
-  ) async {
+  Future<void> updateShock(String uid, String bikeid, String year,
+      String stroke, String brand, String model, String spacers) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
-    return await _db.collection('users').document(uid).collection('bikes').document(bikeid).setData({
+    return await _db
+        .collection('users')
+        .doc(uid)
+        .collection('bikes')
+        .doc(bikeid)
+        .set({
       'shock': {
-        'updated': updated, 'year': year, 'stroke': stroke  ?? '',
-        'brand': brand, 'model': model  ?? '', 'spacers': spacers  ?? ''
+        'updated': updated,
+        'year': year,
+        'stroke': stroke,
+        'brand': brand,
+        'model': model,
+        'spacers': spacers
       }
-    }, merge: true);
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> deleteField(String uid, String bikeid, String component) async {
+    var $now = DateTime.now();
+    var updated = $now.millisecondsSinceEpoch;
+    var ref = _db.collection('users').doc(uid).collection('bikes').doc(bikeid);
+    // remove the provided value field from the document
+    return await ref.update({
+      'updated': updated,
+      component: FieldValue.delete(),
+    });
   }
 
   Future<void> updateSetting(
-    String uid, String id, String bikeid, String hscFork, String lscFork, String hsrFork, String lsrFork, String springFork,
-    String hscShock, String lscShock, String hsrShock, String lsrShock, String springShock,
+    String uid,
+    String id,
+    String bikeid,
+    String hscFork,
+    String lscFork,
+    String hsrFork,
+    String lsrFork,
+    String springFork,
+    String hscShock,
+    String lscShock,
+    String hsrShock,
+    String lsrShock,
+    String springShock,
   ) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
-    return await _db.collection('users').document(uid).collection('bikes').document(bikeid).collection('settings').document(id).setData({
+    return await _db
+        .collection('users')
+        .doc(uid)
+        .collection('bikes')
+        .doc(bikeid)
+        .collection('settings')
+        .doc(id)
+        .set({
       'updated': updated,
-      'fork': {'HSC': hscFork, 'LSC': lscFork, 'HSR': hsrFork, 'LSR': lsrFork, 'springRate': springFork},
-      'shock': {'HSC': hscShock, 'LSC': lscShock, 'HSR': hsrShock, 'LSR': lsrShock, 'springRate': springShock}
-    }, merge: true);
+      'fork': {
+        'HSC': hscFork,
+        'LSC': lscFork,
+        'HSR': hsrFork,
+        'LSR': lsrFork,
+        'springRate': springFork
+      },
+      'shock': {
+        'HSC': hscShock,
+        'LSC': lscShock,
+        'HSR': hsrShock,
+        'LSR': lsrShock,
+        'springRate': springShock
+      }
+    }, SetOptions(merge: true));
   }
 }

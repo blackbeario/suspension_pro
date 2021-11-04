@@ -1,8 +1,6 @@
-// import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:suspension_pro/setting_detail.dart';
+import 'setting_detail.dart';
 import './services/auth_service.dart';
 import './services/db_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,9 +17,6 @@ class SettingsList extends StatefulWidget {
 
 class _SettingsListState extends State<SettingsList> {
   final db = DatabaseService();
-
-  final AuthService auth = AuthService();
-
     Widget _getSettings(uid, bike, settings, context){
       return ListView.builder(
         shrinkWrap: true,
@@ -67,16 +62,9 @@ class _SettingsListState extends State<SettingsList> {
 
   @override
   Widget build(BuildContext context) {
-    var user = Provider.of<FirebaseUser>(context);
-    if (user == null) {
-      return Center(
-        child: CupertinoActivityIndicator(
-          animating: true,
-        )
-      );
-    }
-    return StreamBuilder<User>(
-      stream: db.streamUser(user.uid),
+    final authService = Provider.of<AuthService>(context);
+    return StreamBuilder<AppUser?>(
+      stream: authService.user,
       builder: (context, snapshot) {
         var myUser = snapshot.data;
         if (myUser == null) {
@@ -103,7 +91,7 @@ class _SettingsListState extends State<SettingsList> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 StreamBuilder<List<Setting>>(
-                  stream: db.streamSettings(user.uid, this.widget.bike.id.toString()),
+                  stream: db.streamSettings(myUser.id, this.widget.bike.id.toString()),
                   builder: (context, snapshot) {
                     var settings = snapshot.data;
                     if (settings == null) {
@@ -118,7 +106,7 @@ class _SettingsListState extends State<SettingsList> {
                         style: CupertinoTheme.of(context).textTheme.navTitleTextStyle),
                       );
                     }
-                    return _getSettings(user.uid, this.widget.bike, settings, context);
+                    return _getSettings(myUser.id, this.widget.bike, settings, context);
                   }
                 ),
                 CupertinoButton(
@@ -129,7 +117,7 @@ class _SettingsListState extends State<SettingsList> {
                       fullscreenDialog: true,
                       builder: (context) {
                       // We need to return the shock detail screen here.
-                      return SettingDetails(uid: user.uid, bike: this.widget.bike);
+                      return SettingDetails(uid: myUser.id, bike: this.widget.bike);
                     })
                   ),
                 ),
@@ -152,7 +140,7 @@ class _SettingsListState extends State<SettingsList> {
             isDestructiveAction: true,
             onPressed: () {
               Navigator.pop(context, 'Discard');
-              auth.signOut();
+              context.read<AuthService>().signOut();
             }
           ),
           CupertinoDialogAction(

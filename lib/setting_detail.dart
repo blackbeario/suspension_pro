@@ -1,19 +1,17 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:suspension_pro/models/user.dart';
 import './services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:share/share.dart';
+import 'models/user.dart';
 
 class SettingDetails extends StatefulWidget {
-  SettingDetails({@required this.uid, this.setting, this.bike, this.fork, this.shock});
+  SettingDetails({required this.uid, this.setting, this.bike, this.fork, this.shock});
 
   final uid;
-  final String setting;
+  final String? setting;
   final bike;
-  final Map fork;
-  final Map shock;
+  final Map? fork;
+  final Map? shock;
 
   @override
   _SettingDetailsState createState() => _SettingDetailsState();
@@ -99,7 +97,7 @@ class _SettingDetailsState extends State<SettingDetails> {
   Widget build(BuildContext context) {
     var $fork = widget.bike != null ? widget.bike.fork : null;
     var $shock = widget.bike != null ? widget.bike.shock : null;
-    return StreamBuilder<User>(
+    return StreamBuilder<AppUser>(
       stream: db.streamUser(widget.uid),
       builder: (context, snapshot) {
         var myUser = snapshot.data;
@@ -111,11 +109,11 @@ class _SettingDetailsState extends State<SettingDetails> {
         return CupertinoPageScaffold(
           resizeToAvoidBottomInset: true,
           navigationBar: CupertinoNavigationBar(
-            middle: Text(widget.setting != null ? widget.setting : 'New Setting'),
-            trailing: FlatButton.icon(
+            middle: Text(widget.setting ?? 'New Setting'),
+            trailing: TextButton.icon(
               label: Text('Share'),
               icon: Icon(CupertinoIcons.share, size: 20), 
-              onPressed: () => _share(context, myUser, widget.setting, $fork, widget.fork, $shock, widget.shock),
+              onPressed: () => _share(context, myUser, widget.setting!, $fork, widget.fork, $shock, widget.shock),
             ),
           ),
           child: Material(
@@ -145,7 +143,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                                 child: Text($fork != null ? $fork['brand'] + ' ' + $fork['model'] : 'No fork saved'),
                                 height: 40,
                               ),
-                              Image.asset('assets/fox36-black.jpg', height: 50),
+                              Image.asset('assets/fox36-black.png', height: 50),
                               SizedBox(height: 20),
                               TextField(
                                 style: TextStyle(fontSize: 18, color: Colors.grey[700]),
@@ -207,7 +205,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                                 child: Text($shock != null ? $shock['brand'] + ' ' + $shock['model'] : 'No shock saved'),
                                 height: 40,
                               ),
-                              Image.asset('assets/fox-dpx2.png', height: 50),
+                              Image.asset('assets/float_x2.png', height: 50),
                               SizedBox(height: 20),
                               TextField(
                                 style: TextStyle(fontSize: 18, color: Colors.grey[700]),
@@ -267,7 +265,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                     SizedBox(height: 20),
                     CupertinoButton(
                       // padding: EdgeInsets.all(10),
-                      color: CupertinoColors.quaternaryLabel,
+                      color: CupertinoColors.activeBlue,
                       child: Text('Save'),
                       onPressed: () => 
                         _updateSetting(widget.bike.id, context)
@@ -283,9 +281,8 @@ class _SettingDetailsState extends State<SettingDetails> {
     );
   }
 
-  void _share(context, User user, String setting, fork, forkSettings, shock, shockSettings) {
-    final text = "Suspension Pro setting '$setting' from ${user.username} \n Fork:$fork, \n Fork Settings:$forkSettings, \n Shock:$shock, \n Shock Settings:$shockSettings";
-    print(text);
+  void _share(context, AppUser user, String setting, fork, forkSettings, shock, shockSettings) {
+    final text = "Suspension Pro '$setting' shared by ${user.username} \n\n${fork['year'] + ' ' + fork['brand'] + ' ' + fork['model']} Settings: \n$forkSettings, \n\n${shock['year'] + ' ' + shock['brand'] + ' ' + shock['model']} Settings: \n$shockSettings \n\nGet the Suspension Pro App for iOS soon on the Apple AppStore!";
     Share.share(text, subject: setting);
   }
 }
