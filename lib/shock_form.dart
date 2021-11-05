@@ -65,15 +65,20 @@ class _ShockFormState extends State<ShockForm> {
         key: _formKey,
         child: Column(
           children: <Widget>[
-            widget.shock != null
-                ? Padding(
-                    padding: EdgeInsets.only(bottom: 20),
-                    child: Image.asset('assets/float_x2.png', height: 100))
-                : Padding(
+            Container(
+                margin: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.all(2),
+                width: 75,
+                height: 75,
+                decoration: BoxDecoration(
+                  color: Colors.black12,
+                  shape: BoxShape.circle,
+                ),
+                child: Image.asset('assets/shock.png')),
+                if (widget.shock == null) Padding(
                     padding: EdgeInsets.all(10),
                     child: Column(
                       children: [
-                        Text('Shock Details', style: TextStyle(fontSize: 18)),
                         SizedBox(height: 10),
                         Text(
                             'Leave shock form details blank to \nsave without a rear shock', textAlign: TextAlign.center),

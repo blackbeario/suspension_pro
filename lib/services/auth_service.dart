@@ -19,28 +19,23 @@ class AuthService {
     return _firebaseAuth.authStateChanges().map(_userFromFirebase);
   }
 
-  Future<AppUser?> signIn(String email, String password) async {
+  Future signIn(String email, String password) async {
     try {
       final credential = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
       return _userFromFirebase(credential.user);
     } on auth.FirebaseException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
-      return null;
+      return e.message;
     }
   }
 
-  Future<AppUser?> createUser(String email, String password) async {
+  Future createUser(String email, String password) async {
     try {
       final credential = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
       return _userFromFirebase(credential.user);
     } on auth.FirebaseException catch (e) {
-      print(e.message);
+      return e.message;
     }
   }
 
@@ -48,11 +43,18 @@ class AuthService {
     await _firebaseAuth.signOut();
   }
 
-  Future<void> updateUserData(auth.UserCredential userCredential) async {
+  Future<void> updateUserData(String uid, String email) async {
     DocumentReference userRef =
-        _db.collection('users').doc(userCredential.user!.uid);
+        _db.collection('users').doc(uid);
     return userRef.set(
-        {'uid': userCredential.user!.uid, 'lastActivity': DateTime.now()},
+        {
+        'uid': uid, 
+        'email': email, 
+        'points': 0,
+        'role': 'newbie',
+        'username': email,
+        'lastActivity': DateTime.now(),
+        },
         SetOptions(merge: true));
   }
 }

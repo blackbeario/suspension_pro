@@ -59,9 +59,15 @@ class AuthenticationWrapper extends StatelessWidget {
   }
 }
 
-class AppHomePage extends StatelessWidget {
+class AppHomePage extends StatefulWidget {
   AppHomePage(this.user);
   final AppUser user;
+
+  @override
+  State<AppHomePage> createState() => _AppHomePageState();
+}
+
+class _AppHomePageState extends State<AppHomePage> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
@@ -84,11 +90,11 @@ class AppHomePage extends StatelessWidget {
         switch (index) {
           case 0:
             return CupertinoTabView(
-              builder: (BuildContext context) => Settings(),
+              builder: (BuildContext context) => Settings(user: widget.user),
             );
           case 1:
             return CupertinoTabView(
-              builder: (BuildContext context) => Profile(uid: user.id),
+              builder: (BuildContext context) => Profile(user: widget.user),
             );
         }
         return CircularProgressIndicator();

@@ -10,8 +10,9 @@ import 'bikeform.dart';
 import 'fork_form.dart';
 
 class Settings extends StatefulWidget {
-  Settings({this.bike});
+  Settings({required this.user, this.bike});
 
+  final AppUser user;
   final String? bike;
   @override
   _SettingsState createState() => _SettingsState();
@@ -35,7 +36,7 @@ class _SettingsState extends State<Settings> {
         Bike $bike = bikes[index];
         var fork = $bike.fork;
         var shock = $bike.shock;
-        selected = $bike;
+        selected = bikes[0];
         return Dismissible(
           background: ListTile(
             trailing: Icon(Icons.delete, color: CupertinoColors.systemRed),
@@ -62,13 +63,13 @@ class _SettingsState extends State<Settings> {
                       children: [
                           Container(
                               padding: EdgeInsets.all(2),
-                              width: 60,
-                              height: 60,
+                              width: 50,
+                              height: 50,
                               decoration: BoxDecoration(
                                 color: Colors.black12,
                                 shape: BoxShape.circle,
                               ),
-                              child: Image.asset('assets/fox36-black.png')),
+                              child: Image.asset('assets/fork.png')),
                           Container(
                             padding: EdgeInsets.zero,
                             alignment: Alignment.centerLeft,
@@ -95,7 +96,7 @@ class _SettingsState extends State<Settings> {
                                     style: TextStyle(color: Colors.black54)),
                                 onTap: () async {
                                   /// Await the bike return value from the fork form back button,
-                                  var bike = await Navigator.push(
+                                  await Navigator.push(
                                     context,
                                     CupertinoPageRoute(
                                         fullscreenDialog: true,
@@ -189,14 +190,14 @@ class _SettingsState extends State<Settings> {
                       children: [
                         Container(
                             padding: EdgeInsets.all(4),
-                            width: 60,
-                            height: 60,
+                            width: 50,
+                            height: 50,
                             decoration: BoxDecoration(
                               color: Colors.black12,
                               shape: BoxShape.circle,
                             ),
                             child: shock != null
-                                ? Image.asset('assets/float_x2.png')
+                                ? Image.asset('assets/shock.png')
                                 : null),
                         Container(
                           padding: EdgeInsets.zero,
@@ -292,7 +293,7 @@ class _SettingsState extends State<Settings> {
                                     middle: Text('Add Shock'),
                                   ),
                                   child: ShockForm(
-                                      uid: uid, bike: $bike.id, shock: shock!),
+                                      uid: uid, bike: $bike.id, shock: shock),
                                 );
                               },
                             ));

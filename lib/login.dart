@@ -89,8 +89,7 @@ class LoginPageState extends State<LoginPage> {
                         child: CupertinoTextField(
                           controller: _email,
                           padding: EdgeInsets.all(10.0),
-                          // validator: (value) =>
-                          // (value.isEmpty) ? "Please Enter Email" : null,
+                          keyboardType: TextInputType.emailAddress,
                           placeholder: "email",
                           style: style.copyWith(
                               color: Colors.black, fontWeight: FontWeight.bold),
@@ -103,7 +102,7 @@ class LoginPageState extends State<LoginPage> {
                           controller: _password,
                           placeholder: "password",
                           obscureText: _hidePassword,
-                          // style: TextStyle(color: CupertinoColors.white),
+                          keyboardType: TextInputType.visiblePassword,
                           style: style.copyWith(
                               color: Colors.black, fontWeight: FontWeight.bold),
                           suffix: TextButton(
@@ -117,8 +116,8 @@ class LoginPageState extends State<LoginPage> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 20.0, horizontal: 8.0),
                         child: Material(
-                          elevation: 5.0,
-                          borderRadius: BorderRadius.circular(10.0),
+                          elevation: 1.0,
+                          borderRadius: BorderRadius.circular(8.0),
                           color: Colors.orange[400],
                           child: CupertinoButton(
                             onPressed: () async {
@@ -141,9 +140,8 @@ class LoginPageState extends State<LoginPage> {
                         onPressed: () {
                           Navigator.of(context).push(
                             CupertinoPageRoute(
-                              fullscreenDialog: true,
+                              // fullscreenDialog: true,
                               builder: (context) {
-                              // Return the settings detail form screen. 
                               return SignUpPage();
                             })
                           );

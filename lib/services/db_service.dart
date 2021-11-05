@@ -1,44 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'dart:async';
 import '../models/user.dart';
 import '../models/setting.dart';
 
-class DatabaseService {
+class DatabaseService extends ChangeNotifier {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-
-  // /// Settings collection stream.
-  // Stream<List<Setting>> streamSettings(String uid, String bikeid) {
-  //   var ref = _db
-  //       .collection('users')
-  //       .doc(uid)
-  //       .collection('bikes')
-  //       .doc(bikeid)
-  //       .collection('settings');
-  //   return ref.snapshots().map(
-  //       (list) => list.docs.map((doc) => Setting.fromSnapshot(doc.data())).toList());
-  // }
 
   /// Settings collection stream.
   Stream<List<Setting>> streamSettings(String uid, String bikeid) {
-    var ref = _db.collection('users').doc(uid).collection('bikes').doc(bikeid).collection('settings');
-    return ref.snapshots().map((list) =>
-      list.docs.map((doc) => Setting.fromFirestore(doc)).toList());
+    var ref = _db
+        .collection('users')
+        .doc(uid)
+        .collection('bikes')
+        .doc(bikeid)
+        .collection('settings');
+    return ref.snapshots().map(
+        (list) => list.docs.map((doc) => Setting.fromFirestore(doc)).toList());
   }
 
   /// Bikes collection stream.
   Stream<List<Bike>> streamBikes(String uid) {
-    var ref = _db.collection('users').doc(uid).collection('bikes').orderBy('created');
-    return ref.snapshots().map((list) =>
-      list.docs.map((doc) => Bike.fromFirestore(doc)).toList());
+    var ref =
+        _db.collection('users').doc(uid).collection('bikes').orderBy('created');
+    return ref.snapshots().map(
+        (list) => list.docs.map((doc) => Bike.fromFirestore(doc)).toList());
   }
-
-  // /// Bikes collection stream.
-  // Stream<List<Bike>> streamBikes(String uid) {
-  //   var ref =
-  //       _db.collection('users').doc(uid).collection('bikes').orderBy('created');
-  //   return ref.snapshots().map(
-  //       (list) => list.docs.map((doc) => Bike.fromSnapshot(doc)).toList());
-  // }
 
   Stream<AppUser> streamUser(String id) {
     return _db
@@ -48,13 +35,31 @@ class DatabaseService {
         .map((snap) => AppUser.fromSnapshot(snap.data()!));
   }
 
-  Future<void> updateUser(String uid, String username, String email) async {
+  Future<void> updateUser(String uid, String username, String email, String status) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;
     return await _db.collection('users').doc(uid).set({
       'updated': $updated,
       'username': username,
       'email': email,
+      'role': status,
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> addSharePoints(String uid, int previousPoints) async {
+    var $now = DateTime.now();
+    var $updated = $now.millisecondsSinceEpoch;
+    String status = '';
+    int newPoints = previousPoints + 1;
+    if (newPoints < 5) status = 'newbie';
+    else if (newPoints >= 5) status = 'Cat 3';
+    else if (newPoints >= 10) status = 'Cat 2';
+    else if (newPoints >= 25) status = 'Cat 1';
+    else if (newPoints >= 50) status = 'Pro';
+    return await _db.collection('users').doc(uid).set({
+      'updated': $updated,
+      'points': newPoints,
+      'role': status,
     }, SetOptions(merge: true));
   }
 
@@ -67,7 +72,7 @@ class DatabaseService {
 
   /// Need to add required fork and shock fields with values.
   Future<void> addUpdateBike(
-      String uid, String bikeid, Map fork, Map shock) async {
+      String uid, String bikeid, Map? fork, Map? shock) async {
     var $now = DateTime.now();
     var $created = $now.millisecondsSinceEpoch;
     return await _db

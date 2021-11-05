@@ -82,12 +82,16 @@ class _ForkFormState extends State<ForkForm> {
         key: _formKey,
         child: Column(
           children: [
-            widget.fork != null
-                ? Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: Image.asset('assets/fox36-black.png', height: 100))
-                : Padding(
-                    padding: EdgeInsets.all(10), child: Text('Fork Details')),
+            Container(
+                margin: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.all(2),
+                width: 75,
+                height: 75,
+                decoration: BoxDecoration(
+                  color: Colors.black12,
+                  shape: BoxShape.circle,
+                ),
+                child: Image.asset('assets/fork.png')),
             TextFormField(
                 validator: (_yearController) {
                   if (_yearController == null || _yearController.isEmpty)

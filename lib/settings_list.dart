@@ -17,7 +17,7 @@ class SettingsList extends StatefulWidget {
 
 class _SettingsListState extends State<SettingsList> {
   final db = DatabaseService();
-    Widget _getSettings(uid, bike, settings, context){
+    Widget _getSettings(user, bike, settings, context){
       return ListView.builder(
         shrinkWrap: true,
         itemCount: settings.length,
@@ -30,7 +30,7 @@ class _SettingsListState extends State<SettingsList> {
             ),
             direction: DismissDirection.horizontal,
             onDismissed: (direction) => setState(() {
-              db.deleteSetting(uid, bike.id, settings[index].id);
+              db.deleteSetting(user.id, bike.id, settings[index].id);
               settings.removeAt(index);
             }),
             key: PageStorageKey(settings[index]),
@@ -48,7 +48,7 @@ class _SettingsListState extends State<SettingsList> {
                     builder: (context) {
                     // Return the settings detail form screen. 
                     return SettingDetails(
-                      uid: uid, bike: this.widget.bike, setting: settings[index].id, 
+                      user: user, bike: this.widget.bike, setting: settings[index].id, 
                       fork: fork, shock: shock
                     );
                   })
@@ -106,7 +106,7 @@ class _SettingsListState extends State<SettingsList> {
                         style: CupertinoTheme.of(context).textTheme.navTitleTextStyle),
                       );
                     }
-                    return _getSettings(myUser.id, this.widget.bike, settings, context);
+                    return _getSettings(myUser, this.widget.bike, settings, context);
                   }
                 ),
                 CupertinoButton(
@@ -117,7 +117,7 @@ class _SettingsListState extends State<SettingsList> {
                       fullscreenDialog: true,
                       builder: (context) {
                       // We need to return the shock detail screen here.
-                      return SettingDetails(uid: myUser.id, bike: this.widget.bike);
+                      return SettingDetails(user: myUser, bike: this.widget.bike);
                     })
                   ),
                 ),
