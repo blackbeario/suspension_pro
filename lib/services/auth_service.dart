@@ -43,7 +43,7 @@ class AuthService {
     await _firebaseAuth.signOut();
   }
 
-  Future<void> updateUserData(String uid, String email) async {
+  Future<void> createUserData(String uid, String email) async {
     DocumentReference userRef =
         _db.collection('users').doc(uid);
     return userRef.set(

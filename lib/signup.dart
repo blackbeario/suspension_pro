@@ -92,7 +92,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             .then((authResult) => {
                                   if (authResult.id != null)
                                     {
-                                      authService.updateUserData(authResult.id, authResult.email),
+                                      authService.createUserData(authResult.id, authResult.email),
                                       Navigator.pop(context)
                                     }
                                   else

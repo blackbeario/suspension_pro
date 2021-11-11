@@ -35,7 +35,8 @@ class DatabaseService extends ChangeNotifier {
         .map((snap) => AppUser.fromSnapshot(snap.data()!));
   }
 
-  Future<void> updateUser(String uid, String username, String email, String status) async {
+  Future<void> updateUser(
+      String uid, String username, String email, String status) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;
     return await _db.collection('users').doc(uid).set({
@@ -46,15 +47,21 @@ class DatabaseService extends ChangeNotifier {
     }, SetOptions(merge: true));
   }
 
-  Future<void> addSharePoints(String uid, int previousPoints) async {
+  Future<void> addSharePoints(
+      String uid, int previousPoints, String role) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;
     String status = '';
     int newPoints = previousPoints + 1;
-    if (newPoints < 5) status = 'newbie';
-    else if (newPoints >= 5) status = 'Cat 3';
-    else if (newPoints >= 10) status = 'Cat 2';
-    else if (newPoints >= 25) status = 'Cat 1';
+    if (role == 'admin') status = 'admin';
+    else if (newPoints < 5)
+      status = 'newbie';
+    else if (newPoints >= 5)
+      status = 'Cat 3';
+    else if (newPoints >= 10)
+      status = 'Cat 2';
+    else if (newPoints >= 25)
+      status = 'Cat 1';
     else if (newPoints >= 50) status = 'Pro';
     return await _db.collection('users').doc(uid).set({
       'updated': $updated,

@@ -324,6 +324,7 @@ class _SettingDetailsState extends State<SettingDetails> {
   _addSharePoints(AppUser myUser, int value) {
     // Not updated since we're passing in the user. Need to get user from a stream.
     int? currentPoints = myUser.points ?? 0;
-    db.addSharePoints(widget.user.id, currentPoints);
+    String role = myUser.role!;
+    db.addSharePoints(widget.user.id, currentPoints, role);
   }
 }
