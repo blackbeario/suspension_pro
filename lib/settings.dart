@@ -120,7 +120,7 @@ class _SettingsState extends State<Settings> {
                                             ),
                                             child: ForkForm(
                                                 uid: uid,
-                                                bike: $bike.id,
+                                                bikeId: $bike.id,
                                                 fork: fork),
                                           );
                                         }),
@@ -173,7 +173,7 @@ class _SettingsState extends State<Settings> {
                                     middle: Text('Add Fork'),
                                   ),
                                   child: ForkForm(
-                                      uid: uid, bike: $bike.id, fork: fork!),
+                                      uid: uid, bikeId: $bike.id, fork: fork),
                                 );
                               },
                             ));

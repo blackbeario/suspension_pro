@@ -10,7 +10,7 @@ class SettingDetails extends StatefulWidget {
 
   final AppUser user;
   final String? setting;
-  final bike;
+  final Bike? bike;
   final Map? fork;
   final Map? shock;
 
@@ -84,12 +84,12 @@ class _SettingDetailsState extends State<SettingDetails> {
     super.dispose();
   }
 
-  Future<bool> _updateSetting(bike, BuildContext context) {
+  Future<bool> _updateSetting(bikeId, BuildContext context) {
     Navigator.pop(context);
     db.updateSetting(
         widget.user.id,
+        bikeId,
         _settingNameController.text,
-        bike,
         _hscForkController.text,
         _lscForkController.text,
         _hsrForkController.text,
@@ -105,8 +105,8 @@ class _SettingDetailsState extends State<SettingDetails> {
 
   @override
   Widget build(BuildContext context) {
-    var $fork = widget.bike != null ? widget.bike.fork : null;
-    var $shock = widget.bike != null ? widget.bike.shock : null;
+    var $fork = widget.bike != null ? widget.bike!.fork : null;
+    var $shock = widget.bike != null ? widget.bike!.shock : null;
 
     return StreamBuilder<AppUser?>(
       stream: db.streamUser(widget.user.id),
@@ -291,12 +291,10 @@ class _SettingDetailsState extends State<SettingDetails> {
                     ),
                     SizedBox(height: 20),
                     CupertinoButton(
-                        // padding: EdgeInsets.all(10),
                         color: CupertinoColors.activeBlue,
                         child: Text('Save'),
                         onPressed: () =>
-                            _updateSetting(widget.bike.id, context)),
-                    // Expanded(child: Container())
+                            _updateSetting(widget.bike!.id, context)),
                   ],
                 ),
               ],

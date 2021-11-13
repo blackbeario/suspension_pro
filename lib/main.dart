@@ -7,10 +7,12 @@ import './services/auth_service.dart';
 import './login.dart';
 import './profile.dart';
 import './settings.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   runApp(MyApp());
 }
 
@@ -67,8 +69,8 @@ class AppHomePage extends StatefulWidget {
   State<AppHomePage> createState() => _AppHomePageState();
 }
 
-class _AppHomePageState extends State<AppHomePage> with SingleTickerProviderStateMixin {
-
+class _AppHomePageState extends State<AppHomePage>
+    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(

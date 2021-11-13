@@ -4,10 +4,10 @@ import './services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 
 class ForkForm extends StatefulWidget {
-  ForkForm({@required this.uid, this.bike, this.fork, this.forkCallback});
+  ForkForm({required this.uid, this.bikeId, this.fork, this.forkCallback});
 
   final uid;
-  final String? bike;
+  final String? bikeId;
   final Map? fork;
   final Function(Map val)? forkCallback;
 
@@ -62,7 +62,7 @@ class _ForkFormState extends State<ForkForm> {
     Navigator.pop(context);
     db.updateFork(
         widget.uid,
-        widget.bike!,
+        widget.bikeId!,
         _yearController.text,
         _travelController.text,
         _damperController.text,
@@ -168,11 +168,11 @@ class _ForkFormState extends State<ForkForm> {
               child: CupertinoButton(
                 disabledColor: CupertinoColors.quaternarySystemFill,
                 color: CupertinoColors.activeBlue,
-                child: widget.bike != null ? Text('Save') : Text('Continue'),
+                child: widget.bikeId != null ? Text('Save') : Text('Continue'),
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    widget.bike != null
-                        ? _updateFork(widget.bike, context)
+                    widget.bikeId != null
+                        ? _updateFork(widget.bikeId, context)
                         : widget.forkCallback!({
                             'year': _yearController.text,
                             'brand': _brandController.text,

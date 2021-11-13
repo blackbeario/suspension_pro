@@ -27,6 +27,7 @@ dependencies:
   # path_provider: ^1.0.0
   date_format: ^2.0.4
   share: ^2.0.4
+  firebase_crashlytics: ^2.3.0
 
 dev_dependencies:
   flutter_test:

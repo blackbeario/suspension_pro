@@ -201,8 +201,8 @@ class DatabaseService extends ChangeNotifier {
 
   Future<void> updateSetting(
     String uid,
-    String id,
     String bikeid,
+    String settingId,
     String hscFork,
     String lscFork,
     String hsrFork,
@@ -222,7 +222,7 @@ class DatabaseService extends ChangeNotifier {
         .collection('bikes')
         .doc(bikeid)
         .collection('settings')
-        .doc(id)
+        .doc(settingId)
         .set({
       'updated': updated,
       'fork': {
