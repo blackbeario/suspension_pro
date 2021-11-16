@@ -26,18 +26,21 @@ class _ImageCaptureState extends State<ImageCapture> {
   }
 
   /// Select an image via gallery or camera
-  Future _pickImage(ImageSource source) async {
-    _imageFile = File(await _picker
-        .pickImage(
-            source: source, maxWidth: 300, maxHeight: 300, imageQuality: 80)
-        .then((pickedFile) => pickedFile!.path));
-    if (_imageFile != null) {
+  Future<String?> _pickImage(ImageSource source) async {
+    _imageFile = File(
+      await _picker
+          .pickImage(
+              source: source, maxWidth: 300, maxHeight: 300, imageQuality: 80)
+          .then((pickedFile) => pickedFile != null ? pickedFile.path : ''),
+    );
+    // ignore: unrelated_type_equality_checks
+    if (_imageFile != null && _imageFile != '') {
       _cropImage(_imageFile!);
     }
   }
 
   /// Cropper plugin
-  Future _cropImage(File selectedFile) async {
+  Future<void> _cropImage(File selectedFile) async {
     File? cropped = await ImageCropper.cropImage(
       sourcePath: _imageFile!.path,
       maxWidth: 150,
@@ -61,25 +64,17 @@ class _ImageCaptureState extends State<ImageCapture> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             // Preview the image and crop it
-            ListView(
-              shrinkWrap: true,
-              children: <Widget>[
-                if (_imageFile == null) ...[
-                  Padding(
+            if (_imageFile != null) Uploader(uid: widget.uid, file: _imageFile!)
+                else Padding(
                     padding: EdgeInsets.all(20),
                     child: Builder(builder: (context) {
                       // Navigator.pop(context);
                       return Center(
-                          child: CupertinoActivityIndicator(animating: true));
+                        child: CupertinoActivityIndicator(animating: true),
+                      );
                     }),
                   )
-                ],
-                if (_imageFile != null) ...[
-                  // Image.file(_imageFile!),
-                  Uploader(uid: widget.uid, file: _imageFile!)
-                ],
-              ],
-            ),
+             
           ],
         ),
       ),

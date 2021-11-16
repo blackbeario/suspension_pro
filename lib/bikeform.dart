@@ -90,7 +90,7 @@ class _BikeFormState extends State<BikeForm> {
                   maintainState: true,
                   child: ForkForm(
                       uid: widget.uid,
-                      bike: widget.bike,
+                      bikeId: widget.bike,
                       fork: widget.fork,
                       forkCallback: (val) => showForkForm(val)),
                 ),

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
+import 'package:suspension_pro/models/bike.dart';
 import 'dart:async';
 import '../models/user.dart';
 import '../models/setting.dart';
@@ -21,8 +22,8 @@ class DatabaseService extends ChangeNotifier {
 
   /// Bikes collection stream.
   Stream<List<Bike>> streamBikes(String uid) {
-    var ref =
-        _db.collection('users').doc(uid).collection('bikes').orderBy('created');
+    print('fetching bikes');
+    var ref = _db.collection('users').doc(uid).collection('bikes').orderBy('index');
     return ref.snapshots().map(
         (list) => list.docs.map((doc) => Bike.fromFirestore(doc)).toList());
   }
@@ -53,7 +54,8 @@ class DatabaseService extends ChangeNotifier {
     var $updated = $now.millisecondsSinceEpoch;
     String status = '';
     int newPoints = previousPoints + 1;
-    if (role == 'admin') status = 'admin';
+    if (role == 'admin')
+      status = 'admin';
     else if (newPoints < 5)
       status = 'newbie';
     else if (newPoints >= 5)
@@ -109,6 +111,17 @@ class DatabaseService extends ChangeNotifier {
           'model': shock['model'],
           'spacers': shock['spacers']
         }
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> reorderBike(String uid, String bikeid, int index) async {
+    return await _db
+        .collection('users')
+        .doc(uid)
+        .collection('bikes')
+        .doc(bikeid)
+        .set({
+      'index': index,
     }, SetOptions(merge: true));
   }
 

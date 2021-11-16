@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'models/bike.dart';
 import 'settings_list.dart';
 import 'shock_form.dart';
 import './services/auth_service.dart';
@@ -20,7 +21,7 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   final db = DatabaseService();
-  late Bike selected;
+  late Bike selected = Bike();
 
   @override
   void initState() {
@@ -28,7 +29,20 @@ class _SettingsState extends State<Settings> {
   }
 
   Widget _getBikes(uid, bikes, context) {
-    return ListView.builder(
+    return ReorderableListView.builder(
+      onReorder: (oldIndex, newIndex) {
+        setState(() {
+          if (newIndex > oldIndex) {
+            newIndex -= 1;
+          }
+          final bike = bikes.removeAt(oldIndex);
+          bikes.insert(newIndex, bike);
+          for (Bike bike in bikes) {
+            bike.index = bikes.indexOf(bike);
+            db.reorderBike(uid, bike.id!, bike.index!);
+          }
+        });
+      },
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
       itemCount: bikes.length,
@@ -36,7 +50,6 @@ class _SettingsState extends State<Settings> {
         Bike $bike = bikes[index];
         var fork = $bike.fork;
         var shock = $bike.shock;
-        selected = bikes[0];
         return Dismissible(
           background: ListTile(
             trailing: Icon(Icons.delete, color: CupertinoColors.systemRed),
@@ -46,9 +59,10 @@ class _SettingsState extends State<Settings> {
             bikes.removeAt(index);
             db.deleteBike(uid, $bike.id!);
           }),
-          key: PageStorageKey($bike),
+          key: ValueKey($bike.id),
           child: ExpansionTile(
-            initiallyExpanded: selected == $bike ? true : false,
+            leading: Icon(Icons.menu),
+            initiallyExpanded: selected.id == $bike.id ? true : false,
             key: PageStorageKey($bike),
             title: Text($bike.id!,
                 style: TextStyle(
@@ -330,93 +344,67 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
     final authService = Provider.of<AuthService>(context);
-
-    return StreamBuilder<AppUser?>(
-        stream: authService.user,
-        builder: (context, snapshot) {
-          var myUser = snapshot.data;
-          if (myUser == null) {
-            return Center(
-              child: CupertinoActivityIndicator(animating: true),
-            );
-          }
-          return CupertinoPageScaffold(
-            resizeToAvoidBottomInset: true,
-            navigationBar: CupertinoNavigationBar(
-              middle: Text('Settings'),
-              trailing: CupertinoButton(
-                  padding: EdgeInsets.only(bottom: 0),
-                  child: Icon(Icons.power_settings_new),
-                  onPressed: () => _signOut(context, authService)),
-            ),
-            child: AnimatedContainer(
-              key: Key('settings'),
-              duration: Duration(milliseconds: 250),
-              curve: Curves.fastOutSlowIn,
-              height: height,
-              padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-              decoration: BoxDecoration(
-                color: CupertinoColors.white,
-                image: DecorationImage(
-                    image: AssetImage("assets/cupcake.jpg"),
-                    fit: BoxFit.none,
-                    alignment: Alignment.topCenter),
-              ),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: ListView(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  children: <Widget>[
-                    Card(
-                      color: Colors.white,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: (Radius.circular(16)),
-                              topRight: (Radius.circular(16)))),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          StreamBuilder<List<Bike>>(
-                              stream: db.streamBikes(myUser.id),
-                              builder: (context, snapshot) {
-                                var bikes = snapshot.data;
-                                if (bikes == null) {
-                                  return Center(
-                                      child: CupertinoActivityIndicator(
-                                          animating: true));
-                                }
-                                // return Text('bike list');
-                                return _getBikes(myUser.id, bikes, context);
-                              }),
-                          SizedBox(height: 20),
-                          CupertinoButton(
-                            color: CupertinoColors.activeBlue,
-                            child: Text('Add Bike'),
-                            onPressed: () => Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                    fullscreenDialog:
-                                        true, // loads form from bottom
-                                    builder: (context) {
-                                      // We need to return the shock detail screen here.
-                                      return BikeForm(uid: myUser.id);
-                                    })),
-                          ),
-                          SizedBox(height: 20),
-                          // Expanded(child: Container())
-                        ],
-                      ),
-                    ),
-                  ],
+    return CupertinoPageScaffold(
+      resizeToAvoidBottomInset: true,
+      navigationBar: CupertinoNavigationBar(
+        middle: Text('Settings'),
+        trailing: CupertinoButton(
+            padding: EdgeInsets.only(bottom: 0),
+            child: Icon(Icons.power_settings_new),
+            onPressed: () => _signOut(context, authService)),
+      ),
+      child: Container(
+        key: ValueKey('settings'),
+        height: MediaQuery.of(context).size.height,
+        padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+        decoration: BoxDecoration(
+          color: CupertinoColors.white,
+          image: DecorationImage(
+              image: AssetImage("assets/cupcake.jpg"),
+              fit: BoxFit.none,
+              alignment: Alignment.topCenter),
+        ),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Card(
+            color: Colors.white,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: (Radius.circular(16)),
+                    topRight: (Radius.circular(16)))),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                StreamBuilder<List<Bike>>(
+                    stream: db.streamBikes(widget.user.id),
+                    builder: (context, snapshot) {
+                      var bikes = snapshot.data;
+                      if (!snapshot.hasData)
+                        return Center(
+                            child: CupertinoActivityIndicator(animating: true));
+                      return _getBikes(widget.user.id, bikes, context);
+                    }),
+                SizedBox(height: 20),
+                CupertinoButton(
+                  color: CupertinoColors.activeBlue,
+                  child: Text('Add Bike'),
+                  onPressed: () =>
+                      Navigator.of(context).push(CupertinoPageRoute(
+                          fullscreenDialog: true,
+                          builder: (context) {
+                            return BikeForm(uid: widget.user.id);
+                          })),
                 ),
-              ),
+                SizedBox(height: 20),
+              ],
             ),
-          );
-        });
+          ),
+        ),
+      ),
+    );
   }
 
   Future<bool> _confirmDelete(
