@@ -148,7 +148,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                           },
                           decoration: InputDecoration(
                             suffixIcon: Icon(Icons.settings,
-                                size: 28, color: Colors.blue),
+                                size: 24, color: CupertinoColors.activeBlue.withOpacity(0.5)),
                             isDense: true,
                             // helperText:
                             //     'Enter a settings title',
@@ -316,11 +316,11 @@ class _SettingDetailsState extends State<SettingDetails> {
                       CupertinoButton(
                         color: CupertinoColors.activeBlue,
                         child: Text('Save'),
-                        onPressed: () async {
+                        onPressed: _settingNameController.text.isNotEmpty ? () async {
                           if (_formKey.currentState!.validate()) {
                             await _updateSetting(widget.bike!.id, context);
                           }
-                        },
+                        } : null,
                       ),
                     ],
                   ),

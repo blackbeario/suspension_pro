@@ -170,7 +170,7 @@ class _ForkFormState extends State<ForkForm> {
                     keyboardType: TextInputType.text),
                 TextFormField(
                     decoration:
-                        _decoration('Fork Spacing mm (135, 142, 148...)'),
+                        _decoration('Fork Spacing mm (100, 110, 115...)'),
                     controller: _spacingController,
                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                     keyboardType: TextInputType.text),

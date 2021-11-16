@@ -52,6 +52,8 @@ class _SettingsState extends State<Settings> {
         var shock = $bike.shock;
         return Dismissible(
           background: ListTile(
+            tileColor:
+                CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
             trailing: Icon(Icons.delete, color: CupertinoColors.systemRed),
           ),
           direction: DismissDirection.endToStart,
@@ -385,7 +387,8 @@ class _SettingsState extends State<Settings> {
                         var bikes = snapshot.data;
                         if (!snapshot.hasData)
                           return Center(
-                              child: CupertinoActivityIndicator(animating: true));
+                              child:
+                                  CupertinoActivityIndicator(animating: true));
                         return _getBikes(widget.user.id, bikes, context);
                       }),
                   SizedBox(height: 20),
