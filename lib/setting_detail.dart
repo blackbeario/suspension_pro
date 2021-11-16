@@ -140,7 +140,6 @@ class _SettingDetailsState extends State<SettingDetails> {
                       Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: TextFormField(
-                          autofocus: true,
                           validator: (_settingNameController) {
                             if (_settingNameController == null ||
                                 _settingNameController.isEmpty)
@@ -148,7 +147,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                             return null;
                           },
                           decoration: InputDecoration(
-                            icon: Icon(Icons.settings,
+                            suffixIcon: Icon(Icons.settings,
                                 size: 28, color: Colors.blue),
                             isDense: true,
                             // helperText:

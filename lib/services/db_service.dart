@@ -22,7 +22,7 @@ class DatabaseService extends ChangeNotifier {
 
   /// Bikes collection stream.
   Stream<List<Bike>> streamBikes(String uid) {
-    print('fetching bikes');
+    // print('fetching bikes');
     var ref = _db.collection('users').doc(uid).collection('bikes').orderBy('index');
     return ref.snapshots().map(
         (list) => list.docs.map((doc) => Bike.fromFirestore(doc)).toList());
@@ -91,6 +91,7 @@ class DatabaseService extends ChangeNotifier {
         .doc(bikeid)
         .set({
       'created': $created,
+      'index': 0,
       if (fork != null)
         'fork': {
           'year': fork['year'],

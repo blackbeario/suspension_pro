@@ -77,118 +77,133 @@ class _ForkFormState extends State<ForkForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            Container(
-                margin: EdgeInsets.only(top: 10),
-                padding: EdgeInsets.all(2),
-                width: 75,
-                height: 75,
-                decoration: BoxDecoration(
-                  color: Colors.black12,
-                  shape: BoxShape.circle,
+    return Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Material(
+        color: Colors.white,
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                    width: double.infinity,
+                    // padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(color: Colors.white),
+                    child: Container(
+                        margin: EdgeInsets.only(top: 10),
+                        padding: EdgeInsets.all(2),
+                        width: 75,
+                        height: 75,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Image.asset('assets/fork.png'))),
+                TextFormField(
+                    validator: (_yearController) {
+                      if (_yearController == null || _yearController.isEmpty)
+                        return 'Please enter fork year';
+                      return null;
+                    },
+                    decoration: _decoration('Fork Year'),
+                    controller: _yearController,
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    keyboardType: TextInputType.text),
+                TextFormField(
+                    validator: (_brandController) {
+                      if (_brandController == null || _brandController.isEmpty)
+                        return 'Enter fork brand';
+                      return null;
+                    },
+                    decoration: _decoration('Fork Brand'),
+                    controller: _brandController,
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    keyboardType: TextInputType.text),
+                TextFormField(
+                    validator: (_modelController) {
+                      if (_modelController == null || _modelController.isEmpty)
+                        return 'Enter fork model';
+                      return null;
+                    },
+                    decoration: _decoration('Fork Model'),
+                    controller: _modelController,
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    keyboardType: TextInputType.text),
+                TextFormField(
+                    validator: (_travelController) {
+                      if (_travelController == null ||
+                          _travelController.isEmpty) return 'Enter fork travel';
+                      return null;
+                    },
+                    decoration:
+                        _decoration('Fork Travel mm (130, 150, 170, 200)'),
+                    controller: _travelController,
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    keyboardType: TextInputType.text),
+                TextFormField(
+                    decoration: _decoration('Fork Damper'),
+                    controller: _damperController,
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    keyboardType: TextInputType.text),
+                TextFormField(
+                    decoration: _decoration('Fork Offset mm (44, 51)'),
+                    controller: _offsetController,
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    keyboardType: TextInputType.text),
+                TextFormField(
+                    validator: (_wheelsizeController) {
+                      if (_wheelsizeController == null ||
+                          _wheelsizeController.isEmpty)
+                        return 'Enter wheel size';
+                      return null;
+                    },
+                    decoration: _decoration('Wheel Size (26, 27.5, 29)'),
+                    controller: _wheelsizeController,
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    keyboardType: TextInputType.text),
+                TextFormField(
+                    decoration: _decoration('Fork Volume Spacers'),
+                    controller: _spacersController,
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    keyboardType: TextInputType.text),
+                TextFormField(
+                    decoration:
+                        _decoration('Fork Spacing mm (135, 142, 148...)'),
+                    controller: _spacingController,
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    keyboardType: TextInputType.text),
+                SizedBox(height: 20),
+                Container(
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  child: CupertinoButton(
+                    disabledColor: CupertinoColors.quaternarySystemFill,
+                    color: CupertinoColors.activeBlue,
+                    child:
+                        widget.bikeId != null ? Text('Save') : Text('Continue'),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        widget.bikeId != null
+                            ? _updateFork(widget.bikeId, context)
+                            : widget.forkCallback!({
+                                'year': _yearController.text,
+                                'brand': _brandController.text,
+                                'model': _modelController.text,
+                                'travel': _travelController.text,
+                                'damper': _damperController.text,
+                                'offset': _offsetController.text,
+                                'wheelsize': _wheelsizeController.text,
+                                'spacers': _spacersController.text,
+                                'spacing': _spacingController.text
+                              });
+                      }
+                    },
+                  ),
                 ),
-                child: Image.asset('assets/fork.png')),
-            TextFormField(
-                validator: (_yearController) {
-                  if (_yearController == null || _yearController.isEmpty)
-                    return 'Please enter fork year';
-                  return null;
-                },
-                decoration: _decoration('Fork Year'),
-                controller: _yearController,
-                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                keyboardType: TextInputType.text),
-            TextFormField(
-                validator: (_brandController) {
-                  if (_brandController == null || _brandController.isEmpty)
-                    return 'Enter fork brand';
-                  return null;
-                },
-                decoration: _decoration('Fork Brand'),
-                controller: _brandController,
-                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                keyboardType: TextInputType.text),
-            TextFormField(
-                validator: (_modelController) {
-                  if (_modelController == null || _modelController.isEmpty)
-                    return 'Enter fork model';
-                  return null;
-                },
-                decoration: _decoration('Fork Model'),
-                controller: _modelController,
-                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                keyboardType: TextInputType.text),
-            TextFormField(
-                validator: (_travelController) {
-                  if (_travelController == null || _travelController.isEmpty)
-                    return 'Enter fork travel';
-                  return null;
-                },
-                decoration: _decoration('Fork Travel mm (130, 150, 170, 200)'),
-                controller: _travelController,
-                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                keyboardType: TextInputType.text),
-            TextFormField(
-                decoration: _decoration('Fork Damper'),
-                controller: _damperController,
-                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                keyboardType: TextInputType.text),
-            TextFormField(
-                decoration: _decoration('Fork Offset mm (44, 51)'),
-                controller: _offsetController,
-                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                keyboardType: TextInputType.text),
-            TextFormField(
-                validator: (_wheelsizeController) {
-                  if (_wheelsizeController == null ||
-                      _wheelsizeController.isEmpty) return 'Enter wheel size';
-                  return null;
-                },
-                decoration: _decoration('Wheel Size (26, 27.5, 29)'),
-                controller: _wheelsizeController,
-                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                keyboardType: TextInputType.text),
-            TextFormField(
-                decoration: _decoration('Fork Volume Spacers'),
-                controller: _spacersController,
-                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                keyboardType: TextInputType.text),
-            TextFormField(
-                decoration: _decoration('Fork Spacing mm (135, 142, 148...)'),
-                controller: _spacingController,
-                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                keyboardType: TextInputType.text),
-            SizedBox(height: 20),
-            Container(
-              padding: EdgeInsets.only(left: 20, right: 20),
-              child: CupertinoButton(
-                disabledColor: CupertinoColors.quaternarySystemFill,
-                color: CupertinoColors.activeBlue,
-                child: widget.bikeId != null ? Text('Save') : Text('Continue'),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    widget.bikeId != null
-                        ? _updateFork(widget.bikeId, context)
-                        : widget.forkCallback!({
-                            'year': _yearController.text,
-                            'brand': _brandController.text,
-                            'model': _modelController.text,
-                            'travel': _travelController.text,
-                            'damper': _damperController.text,
-                            'offset': _offsetController.text,
-                            'wheelsize': _wheelsizeController.text,
-                            'spacers': _spacersController.text,
-                            'spacing': _spacingController.text
-                          });
-                  }
-                },
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

@@ -66,8 +66,8 @@ class _SettingsState extends State<Settings> {
             key: PageStorageKey($bike),
             title: Text($bike.id!,
                 style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    // fontWeight: FontWeight.bold,
                     color: Colors.black87)),
             children: <Widget>[
               fork != null
@@ -356,7 +356,7 @@ class _SettingsState extends State<Settings> {
       ),
       child: Container(
         key: ValueKey('settings'),
-        height: MediaQuery.of(context).size.height,
+        // height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
         decoration: BoxDecoration(
           color: CupertinoColors.white,
@@ -367,39 +367,41 @@ class _SettingsState extends State<Settings> {
         ),
         child: Align(
           alignment: Alignment.bottomCenter,
-          child: Card(
-            color: Colors.white,
-            shadowColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: (Radius.circular(16)),
-                    topRight: (Radius.circular(16)))),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                StreamBuilder<List<Bike>>(
-                    stream: db.streamBikes(widget.user.id),
-                    builder: (context, snapshot) {
-                      var bikes = snapshot.data;
-                      if (!snapshot.hasData)
-                        return Center(
-                            child: CupertinoActivityIndicator(animating: true));
-                      return _getBikes(widget.user.id, bikes, context);
-                    }),
-                SizedBox(height: 20),
-                CupertinoButton(
-                  color: CupertinoColors.activeBlue,
-                  child: Text('Add Bike'),
-                  onPressed: () =>
-                      Navigator.of(context).push(CupertinoPageRoute(
-                          fullscreenDialog: true,
-                          builder: (context) {
-                            return BikeForm(uid: widget.user.id);
-                          })),
-                ),
-                SizedBox(height: 20),
-              ],
+          child: SingleChildScrollView(
+            child: Card(
+              color: Colors.white,
+              shadowColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: (Radius.circular(16)),
+                      topRight: (Radius.circular(16)))),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  StreamBuilder<List<Bike>>(
+                      stream: db.streamBikes(widget.user.id),
+                      builder: (context, snapshot) {
+                        var bikes = snapshot.data;
+                        if (!snapshot.hasData)
+                          return Center(
+                              child: CupertinoActivityIndicator(animating: true));
+                        return _getBikes(widget.user.id, bikes, context);
+                      }),
+                  SizedBox(height: 20),
+                  CupertinoButton(
+                    color: CupertinoColors.activeBlue,
+                    child: Text('Add Bike'),
+                    onPressed: () =>
+                        Navigator.of(context).push(CupertinoPageRoute(
+                            fullscreenDialog: true,
+                            builder: (context) {
+                              return BikeForm(uid: widget.user.id);
+                            })),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),
