@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class AppUser {
   final String id;
   final String? username;
@@ -9,14 +7,15 @@ class AppUser {
   final int? points;
   final DateTime? created;
 
-  AppUser(
-      {required this.id,
-      this.username,
-      this.profilePic,
-      this.email,
-      this.role,
-      this.points,
-      this.created});
+  AppUser({
+    required this.id,
+    this.username,
+    this.profilePic,
+    this.email,
+    this.role,
+    this.points,
+    this.created,
+  });
 
   factory AppUser.fromSnapshot(Map<String, dynamic> data) => AppUser(
         id: data['id'] ?? '',

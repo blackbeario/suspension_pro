@@ -1,14 +1,64 @@
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'imageCapture.dart';
+import 'package:suspension_pro/services/db_service.dart';
 
 // ignore: must_be_immutable
 class ImageActionSheet extends StatelessWidget {
+  final db = DatabaseService();
+
   ImageActionSheet({required this.uid});
   final String uid;
-  late Function(File val) file;
+  FirebaseStorage storage =
+      FirebaseStorage.instanceFor(bucket: 'gs://suspension-pro.appspot.com/');
+  late String downloadUrl = '';
+  File? _imageFile;
+  var imagePicker;
+
+  /// Get from gallery
+  _getFromCamera() async {
+    XFile? pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      maxWidth: 300,
+      maxHeight: 300,
+    );
+    _cropImage(pickedFile!.path);
+  }
+
+  /// Get from gallery
+  _getFromGallery() async {
+    XFile? pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 300,
+      maxHeight: 300,
+    );
+    _cropImage(pickedFile!.path);
+  }
+
+  /// Crop Image
+  _cropImage(filePath) async {
+    File? croppedImage = await ImageCropper.cropImage(
+        cropStyle: CropStyle.circle, sourcePath: filePath, compressQuality: 50);
+    if (croppedImage != null) {
+      _imageFile = croppedImage;
+      _uploadToFirebase(uid, _imageFile!);
+    }
+  }
+
+  _uploadToFirebase(uid, File imageFile) async {
+    FirebaseStorage storage = FirebaseStorage.instance;
+    Reference ref = storage.ref().child('userImages/$uid/profile.jpg');
+    UploadTask uploadTask = ref.putFile(imageFile);
+    uploadTask.whenComplete(() async {
+      downloadUrl = await ref.getDownloadURL();
+      db.setProfilePic(uid, downloadUrl);
+    }).catchError((onError) {
+      print(onError);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,16 +78,8 @@ class ImageActionSheet extends StatelessWidget {
               ],
             ),
             onPressed: () {
-              Navigator.pop(context); // Dismiss the CupertinoModal first.
-              Navigator.of(context).push(
-                // Then push the camera route onto the stack.
-                CupertinoPageRoute(
-                    fullscreenDialog: true, // loads form from bottom
-                    builder: (context) {
-                      return ImageCapture(
-                          source: ImageSource.camera, uid: this.uid);
-                    }),
-              );
+              Navigator.pop(context);
+              _getFromCamera();
             }),
         CupertinoActionSheetAction(
           child: Row(
@@ -49,16 +91,8 @@ class ImageActionSheet extends StatelessWidget {
             ],
           ),
           onPressed: () {
-            Navigator.pop(context); // Dismiss the CupertinoModal first.
-            Navigator.of(context).push(
-              // Then push the gallery route onto the stack.
-              CupertinoPageRoute(
-                  fullscreenDialog: true, // loads from bottom
-                  builder: (context) {
-                    return ImageCapture(
-                        source: ImageSource.gallery, uid: uid);
-                  }),
-            );
+            Navigator.pop(context);
+            _getFromGallery();
           },
         ),
       ],

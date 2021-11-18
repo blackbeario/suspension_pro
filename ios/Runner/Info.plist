@@ -19,13 +19,15 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>18</string>
+	<string>19</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow acces to the camera</string>
+	<string>Allow acces to the camera for profile pictures</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow uploads from user photo library</string>
+	<string>Allow uploads from photo library for profile pictures</string>
+	<key>NSMicrophoneUsageDescription</key>
+  <string>Post videos to profile</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

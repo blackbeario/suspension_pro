@@ -27,14 +27,14 @@ class _SettingDetailsState extends State<SettingDetails> {
   final _lscForkController = TextEditingController();
   final _hsrForkController = TextEditingController();
   final _lsrForkController = TextEditingController();
-  final _springRateForkController =
-      TextEditingController(); // Can be PSI or Coil
+  final _springRateForkController = TextEditingController();
+  final _frontTireController = TextEditingController();
   final _hscShockController = TextEditingController();
   final _lscShockController = TextEditingController();
   final _hsrShockController = TextEditingController();
   final _lsrShockController = TextEditingController();
-  final _springRateShockController =
-      TextEditingController(); // Can be PSI or Coil
+  final _springRateShockController = TextEditingController(); 
+  final _rearTireController = TextEditingController();
 
   @override
   void initState() {
@@ -43,31 +43,19 @@ class _SettingDetailsState extends State<SettingDetails> {
     var $fork = widget.fork;
     var $shock = widget.shock;
     _settingNameController.text = $setting != null ? $setting : '';
-    if ($fork != null) {
-      _hscForkController.text = $fork['HSC'] ?? '';
-      _lscForkController.text = $fork['LSC'] ?? '';
-      _hsrForkController.text = $fork['HSR'] ?? '';
-      _lsrForkController.text = $fork['LSR'] ?? '';
-      _springRateForkController.text = $fork['springRate'] ?? '';
-    }
-    if ($shock != null) {
-      _hscShockController.text = $shock['HSC'] ?? '';
-      _lscShockController.text = $shock['LSC'] ?? '';
-      _hsrShockController.text = $shock['HSR'] ?? '';
-      _lsrShockController.text = $shock['LSR'] ?? '';
-      _springRateShockController.text = $shock['springRate'] ?? '';
-    } else {
-      _hscForkController.text = '';
-      _lscForkController.text = '';
-      _hsrForkController.text = '';
-      _lsrForkController.text = '';
-      _springRateForkController.text = '';
-      _hscShockController.text = '';
-      _lscShockController.text = '';
-      _hsrShockController.text = '';
-      _lsrShockController.text = '';
-      _springRateShockController.text = '';
-    }
+  
+      _hscForkController.text = $fork?['HSC'] ?? '';
+      _lscForkController.text = $fork?['LSC'] ?? '';
+      _hsrForkController.text = $fork?['HSR'] ?? '';
+      _lsrForkController.text = $fork?['LSR'] ?? '';
+      _springRateForkController.text = $fork?['springRate'] ?? '';
+    
+      _hscShockController.text = $shock?['HSC'] ?? '';
+      _lscShockController.text = $shock?['LSC'] ?? '';
+      _hsrShockController.text = $shock?['HSR'] ?? '';
+      _lsrShockController.text = $shock?['LSR'] ?? '';
+      _springRateShockController.text = $shock?['springRate'] ?? '';
+    
   }
 
   @override

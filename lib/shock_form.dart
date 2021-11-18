@@ -80,7 +80,7 @@ class _ShockFormState extends State<ShockForm> {
                       width: 75,
                       height: 75,
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: CupertinoColors.inactiveGray.withOpacity(0.25),
                         shape: BoxShape.circle,
                       ),
                       child: Image.asset('assets/shock.png')),

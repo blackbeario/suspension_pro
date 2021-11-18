@@ -79,6 +79,13 @@ class DatabaseService extends ChangeNotifier {
         {'updated': $updated, 'profilePic': filePath}, SetOptions(merge: true));
   }
 
+  Future<void> setBikePic(String uid, String bikeid, String filePath) async {
+    var $now = DateTime.now();
+    var $updated = $now.millisecondsSinceEpoch;
+    return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).set(
+        {'updated': $updated, 'bikePic': filePath}, SetOptions(merge: true));
+  }
+
   /// Need to add required fork and shock fields with values.
   Future<void> addUpdateBike(
       String uid, String bikeid, Map? fork, Map? shock) async {

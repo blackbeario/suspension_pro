@@ -23,7 +23,7 @@ class _ProfileState extends State<Profile> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final db = DatabaseService();
-  late String profilePic;
+  String? profilePic;
   late String role;
   bool usernameUpdated = false;
 
@@ -82,29 +82,26 @@ class _ProfileState extends State<Profile> {
                             Padding(
                                 padding: EdgeInsets.all(20),
                                 child: CircleAvatar(
-                                  // radius 122.5*2=245 so we essentially get a
-                                  // 2.5px border around the 240px image
-                                  radius: 122.5,
+                                  radius: 102.5,
                                   child: ClipOval(
-                                    child: CachedNetworkImage(
-                                      imageUrl: myUser.profilePic!,
-                                      width: 240,
-                                      height: 240,
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) =>
-                                          Image.asset(
-                                              'assets/genericUserPic.png'),
-                                      errorWidget: (context, url, error) =>
-                                          Image.asset(
-                                              'assets/genericUserPic.png'),
-                                    ),
+                                    child: myUser.profilePic != '' &&
+                                            myUser.profilePic != null
+                                        ? CachedNetworkImage(
+                                            imageUrl: myUser.profilePic!,
+                                            width: 200,
+                                            height: 200,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) =>
+                                                CupertinoActivityIndicator(
+                                                    animating: true),
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                Image.asset(
+                                                    'assets/genericUserPic.png'),
+                                          )
+                                        : Icon(Icons.photo_camera),
                                   ),
                                 )),
-                            Positioned(
-                                right: 130,
-                                bottom: 25,
-                                child: Icon(CupertinoIcons.photo_camera,
-                                    color: Colors.white70)),
                           ],
                         ),
                       ],

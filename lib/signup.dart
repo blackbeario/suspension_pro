@@ -4,8 +4,6 @@ import 'package:provider/src/provider.dart';
 import './services/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'models/user.dart';
-
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key? key}) : super(key: key);
 
@@ -20,7 +18,6 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   bool _hidePassword = true;
 
-  // Toggles the password show status
   void _toggle() {
     setState(() {
       _hidePassword = !_hidePassword;

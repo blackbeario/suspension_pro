@@ -5,8 +5,9 @@ class Bike {
   final Map? fork;
   final Map? shock;
   int? index;
+  final String? bikePic;
 
-  Bike({this.id, this.fork, this.shock, this.index});
+  Bike({this.id, this.fork, this.shock, this.index, this.bikePic});
 
   factory Bike.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -16,12 +17,14 @@ class Bike {
       fork: data["fork"] ?? null,
       shock: data["shock"] ?? null,
       index: data["index"] ?? null,
+      bikePic: data['bikePic'] ?? '',
     );
   }
 
   Map<dynamic, dynamic> toJson() => {
         "fork": fork,
         "shock": shock,
-        "index": index
+        "index": index,
+        'bikePic': bikePic,
       };
 }
