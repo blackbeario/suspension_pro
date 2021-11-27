@@ -164,7 +164,8 @@ class DatabaseService extends ChangeNotifier {
       String brand,
       String model,
       String spacers,
-      String spacing) async {
+      String spacing,
+      String serial) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
     return await _db
@@ -183,13 +184,14 @@ class DatabaseService extends ChangeNotifier {
         'brand': brand,
         'model': model,
         'spacers': spacers,
-        'spacing': spacing
+        'spacing': spacing,
+        'serial': serial,
       }
     }, SetOptions(merge: true));
   }
 
   Future<void> updateShock(String uid, String bikeid, String year,
-      String stroke, String brand, String model, String spacers) async {
+      String stroke, String brand, String model, String spacers, String serial) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
     return await _db
@@ -204,7 +206,8 @@ class DatabaseService extends ChangeNotifier {
         'stroke': stroke,
         'brand': brand,
         'model': model,
-        'spacers': spacers
+        'spacers': spacers,
+        'serial': serial,
       }
     }, SetOptions(merge: true));
   }

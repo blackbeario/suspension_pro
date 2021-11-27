@@ -23,6 +23,7 @@ class _ShockFormState extends State<ShockForm> {
   final _modelController = TextEditingController();
   final _strokeController = TextEditingController();
   final _spacersController = TextEditingController();
+  final _serialNumberController = TextEditingController();
 
   @override
   void initState() {
@@ -33,6 +34,7 @@ class _ShockFormState extends State<ShockForm> {
     _modelController.text = $shock?['model'] ?? '';
     _spacersController.text = $shock?['spacers'] ?? '';
     _strokeController.text = $shock?['stroke'] ?? '';
+    _serialNumberController.text = $shock?['serial'] ?? '';
   }
 
   @override
@@ -42,6 +44,7 @@ class _ShockFormState extends State<ShockForm> {
     _modelController.dispose();
     _spacersController.dispose();
     _yearController.dispose();
+    _serialNumberController.dispose();
     super.dispose();
   }
 
@@ -54,7 +57,9 @@ class _ShockFormState extends State<ShockForm> {
         _strokeController.text,
         _brandController.text,
         _modelController.text,
-        _spacersController.text);
+        _spacersController.text,
+        _serialNumberController.text);
+    ;
     return Future.value(false);
   }
 
@@ -72,7 +77,6 @@ class _ShockFormState extends State<ShockForm> {
               children: <Widget>[
                 Container(
                   width: double.infinity,
-                  // padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(color: Colors.white),
                   child: Container(
                       margin: EdgeInsets.only(top: 10),
@@ -105,7 +109,7 @@ class _ShockFormState extends State<ShockForm> {
                     decoration: _decoration('Shock Year'),
                     controller: _yearController,
                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                    keyboardType: TextInputType.text),
+                    keyboardType: TextInputType.number),
                 TextFormField(
                     // validator: (_brandController) {
                     //   if (_brandController == null || _brandController.isEmpty)
@@ -135,6 +139,13 @@ class _ShockFormState extends State<ShockForm> {
                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                     decoration: _decoration('Shock Volume Spacers'),
                     controller: _spacersController,
+                    keyboardType: TextInputType.number),
+                TextFormField(
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    decoration: InputDecoration(
+                      hintText: 'Shock Serial Number',
+                    ),
+                    controller: _serialNumberController,
                     keyboardType: TextInputType.text),
                 SizedBox(height: 30),
                 Container(
@@ -153,7 +164,8 @@ class _ShockFormState extends State<ShockForm> {
                                   'brand': _brandController.text,
                                   'model': _modelController.text,
                                   'spacers': _spacersController.text,
-                                  'stroke': _strokeController.text
+                                  'stroke': _strokeController.text,
+                                  'serial': _serialNumberController.text,
                                 });
                         }
                       }),

@@ -27,6 +27,7 @@ class _ForkFormState extends State<ForkForm> {
   final _wheelsizeController = TextEditingController();
   final _spacersController = TextEditingController();
   final _spacingController = TextEditingController();
+  final _serialNumberController = TextEditingController();
   bool buttonEnabled = false;
 
   @override
@@ -42,6 +43,7 @@ class _ForkFormState extends State<ForkForm> {
     _wheelsizeController.text = $fork?['wheelsize'] ?? '';
     _spacingController.text = $fork?['spacing'] ?? '';
     _spacersController.text = $fork?['spacers'] ?? '';
+    _serialNumberController.text = $fork?['serial'] ?? '';
   }
 
   @override
@@ -55,6 +57,7 @@ class _ForkFormState extends State<ForkForm> {
     _wheelsizeController.dispose();
     _spacingController.dispose();
     _spacersController.dispose();
+    _serialNumberController.dispose();
     super.dispose();
   }
 
@@ -71,7 +74,8 @@ class _ForkFormState extends State<ForkForm> {
         _brandController.text,
         _modelController.text,
         _spacersController.text,
-        _spacingController.text);
+        _spacingController.text,
+        _serialNumberController.text);
     return Future.value(false);
   }
 
@@ -89,7 +93,6 @@ class _ForkFormState extends State<ForkForm> {
               children: [
                 Container(
                     width: double.infinity,
-                    // padding: EdgeInsets.all(20),
                     decoration: BoxDecoration(color: Colors.white),
                     child: Container(
                         margin: EdgeInsets.only(top: 10),
@@ -110,7 +113,7 @@ class _ForkFormState extends State<ForkForm> {
                     decoration: _decoration('Fork Year'),
                     controller: _yearController,
                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                    keyboardType: TextInputType.text),
+                    keyboardType: TextInputType.number),
                 TextFormField(
                     validator: (_brandController) {
                       if (_brandController == null || _brandController.isEmpty)
@@ -138,10 +141,10 @@ class _ForkFormState extends State<ForkForm> {
                       return null;
                     },
                     decoration:
-                        _decoration('Fork Travel mm (130, 150, 170, 200)'),
+                        _decoration('Fork Travel mm (130, 150, 170...)'),
                     controller: _travelController,
                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                    keyboardType: TextInputType.text),
+                    keyboardType: TextInputType.number),
                 TextFormField(
                     decoration: _decoration('Fork Damper'),
                     controller: _damperController,
@@ -151,7 +154,7 @@ class _ForkFormState extends State<ForkForm> {
                     decoration: _decoration('Fork Offset mm (44, 51)'),
                     controller: _offsetController,
                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                    keyboardType: TextInputType.text),
+                    keyboardType: TextInputType.number),
                 TextFormField(
                     validator: (_wheelsizeController) {
                       if (_wheelsizeController == null ||
@@ -162,16 +165,21 @@ class _ForkFormState extends State<ForkForm> {
                     decoration: _decoration('Wheel Size (26, 27.5, 29)'),
                     controller: _wheelsizeController,
                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                    keyboardType: TextInputType.text),
+                    keyboardType: TextInputType.numberWithOptions()),
                 TextFormField(
                     decoration: _decoration('Fork Volume Spacers'),
                     controller: _spacersController,
                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                    keyboardType: TextInputType.text),
+                    keyboardType: TextInputType.number),
                 TextFormField(
                     decoration:
                         _decoration('Fork Spacing mm (100, 110, 115...)'),
                     controller: _spacingController,
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    keyboardType: TextInputType.number),
+                TextFormField(
+                    decoration: _decoration('Fork Serial Number'),
+                    controller: _serialNumberController,
                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                     keyboardType: TextInputType.text),
                 SizedBox(height: 20),
@@ -195,7 +203,8 @@ class _ForkFormState extends State<ForkForm> {
                                 'offset': _offsetController.text,
                                 'wheelsize': _wheelsizeController.text,
                                 'spacers': _spacersController.text,
-                                'spacing': _spacingController.text
+                                'spacing': _spacingController.text,
+                                'serial': _serialNumberController.text
                               });
                       }
                     },
