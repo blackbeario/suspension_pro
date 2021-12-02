@@ -237,6 +237,8 @@ class DatabaseService extends ChangeNotifier {
     String hsrShock,
     String lsrShock,
     String springShock,
+    String frontTire,
+    String rearTire
   ) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
@@ -262,7 +264,9 @@ class DatabaseService extends ChangeNotifier {
         'HSR': hsrShock,
         'LSR': lsrShock,
         'springRate': springShock
-      }
+      },
+      'frontTire': frontTire,
+      'rearTire': rearTire
     }, SetOptions(merge: true));
   }
 }

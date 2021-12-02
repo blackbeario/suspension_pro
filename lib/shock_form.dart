@@ -59,7 +59,6 @@ class _ShockFormState extends State<ShockForm> {
         _modelController.text,
         _spacersController.text,
         _serialNumberController.text);
-    ;
     return Future.value(false);
   }
 

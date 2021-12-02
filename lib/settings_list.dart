@@ -24,6 +24,8 @@ class _SettingsListState extends State<SettingsList> {
       itemBuilder: (context, index) {
         var fork = settings[index].fork ?? null;
         var shock = settings[index].shock ?? null;
+        var frontTire = settings[index].frontTire ?? null;
+        var rearTire = settings[index].rearTire ?? null;
         return Dismissible(
           background: ListTile(
             tileColor:
@@ -49,11 +51,14 @@ class _SettingsListState extends State<SettingsList> {
                     builder: (context) {
                       // Return the settings detail form screen.
                       return SettingDetails(
-                          user: user,
-                          bike: this.widget.bike,
-                          setting: settings[index].id,
-                          fork: fork,
-                          shock: shock);
+                        user: user,
+                        bike: this.widget.bike,
+                        setting: settings[index].id,
+                        fork: fork,
+                        shock: shock,
+                        frontTire: frontTire,
+                        rearTire: rearTire,
+                      );
                     }));
               }),
         );

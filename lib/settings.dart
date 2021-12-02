@@ -433,7 +433,7 @@ class _SettingsState extends State<Settings> {
                       child: ListTile(
                         leading: Icon(CupertinoIcons.settings,
                             color: Colors.black54),
-                        title: Text('Suspension Settings',
+                        title: Text('Ride Settings',
                             style: TextStyle(color: Colors.black87)),
                         trailing: Icon(Icons.arrow_forward_ios,
                             color: Colors.black38),
