@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
   <testsuite name="fastlane.lanes">
-    
-    
-    
       
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000361">
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000417">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: increment_build_number" time="1.748073">
+      <testcase classname="fastlane.lanes" name="1: increment_build_number" time="1.592597">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="2: build_app" time="369.639923">
+      <testcase classname="fastlane.lanes" name="2: build_app" time="345.454259">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="3: upload_to_testflight" time="589.424006">
+      <testcase classname="fastlane.lanes" name="3: upload_to_testflight" time="1098.080458">
         
       </testcase>
     
