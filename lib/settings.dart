@@ -1,3 +1,5 @@
+// ignore_for_file: body_might_complete_normally_catch_error
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -50,7 +52,7 @@ class _SettingsState extends State<Settings> {
 
   /// Crop Image
   _cropImage(bikeid, filePath) async {
-    File? croppedImage = await ImageCropper.cropImage(
+    File? croppedImage = await ImageCropper().cropImage(
         cropStyle: CropStyle.circle, sourcePath: filePath, compressQuality: 50);
     if (croppedImage != null) {
       _imageFile = croppedImage;
@@ -101,7 +103,7 @@ class _SettingsState extends State<Settings> {
           ),
           direction: DismissDirection.endToStart,
           confirmDismiss:(direction) async {
-            await _confirmDelete(context, uid, $bike.id!, null);
+            return await _confirmDelete(context, uid, $bike.id!, null);
           },
           // onDismissed: (direction) => setState(() {
           //   _confirmDelete(context, uid, $bike.id!, null);
@@ -202,14 +204,8 @@ class _SettingsState extends State<Settings> {
                                                   /// screen so we can expand the appropriate expansion panel.
                                                   leading: CupertinoButton(
                                                       child: BackButtonIcon(),
-                                                      onPressed: () =>
-                                                          Navigator.pop(context,
-                                                              $bike.id)),
-                                                  middle: Text(fork != null
-                                                      ? fork['brand'] +
-                                                          ' ' +
-                                                          fork['model']
-                                                      : 'Add fork'),
+                                                      onPressed: () => Navigator.pop(context, $bike.id)),
+                                                  middle: Text(fork['brand'] + ' ' + fork['model']),
                                                 ),
                                                 child: ForkForm(
                                                     uid: uid,
@@ -246,8 +242,8 @@ class _SettingsState extends State<Settings> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            primary: CupertinoColors.extraLightBackgroundGray,
-                            onPrimary: CupertinoColors.black,
+                            backgroundColor: CupertinoColors.extraLightBackgroundGray,
+                            foregroundColor: CupertinoColors.black,
                           ),
                           child: Row(
                             children: [
@@ -257,7 +253,7 @@ class _SettingsState extends State<Settings> {
                           ),
                           onPressed: () async {
                             /// Await the bike return value from the shock form back button.
-                            var bike = await Navigator.push(
+                            await Navigator.push(
                                 context,
                                 CupertinoPageRoute(
                                   fullscreenDialog: true,
@@ -305,9 +301,8 @@ class _SettingsState extends State<Settings> {
                                 //   color: Colors.white,
                                 //   shape: BoxShape.circle,
                                 // ),
-                                child: shock != null
-                                    ? Image.asset('assets/shock.png')
-                                    : null),
+                                child: Image.asset('assets/shock.png'),
+                            ),
                             Container(
                               padding: EdgeInsets.zero,
                               alignment: Alignment.centerLeft,
@@ -326,7 +321,7 @@ class _SettingsState extends State<Settings> {
                                       style: TextStyle(color: Colors.black54)),
                                   onTap: () async {
                                     /// Await the bike return value from the shock form back button.
-                                    var bike = await Navigator.push(
+                                    await Navigator.push(
                                         context,
                                         CupertinoPageRoute(
                                           fullscreenDialog: true,
@@ -342,11 +337,7 @@ class _SettingsState extends State<Settings> {
                                                     onPressed: () =>
                                                         Navigator.pop(
                                                             context, $bike.id)),
-                                                middle: Text($bike != null
-                                                    ? shock['brand'] +
-                                                        ' ' +
-                                                        shock['model']
-                                                    : ''),
+                                                middle: Text(shock['brand'] + ' ' + shock['model']),
                                               ),
                                               child: ShockForm(
                                                   uid: uid,
@@ -384,8 +375,8 @@ class _SettingsState extends State<Settings> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            primary: CupertinoColors.extraLightBackgroundGray,
-                            onPrimary: CupertinoColors.black,
+                            backgroundColor: CupertinoColors.extraLightBackgroundGray,
+                            foregroundColor: CupertinoColors.black,
                           ),
                           child: Row(
                             children: [
@@ -557,9 +548,7 @@ class _SettingsState extends State<Settings> {
               CupertinoDialogAction(
                 child: Text('Cancel'),
                 isDefaultAction: true,
-                onPressed: () {
-                  Navigator.pop(context, false);
-                },
+                onPressed: () => Navigator.pop(context, false),
               ),
             ],
           );

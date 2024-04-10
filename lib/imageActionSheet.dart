@@ -1,7 +1,8 @@
+// ignore_for_file: body_might_complete_normally_catch_error
+
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:suspension_pro/services/db_service.dart';
@@ -12,8 +13,7 @@ class ImageActionSheet extends StatelessWidget {
 
   ImageActionSheet({required this.uid});
   final String uid;
-  FirebaseStorage storage =
-      FirebaseStorage.instanceFor(bucket: 'gs://suspension-pro.appspot.com/');
+  FirebaseStorage storage = FirebaseStorage.instanceFor(bucket: 'gs://suspension-pro.appspot.com/');
   late String downloadUrl = '';
   File? _imageFile;
   var imagePicker;
@@ -40,8 +40,7 @@ class ImageActionSheet extends StatelessWidget {
 
   /// Crop Image
   _cropImage(filePath) async {
-    File? croppedImage = await ImageCropper.cropImage(
-        cropStyle: CropStyle.circle, sourcePath: filePath, compressQuality: 50);
+    File? croppedImage = await ImageCropper().cropImage(cropStyle: CropStyle.circle, sourcePath: filePath, compressQuality: 50);
     if (croppedImage != null) {
       _imageFile = croppedImage;
       _uploadToFirebase(uid, _imageFile!);

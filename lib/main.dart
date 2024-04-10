@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/widgets.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:suspension_pro/models/user.dart';
 import './services/auth_service.dart';
@@ -18,12 +17,16 @@ Future<void> main() async {
 }
 
 enum DeviceType { Phone, Tablet }
+
 DeviceType getDeviceType() {
-  final data = MediaQueryData.fromWindow(WidgetsBinding.instance!.window);
-  return data.size.shortestSide < 550 ? DeviceType.Phone : DeviceType.Tablet;
+  BuildContext context = MyApp.navigatorKey.currentContext!;
+  final screenWidth = MediaQuery.sizeOf(context).width;
+  return screenWidth < 550 ? DeviceType.Phone : DeviceType.Tablet;
 }
 
 class MyApp extends StatelessWidget {
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) {
     // print(getDeviceType());
@@ -74,8 +77,7 @@ class AppHomePage extends StatefulWidget {
   State<AppHomePage> createState() => _AppHomePageState();
 }
 
-class _AppHomePageState extends State<AppHomePage>
-    with SingleTickerProviderStateMixin {
+class _AppHomePageState extends State<AppHomePage> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
