@@ -38,8 +38,9 @@ class LoginPageState extends State<LoginPage> {
       child: Container(
         padding: EdgeInsets.all(30),
         decoration: BoxDecoration(
-            image:
-                DecorationImage(image: AssetImage('assets/josh_lower_hareball.jpg'), alignment: Alignment.center, fit: BoxFit.fitHeight)),
+            image: DecorationImage(image: AssetImage('assets/josh_lower_hareball.jpg'), 
+            alignment: Alignment.center, fit: BoxFit.fitHeight),
+          ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -79,66 +80,95 @@ class LoginPageState extends State<LoginPage> {
               child: Form(
                 key: _formKey,
                 child: Center(
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: CupertinoTextField(
-                          controller: _email,
-                          padding: EdgeInsets.all(10.0),
-                          keyboardType: TextInputType.emailAddress,
-                          placeholder: "email",
-                          style: style.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: CupertinoTextField(
-                          padding: EdgeInsets.all(10.0),
-                          controller: _password,
-                          placeholder: "password",
-                          obscureText: _hidePassword,
-                          keyboardType: TextInputType.visiblePassword,
-                          style: style.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
-                          suffix: TextButton(
-                              onPressed: _toggle,
-                              child: Icon(_hidePassword ? Icons.lock : Icons.lock_open, color: CupertinoColors.inactiveGray)),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 8.0),
-                        child: Material(
-                          elevation: 1.0,
-                          borderRadius: BorderRadius.circular(8.0),
-                          color: Colors.orange[400],
-                          child: CupertinoButton(
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
-                                var result = await authService.signIn(_email.text.trim(), _password.text.trim());
-                                if (result.runtimeType == FirebaseAuthException) {
-                                  _showLoginFailure(context, result.message);
-                                }
-                              }
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            controller: _email,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: EdgeInsets.only(left: 10, right: 10),
+                              border: OutlineInputBorder(
+                                borderSide: const BorderSide(style: BorderStyle.none),
+                                borderRadius: const BorderRadius.all(Radius.circular(6.0))),
+                              hintText: 'email',
+                              hintStyle: TextStyle(fontWeight: FontWeight.w300)
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                            style: style.copyWith(color: Colors.black),
+                            validator: (_email) {
+                              if (_email == null || _email.isEmpty) return 'Enter email address';
+                              return null;
                             },
-                            child: Text(
-                              "Sign In",
-                              style: style.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            controller: _password,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: EdgeInsets.only(left: 10, right: 10),
+                              border: OutlineInputBorder(
+                                borderSide: const BorderSide(style: BorderStyle.none),
+                                borderRadius: const BorderRadius.all(Radius.circular(6.0))),
+                              hintText: 'password',
+                              hintStyle: TextStyle(fontWeight: FontWeight.w300),
+                              suffix: TextButton(
+                                onPressed: _toggle,
+                                style: ButtonStyle(alignment: Alignment.centerRight),
+                                child: Icon(_hidePassword ? Icons.lock : Icons.lock_open, color: CupertinoColors.inactiveGray),
+                              ),
+                            ),
+                            obscureText: _hidePassword,
+                            keyboardType: TextInputType.visiblePassword,
+                            style: style.copyWith(color: Colors.black),
+                            validator: (_password) {
+                              if (_password == null || _password.isEmpty) return 'Enter password';
+                              return null;
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 8.0),
+                          child: Material(
+                            elevation: 1.0,
+                            borderRadius: BorderRadius.circular(8.0),
+                            color: Colors.orange[400],
+                            child: CupertinoButton(
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  var result = await authService.signIn(_email.text.trim(), _password.text.trim());
+                                  if (result.runtimeType == FirebaseAuthException) {
+                                    _showLoginFailure(context, result.message);
+                                  }
+                                }
+                              },
+                              child: Text(
+                                "Sign In",
+                                style: style.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      TextButton(
-                          child: Text('Create New Account'),
-                          onPressed: () {
-                            Navigator.of(context).push(CupertinoPageRoute(
-                                // fullscreenDialog: true,
-                                builder: (context) {
-                              return SignUpPage();
-                            }));
-                          }),
-                      Text('Version: Beta 0.1.4', style: TextStyle(color: Colors.white54, fontSize: 12), textAlign: TextAlign.center),
-                    ],
+                        TextButton(
+                            child: Text('Create New Account', style: style.copyWith(color: Colors.white, fontSize: 14)),
+                            onPressed: () {
+                              Navigator.of(context).push(CupertinoPageRoute(
+                                  // fullscreenDialog: true,
+                                  builder: (context) {
+                                return SignUpPage();
+                              }));
+                            }),
+                        Text('Version: Beta 0.1.4', style: TextStyle(color: Colors.white54, fontSize: 12), textAlign: TextAlign.center),
+                      ],
+                    ),
                   ),
                 ),
               ),
