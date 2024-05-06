@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:suspension_pro/signup.dart';
 // import 'package:suspension_pro/signup.dart';
@@ -37,10 +38,8 @@ class LoginPageState extends State<LoginPage> {
       child: Container(
         padding: EdgeInsets.all(30),
         decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/josh_lower_hareball.jpg'),
-                alignment: Alignment.center,
-                fit: BoxFit.fitHeight)),
+            image:
+                DecorationImage(image: AssetImage('assets/josh_lower_hareball.jpg'), alignment: Alignment.center, fit: BoxFit.fitHeight)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -63,8 +62,7 @@ class LoginPageState extends State<LoginPage> {
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(0, 200, 0, 0),
-              child: Text(
-                  'Record and share your bike \nsuspension products and settings',
+              child: Text('Record and share your bike \nsuspension products and settings',
                   style: TextStyle(
                     color: Colors.white,
                     shadows: <Shadow>[
@@ -91,8 +89,7 @@ class LoginPageState extends State<LoginPage> {
                           padding: EdgeInsets.all(10.0),
                           keyboardType: TextInputType.emailAddress,
                           placeholder: "email",
-                          style: style.copyWith(
-                              color: Colors.black, fontWeight: FontWeight.bold),
+                          style: style.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                       ),
                       Padding(
@@ -103,18 +100,14 @@ class LoginPageState extends State<LoginPage> {
                           placeholder: "password",
                           obscureText: _hidePassword,
                           keyboardType: TextInputType.visiblePassword,
-                          style: style.copyWith(
-                              color: Colors.black, fontWeight: FontWeight.bold),
+                          style: style.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
                           suffix: TextButton(
                               onPressed: _toggle,
-                              child: Icon(
-                                  _hidePassword ? Icons.lock : Icons.lock_open,
-                                  color: CupertinoColors.inactiveGray)),
+                              child: Icon(_hidePassword ? Icons.lock : Icons.lock_open, color: CupertinoColors.inactiveGray)),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20.0, horizontal: 8.0),
+                        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 8.0),
                         child: Material(
                           elevation: 1.0,
                           borderRadius: BorderRadius.circular(8.0),
@@ -122,34 +115,29 @@ class LoginPageState extends State<LoginPage> {
                           child: CupertinoButton(
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                await authService.signIn(
-                                    _email.text.trim(), _password.text.trim());
+                                var result = await authService.signIn(_email.text.trim(), _password.text.trim());
+                                if (result.runtimeType == FirebaseAuthException) {
+                                  _showLoginFailure(context, result.message);
+                                }
                               }
                             },
                             child: Text(
                               "Sign In",
-                              style: style.copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
+                              style: style.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
                       ),
                       TextButton(
-                        child: Text('Create New Account'),
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            CupertinoPageRoute(
-                              // fullscreenDialog: true,
-                              builder: (context) {
+                          child: Text('Create New Account'),
+                          onPressed: () {
+                            Navigator.of(context).push(CupertinoPageRoute(
+                                // fullscreenDialog: true,
+                                builder: (context) {
                               return SignUpPage();
-                            })
-                          );
-                      }
-                      ),
-                      Text('Version: Beta 0.1.4',
-                          style: TextStyle(color: Colors.white54, fontSize: 12),
-                          textAlign: TextAlign.center),
+                            }));
+                          }),
+                      Text('Version: Beta 0.1.4', style: TextStyle(color: Colors.white54, fontSize: 12), textAlign: TextAlign.center),
                     ],
                   ),
                 ),
@@ -166,5 +154,22 @@ class LoginPageState extends State<LoginPage> {
     _email.dispose();
     _password.dispose();
     super.dispose();
+  }
+
+  Future<bool> _showLoginFailure(BuildContext context, message) {
+    showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text(message),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                  child: Text('Okay'),
+                  isDestructiveAction: true,
+                  onPressed: () => Navigator.pop(context, 'Discard')),
+            ],
+          );
+        });
+    return new Future.value(false);
   }
 }
