@@ -52,10 +52,12 @@ class _SettingsState extends State<Settings> {
 
   /// Crop Image
   _cropImage(bikeid, filePath) async {
-    File? croppedImage = await ImageCropper().cropImage(
-        cropStyle: CropStyle.circle, sourcePath: filePath, compressQuality: 50);
+    CroppedFile? croppedImage = await ImageCropper().cropImage(
+        cropStyle: CropStyle.circle, 
+        sourcePath: filePath, compressQuality: 50,
+      );
     if (croppedImage != null) {
-      _imageFile = croppedImage;
+      _imageFile = File(croppedImage.path);
       _uploadToFirebase(widget.user.id, bikeid, _imageFile!);
       setState(() {});
     }

@@ -40,9 +40,9 @@ class ImageActionSheet extends StatelessWidget {
 
   /// Crop Image
   _cropImage(filePath) async {
-    File? croppedImage = await ImageCropper().cropImage(cropStyle: CropStyle.circle, sourcePath: filePath, compressQuality: 50);
+    CroppedFile? croppedImage = await ImageCropper().cropImage(cropStyle: CropStyle.circle, sourcePath: filePath, compressQuality: 50);
     if (croppedImage != null) {
-      _imageFile = croppedImage;
+      _imageFile = croppedImage as File?;
       _uploadToFirebase(uid, _imageFile!);
     }
   }
