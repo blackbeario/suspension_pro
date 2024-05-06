@@ -100,7 +100,7 @@ class LoginPageState extends State<LoginPage> {
                               hintStyle: TextStyle(fontWeight: FontWeight.w300)
                             ),
                             keyboardType: TextInputType.emailAddress,
-                            style: style.copyWith(color: Colors.black),
+                            style: style.copyWith(color: Colors.black), 
                             validator: (_email) {
                               if (_email == null || _email.isEmpty) return 'Enter email address';
                               return null;
@@ -120,7 +120,7 @@ class LoginPageState extends State<LoginPage> {
                                 borderRadius: const BorderRadius.all(Radius.circular(6.0))),
                               hintText: 'password',
                               hintStyle: TextStyle(fontWeight: FontWeight.w300),
-                              suffix: TextButton(
+                              suffixIcon: TextButton(
                                 onPressed: _toggle,
                                 style: ButtonStyle(alignment: Alignment.centerRight),
                                 child: Icon(_hidePassword ? Icons.lock : Icons.lock_open, color: CupertinoColors.inactiveGray),

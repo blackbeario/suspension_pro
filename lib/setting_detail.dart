@@ -6,15 +6,12 @@ import 'models/bike.dart';
 import 'models/user.dart';
 
 class SettingDetails extends StatefulWidget {
-  SettingDetails({required this.user, this.setting, this.bike, this.fork, this.shock, this.frontTire, this.rearTire});
+  SettingDetails({required this.user, this.setting, this.bike, this.fork, this.shock, this.frontTire, this.rearTire, this.notes});
 
   final AppUser user;
-  final String? setting;
+  final String? setting, frontTire, rearTire, notes;
   final Bike? bike;
-  final Map? fork;
-  final Map? shock;
-  final String? frontTire;
-  final String? rearTire;
+  final Map? fork, shock;
 
   @override
   _SettingDetailsState createState() => _SettingDetailsState();
@@ -36,6 +33,7 @@ class _SettingDetailsState extends State<SettingDetails> {
   final _lsrShockController = TextEditingController();
   final _springRateShockController = TextEditingController();
   final _rearTireController = TextEditingController();
+  final _notesController = TextEditingController();
 
   @override
   void initState() {
@@ -59,6 +57,8 @@ class _SettingDetailsState extends State<SettingDetails> {
 
     _frontTireController.text = widget.frontTire ?? '';
     _rearTireController.text = widget.rearTire ?? '';
+
+    _notesController.text = widget.notes ?? '';
   }
 
   @override
@@ -76,6 +76,7 @@ class _SettingDetailsState extends State<SettingDetails> {
     _settingNameController.dispose();
     _frontTireController.dispose();
     _rearTireController.dispose();
+    _notesController.dispose();
     super.dispose();
   }
 
@@ -97,6 +98,7 @@ class _SettingDetailsState extends State<SettingDetails> {
       _springRateShockController.text,
       _frontTireController.text,
       _rearTireController.text,
+      _notesController.text,
     );
     return Future.value(false);
   }
@@ -106,6 +108,8 @@ class _SettingDetailsState extends State<SettingDetails> {
     var $fork = widget.bike != null ? widget.bike!.fork : null;
     var $shock = widget.bike != null ? widget.bike!.shock : null;
 
+    // This would be saved in a singleton class if building this in 2024
+    // instead of repeating this all over the app. Rookie shit from 2020.
     return StreamBuilder<AppUser?>(
       stream: db.streamUser(widget.user.id),
       builder: (context, snapshot) {
@@ -156,17 +160,16 @@ class _SettingDetailsState extends State<SettingDetails> {
                           },
                         ),
                       ),
-                      SizedBox(height: 10),
+                      // SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
                             child: Column(children: <Widget>[
                               SizedBox(
                                 child: Text($fork != null ? $fork['brand'] + ' ' + $fork['model'] : 'No fork saved'),
-                                height: 40,
+                                height: 25,
                               ),
                               Container(
                                   padding: EdgeInsets.all(2),
@@ -239,7 +242,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                               children: <Widget>[
                                 SizedBox(
                                   child: Text($shock != null ? $shock['brand'] + ' ' + $shock['model'] : 'No shock saved'),
-                                  height: 40,
+                                  height: 25,
                                 ),
                                 Container(
                                     padding: EdgeInsets.all(2),
@@ -306,6 +309,19 @@ class _SettingDetailsState extends State<SettingDetails> {
                                     controller: _rearTireController,
                                     keyboardType: TextInputType.number),
                               ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      ExpansionTile(
+                        title: Text('Notes'),
+                        children: [
+                          TextField(
+                            maxLines: 4,
+                            controller: _notesController,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(10),
+                              hintText: 'Custom notes for this setting',
                             ),
                           ),
                         ],

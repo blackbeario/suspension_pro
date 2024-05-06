@@ -8,8 +8,9 @@ class Setting {
   final DateTime? updated;
   final String? frontTire;
   final String? rearTire;
+  final String? notes;
 
-  Setting({required this.id, this.bike, this.fork, this.shock, this.updated, this.frontTire, this.rearTire});
+  Setting({required this.id, this.bike, this.fork, this.shock, this.updated, this.frontTire, this.rearTire, this.notes});
 
   factory Setting.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -20,9 +21,8 @@ class Setting {
       shock: data['shock'] != null ? Map.from(data['shock']) : null,
       frontTire: data['frontTire'] ?? '',
       rearTire: data['rearTire'] ?? '',
-      updated: data['updated'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(data['updated'])
-          : null,
+      updated: data['updated'] != null ? DateTime.fromMillisecondsSinceEpoch(data['updated']) : null,
+      notes: data['notes'] ?? '',
     );
   }
 
@@ -33,5 +33,6 @@ class Setting {
         'frontTire': frontTire,
         'rearTire': rearTire,
         'updated': updated?.millisecondsSinceEpoch,
+        'notes': notes,
       };
 }

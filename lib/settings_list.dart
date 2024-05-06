@@ -22,10 +22,11 @@ class _SettingsListState extends State<SettingsList> {
       shrinkWrap: true,
       itemCount: settings.length,
       itemBuilder: (context, index) {
-        var fork = settings[index].fork ?? null;
-        var shock = settings[index].shock ?? null;
-        var frontTire = settings[index].frontTire ?? null;
-        var rearTire = settings[index].rearTire ?? null;
+        Map fork = settings[index].fork ?? null;
+        Map shock = settings[index].shock ?? null;
+        String frontTire = settings[index].frontTire ?? null;
+        String rearTire = settings[index].rearTire ?? null;
+        String notes = settings[index].notes ?? null;
         return Dismissible(
           background: ListTile(
             tileColor:
@@ -58,6 +59,7 @@ class _SettingsListState extends State<SettingsList> {
                         shock: shock,
                         frontTire: frontTire,
                         rearTire: rearTire,
+                        notes: notes,
                       );
                     }));
               }),
