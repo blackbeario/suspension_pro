@@ -78,8 +78,7 @@ class _SettingsListState extends State<SettingsList> {
           if (myUser == null) {
             return Center(
               child: Text('Loading...',
-                  style:
-                      CupertinoTheme.of(context).textTheme.navTitleTextStyle),
+                  style: CupertinoTheme.of(context).textTheme.navTitleTextStyle),
             );
           }
           return CupertinoPageScaffold(

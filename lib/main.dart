@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:suspension_pro/app_info.dart';
 import 'package:suspension_pro/models/user.dart';
 import './services/auth_service.dart';
 import './login.dart';
@@ -44,7 +45,8 @@ class MyApp extends StatelessWidget {
         theme: CupertinoThemeData(
             primaryColor: Color(0xFF007AFF), // iOS 10's default blue
             primaryContrastingColor: Color(0xFFFFFFFF),
-            barBackgroundColor: Color(0xFFE5E5EA)),
+            barBackgroundColor: Color(0xFFE5E5EA),
+          ),
         home: AuthenticationWrapper(),
       ),
     );
@@ -77,19 +79,23 @@ class AppHomePage extends StatefulWidget {
   State<AppHomePage> createState() => _AppHomePageState();
 }
 
-class _AppHomePageState extends State<AppHomePage> with SingleTickerProviderStateMixin {
+class _AppHomePageState extends State<AppHomePage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.settings),
+            icon: Icon(CupertinoIcons.settings, size: 24),
             label: 'Settings',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.profile_circled),
+            icon: Icon(CupertinoIcons.profile_circled, size: 24),
             label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.info, size: 24),
+            label: 'Info',
           ),
         ],
       ),
@@ -104,6 +110,10 @@ class _AppHomePageState extends State<AppHomePage> with SingleTickerProviderStat
           case 1:
             return CupertinoTabView(
               builder: (BuildContext context) => Profile(user: widget.user),
+            );
+            case 2:
+            return CupertinoTabView(
+              builder: (BuildContext context) => AppInfo(),
             );
         }
         return CircularProgressIndicator();
