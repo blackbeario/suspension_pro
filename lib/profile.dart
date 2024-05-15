@@ -33,15 +33,8 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<bool> _updateUser(uid, BuildContext context) {
-    db.updateUser(
-        widget.user.id, _usernameController.text, widget.user.email!, role);
+    db.updateUser(widget.user.id, _usernameController.text, widget.user.email!, role);
     return Future.value(false);
-  }
-
-  void _toggle() {
-    setState(() {
-      usernameUpdated = !usernameUpdated;
-    });
   }
 
   _setUsername(value) {
@@ -63,11 +56,10 @@ class _ProfileState extends State<Profile> {
             resizeToAvoidBottomInset: true,
             navigationBar: CupertinoNavigationBar(
               middle: Text(myUser.username ?? widget.user.email!),
-              trailing: CupertinoButton(
-                  child: Icon(Icons.power_settings_new),
-                  onPressed: () => _signOut(context)),
+              trailing: CupertinoButton(child: Icon(Icons.power_settings_new), onPressed: () => _signOut(context)),
             ),
             child: Material(
+              color: Colors.white,
               child: ListView(
                 children: <Widget>[
                   GestureDetector(
@@ -83,20 +75,14 @@ class _ProfileState extends State<Profile> {
                                 child: CircleAvatar(
                                   radius: 102.5,
                                   child: ClipOval(
-                                    child: myUser.profilePic != '' &&
-                                            myUser.profilePic != null
+                                    child: myUser.profilePic != '' && myUser.profilePic != null
                                         ? CachedNetworkImage(
                                             imageUrl: myUser.profilePic!,
                                             width: 200,
                                             height: 200,
                                             fit: BoxFit.cover,
-                                            placeholder: (context, url) =>
-                                                CupertinoActivityIndicator(
-                                                    animating: true),
-                                            errorWidget: (context, url,
-                                                    error) =>
-                                                Image.asset(
-                                                    'assets/genericUserPic.png'),
+                                            placeholder: (context, url) => CupertinoActivityIndicator(animating: true),
+                                            errorWidget: (context, url, error) => Image.asset('assets/genericUserPic.png'),
                                           )
                                         : Icon(Icons.photo_camera),
                                   ),
@@ -106,10 +92,7 @@ class _ProfileState extends State<Profile> {
                       ],
                     ),
                     onTap: () => showCupertinoModalPopup(
-                        useRootNavigator: true,
-                        context: context,
-                        builder: (context) =>
-                            ImageActionSheet(uid: widget.user.id)),
+                        useRootNavigator: true, context: context, builder: (context) => ImageActionSheet(uid: widget.user.id)),
                   ),
                   Form(
                     key: _formKey,
@@ -120,17 +103,17 @@ class _ProfileState extends State<Profile> {
                           child: TextFormField(
                               autofocus: false,
                               validator: (_usernameController) {
-                                if (_usernameController == null ||
-                                    _usernameController.isEmpty)
-                                  return 'Please add a username';
+                                if (_usernameController == null || _usernameController.isEmpty) return 'Please add a username';
                                 return null;
                               },
-                              onFieldSubmitted: (value) {
-                                _toggle();
+                              onEditingComplete: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _updateUser(myUser.id, context);
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                }
                               },
                               decoration: InputDecoration(
-                                icon: Icon(Icons.person,
-                                    size: 28, color: Colors.blue),
+                                icon: Icon(Icons.person, size: 28, color: Colors.blue),
                                 isDense: true,
                                 helperText:
                                     'Feel free to change this to whatever you like. \nYour email address will not change, and you \ndon\'t have to worry about other usernames.',
@@ -139,10 +122,9 @@ class _ProfileState extends State<Profile> {
                                 border: OutlineInputBorder(),
                                 hintText: 'username',
                               ),
-                              style: TextStyle(
-                                  fontSize: 18, color: Colors.grey[700]),
+                              style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                               controller: _usernameController,
-                              keyboardType: TextInputType.emailAddress),
+                          ),
                         ),
                         ListTile(
                           leading: Icon(Icons.stars, color: Colors.blue),
@@ -150,36 +132,25 @@ class _ProfileState extends State<Profile> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text('Level: ' + role,
-                                  style: TextStyle(color: Colors.black87)),
+                              Text('Level: ' + role, style: TextStyle(color: Colors.black87)),
                               Padding(
                                 padding: const EdgeInsets.only(right: 10),
-                                child: Text(myUser.points.toString() + 'pts',
-                                    style: TextStyle(color: Colors.blue)),
+                                child: Text(myUser.points.toString() + 'pts', style: TextStyle(color: Colors.blue)),
                               ),
                             ],
                           ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: Text(
-                                'Share settings with others to raise your skill level! Move up from newbie => Pro simply by sharing your suspension settings!',
-                                style: TextStyle(fontSize: 12)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                          child: Text(
+                            'Share settings with others to raise your skill level! Move up from NEWBIE to PRO simply by sharing your suspension settings.',
                           ),
                         ),
-                        SizedBox(height: 30),
-                        CupertinoButton(
-                            disabledColor: CupertinoColors.inactiveGray,
-                            color: CupertinoColors.activeBlue,
-                            child: Text('Save',
-                                style: TextStyle(color: Colors.white)),
-                            onPressed: usernameUpdated
-                                ? () {
-                                    _toggle();
-                                    if (_formKey.currentState!.validate()) {
-                                      _updateUser(myUser.id, context);
-                                    }
-                                  }
-                                : null),
+                        ListTile(
+                          title: Text('Points Guide'),
+                          trailing: Icon(Icons.arrow_forward_ios),
+                          onTap: () => null,
+                        ),
                       ],
                     ),
                   ),

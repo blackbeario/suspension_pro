@@ -25,83 +25,71 @@ class _AppInfoState extends State<AppInfo> {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Material(
+          color: Colors.white,
           child: ListView(
             children: <Widget>[
-              Flexible(
-                flex: 1,
-                fit: FlexFit.tight,
-                child: ListTile(
-                  title: Text('Privacy Policy'),
-                  trailing: Icon(Icons.arrow_forward_ios),
-                  onTap: () => _loadURL('https://vibesoftware.io/privacy/suspension_pro'),
-                ),
+              ListTile(
+                title: Text('Privacy Policy'),
+                trailing: Icon(Icons.arrow_forward_ios),
+                onTap: () => _loadURL('https://vibesoftware.io/privacy/suspension_pro'),
               ),
-              Flexible(
-                flex: 1,
-                fit: FlexFit.tight,
-                child: ListTile(
-                  title: Text('Terms & Conditions'),
-                  trailing: Icon(Icons.arrow_forward_ios),
-                  onTap: () => _loadURL('https://vibesoftware.io/terms/suspension_pro'),
-                ),
+              ListTile(
+                title: Text('Terms & Conditions'),
+                trailing: Icon(Icons.arrow_forward_ios),
+                onTap: () => _loadURL('https://vibesoftware.io/terms/suspension_pro'),
               ),
-              Flexible(
-                flex: 3,
-                child: ListTile(
-                  title: Text('App Roadmap (2024)'),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // SizedBox(height: 4),
-                        AppRoadmapItem(value: 'Create database for importing suspension products dynamically (June)'),
-                        AppRoadmapItem(value: 'Additional support for less common suspension products (June)'),
-                        AppRoadmapItem(value: 'Custom user app backgrounds (July)'),
-                        AppRoadmapItem(value: 'Flush out user points rewards (TBD)'),
-                        AppRoadmapItem(value: 'ChatGPT suspension suggestions based on bike model and rider weight (TBD)'),
-                        AppRoadmapItem(value: 'Maybe some fancy animations of the shock dials when a user inputs settings (TBD)'),
-                      ],
-                    ),
+              ListTile(
+                title: Text('App Roadmap (2024)'),
+                subtitle: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // SizedBox(height: 4),
+                      AppRoadmapItem(value: 'Offline Support (May)'),
+                      AppRoadmapItem(value: 'Create database for importing suspension products dynamically (June)'),
+                      AppRoadmapItem(value: 'Additional support for less common suspension products (June)'),
+                      AppRoadmapItem(value: 'Custom user app backgrounds (July)'),
+                      AppRoadmapItem(value: 'Flush out user points rewards (TBD)'),
+                      AppRoadmapItem(value: 'ChatGPT suspension suggestions based on bike model and rider weight (TBD)'),
+                      AppRoadmapItem(value: 'Maybe some fancy animations of the shock dials when a user inputs settings (TBD)'),
+                    ],
                   ),
                 ),
               ),
-              Flexible(
-                flex: 1,
-                child: ListTile(
-                  title: Text('Suggestion Box'),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          TextFormField(
-                            autofocus: false,
-                            onChanged: (value) => setState(() {}),
-                            maxLines: 5,
-                            minLines: 1,
-                            decoration: InputDecoration(
-                              helperText: formSubmitted ? 'Thanks!' : null,
-                              contentPadding: EdgeInsets.all(6),
-                              filled: true,
-                              border: OutlineInputBorder(),
-                              hintText: 'Suggestions for this app? Let us know!',
-                            ),
-                            style: TextStyle(fontSize: 12, overflow: TextOverflow.fade),
-                            controller: _suggestionController,
-                            keyboardType: TextInputType.text,
+              ListTile(
+                title: Text('Suggestion Box'),
+                subtitle: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        TextFormField(
+                          autofocus: false,
+                          onChanged: (value) => setState(() {}),
+                          maxLines: 5,
+                          minLines: 1,
+                          decoration: InputDecoration(
+                            helperText: formSubmitted ? 'Thanks!' : null,
+                            contentPadding: EdgeInsets.all(6),
+                            filled: true,
+                            border: OutlineInputBorder(),
+                            hintText: 'Suggestions for this app? Let us know!',
                           ),
-                          SizedBox(height: 20),
-                          CupertinoButton(
-                            disabledColor: CupertinoColors.inactiveGray,
-                            color: CupertinoColors.activeBlue,
-                            child: Text('Submit', style: TextStyle(color: Colors.white)),
-                            onPressed: _suggestionController.text.isNotEmpty ? () => _submitSuggestion(_suggestionController.text) : null,
-                          ),
-                        ],
-                      ),
+                          style: TextStyle(fontSize: 12, overflow: TextOverflow.fade),
+                          controller: _suggestionController,
+                          keyboardType: TextInputType.text,
+                        ),
+                        SizedBox(height: 20),
+                        CupertinoButton(
+                          disabledColor: CupertinoColors.inactiveGray,
+                          color: CupertinoColors.activeBlue,
+                          child: Text('Submit', style: TextStyle(color: Colors.white)),
+                          onPressed: _suggestionController.text.isNotEmpty ? () => _submitSuggestion(_suggestionController.text) : null,
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -146,9 +134,7 @@ class _AppInfoState extends State<AppInfo> {
 }
 
 class AppRoadmapItem extends StatelessWidget {
-  const AppRoadmapItem({
-    Key? key, required this.value
-  }) : super(key: key);
+  const AppRoadmapItem({Key? key, required this.value}) : super(key: key);
   final String value;
 
   @override
