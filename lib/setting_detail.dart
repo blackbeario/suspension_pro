@@ -130,6 +130,7 @@ class _SettingDetailsState extends State<SettingDetails> {
             ),
           ),
           child: Material(
+            color: Colors.white,
             child: ListView(
               scrollDirection: Axis.vertical,
               children: <Widget>[
@@ -160,7 +161,6 @@ class _SettingDetailsState extends State<SettingDetails> {
                           },
                         ),
                       ),
-                      // SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
@@ -321,7 +321,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                             controller: _notesController,
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.all(10),
-                              hintText: 'Custom notes for this setting',
+                              hintText: 'Add custom notes for this setting',
                             ),
                           ),
                         ],

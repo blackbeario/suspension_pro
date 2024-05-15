@@ -93,6 +93,7 @@ class _SettingsListState extends State<SettingsList> {
                     onPressed: () => _requestPop(context)),
               ),
               child: Card(
+                color: Colors.white,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
