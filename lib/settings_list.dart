@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:suspension_pro/models/bike.dart';
+import 'package:suspension_pro/models/product_setting.dart';
 import 'setting_detail.dart';
 import './services/auth_service.dart';
 import './services/db_service.dart';
@@ -8,8 +10,8 @@ import './models/user.dart';
 import 'models/setting.dart';
 
 class SettingsList extends StatefulWidget {
-  SettingsList({@required this.bike});
-  final bike;
+  SettingsList({required this.bike});
+  final Bike bike;
 
   @override
   _SettingsListState createState() => _SettingsListState();
@@ -17,16 +19,16 @@ class SettingsList extends StatefulWidget {
 
 class _SettingsListState extends State<SettingsList> {
   final db = DatabaseService();
-  Widget _getSettings(user, bike, settings, context) {
+  Widget _getSettings(user, Bike bike, List<Setting> settings, context) {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: settings.length,
       itemBuilder: (context, index) {
-        Map fork = settings[index].fork ?? null;
-        Map shock = settings[index].shock ?? null;
-        String frontTire = settings[index].frontTire ?? null;
-        String rearTire = settings[index].rearTire ?? null;
-        String notes = settings[index].notes ?? null;
+        ProductSetting? fork = settings[index].fork ?? null;
+        ProductSetting? shock = settings[index].shock ?? null;
+        String? frontTire = settings[index].frontTire ?? null;
+        String? rearTire = settings[index].rearTire ?? null;
+        String? notes = settings[index].notes ?? null;
         return Dismissible(
           background: ListTile(
             tileColor:
@@ -43,7 +45,7 @@ class _SettingsListState extends State<SettingsList> {
               key: PageStorageKey(settings[index]),
               child: ListTile(
                 title: Text(settings[index].id),
-                subtitle: Text(this.widget.bike.id),
+                subtitle: Text(widget.bike.id),
                 trailing: Icon(Icons.arrow_forward_ios),
               ),
               onTap: () {
@@ -53,7 +55,7 @@ class _SettingsListState extends State<SettingsList> {
                       // Return the settings detail form screen.
                       return SettingDetails(
                         user: user,
-                        bike: this.widget.bike,
+                        bike: widget.bike,
                         setting: settings[index].id,
                         fork: fork,
                         shock: shock,
@@ -99,19 +101,15 @@ class _SettingsListState extends State<SettingsList> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     StreamBuilder<List<Setting>>(
-                        stream: db.streamSettings(
-                            myUser.id, this.widget.bike.id.toString()),
+                        stream: db.streamSettings(myUser.id, widget.bike.id),
                         builder: (context, snapshot) {
                           var settings = snapshot.data;
                           if (settings == null) {
                             return Center(
-                              child: Text('Loading...',
-                                  style: CupertinoTheme.of(context)
-                                      .textTheme
-                                      .navTitleTextStyle),
+                              child: CircularProgressIndicator.adaptive()
                             );
                           }
-                          if (snapshot.error != null) {
+                          if (snapshot.hasError) {
                             return Center(
                               child: Text('Error...',
                                   style: CupertinoTheme.of(context)
@@ -120,7 +118,7 @@ class _SettingsListState extends State<SettingsList> {
                             );
                           }
                           return _getSettings(
-                              myUser, this.widget.bike, settings, context);
+                              myUser, widget.bike, settings, context);
                         }),
                     CupertinoButton(
                       color: CupertinoColors.activeBlue,
@@ -131,7 +129,7 @@ class _SettingsListState extends State<SettingsList> {
                               builder: (context) {
                                 // We need to return the shock detail screen here.
                                 return SettingDetails(
-                                    user: myUser, bike: this.widget.bike);
+                                    user: myUser, bike: widget.bike);
                               })),
                     ),
                     Expanded(child: Container())

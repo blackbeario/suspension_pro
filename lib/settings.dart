@@ -1,5 +1,3 @@
-// ignore_for_file: body_might_complete_normally_catch_error
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +26,7 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   final db = DatabaseService();
-  late Bike selected = Bike();
+  late Bike? _selectedBike = Bike(id: '');
   FirebaseStorage storage = FirebaseStorage.instanceFor(bucket: 'gs://suspension-pro.appspot.com/');
   late String downloadUrl = '';
   File? _imageFile;
@@ -70,8 +68,9 @@ class _SettingsState extends State<Settings> {
     uploadTask.whenComplete(() async {
       downloadUrl = await ref.getDownloadURL();
       db.setBikePic(uid, bikeid, downloadUrl);
-    }).catchError((onError) {
-      print(onError);
+    }).catchError((error) {
+      print(error);
+      return error;
     });
   }
 
@@ -86,7 +85,7 @@ class _SettingsState extends State<Settings> {
           bikes.insert(newIndex, bike);
           for (Bike bike in bikes) {
             bike.index = bikes.indexOf(bike);
-            db.reorderBike(uid, bike.id!, bike.index!);
+            db.reorderBike(uid, bike.id, bike.index!);
           }
         });
       },
@@ -104,7 +103,7 @@ class _SettingsState extends State<Settings> {
           ),
           direction: DismissDirection.endToStart,
           confirmDismiss: (direction) async {
-            return await _confirmDelete(context, uid, $bike.id!, null);
+            return await _confirmDelete(context, uid, $bike.id, null);
           },
           // onDismissed: (direction) => setState(() {
           //   _confirmDelete(context, uid, $bike.id!, null);
@@ -138,10 +137,9 @@ class _SettingsState extends State<Settings> {
                           ),
                         ),
                 ),
-                // leading: Icon(Icons.menu, color: CupertinoColors.inactiveGray.withOpacity(0.5)),
-                initiallyExpanded: selected.id == $bike.id ? true : false,
+                initiallyExpanded: _selectedBike!.id == $bike.id ? true : false,
                 key: PageStorageKey($bike),
-                title: Text($bike.id!, style: TextStyle(fontSize: 18)),
+                title: Text($bike.id, style: TextStyle(fontSize: 18)),
                 children: <Widget>[
                   fork != null
                       ? Container(
@@ -153,10 +151,6 @@ class _SettingsState extends State<Settings> {
                                 padding: EdgeInsets.all(2),
                                 width: 35,
                                 height: 35,
-                                // decoration: BoxDecoration(
-                                //   color: Colors.white,
-                                //   shape: BoxShape.circle,
-                                // ),
                                 child: Image.asset('assets/fork.png')),
                             Container(
                               padding: EdgeInsets.zero,
@@ -168,14 +162,9 @@ class _SettingsState extends State<Settings> {
                                   title: Text(fork["year"].toString() + ' ' + fork["brand"] + ' ' + fork["model"],
                                       style: TextStyle(color: Colors.black87)),
                                   subtitle: Text(
-                                      fork["travel"].toString() +
-                                          'mm / ' +
-                                          fork["damper"] +
-                                          ' / ' +
-                                          fork["offset"].toString() +
-                                          'mm / ' +
-                                          fork["wheelsize"].toString() +
-                                          '"',
+                                      fork["travel"].toString() + 'mm / ' + fork["damper"] + ' / ' 
+                                        + fork["offset"].toString() + 'mm / '
+                                        + fork["wheelsize"].toString() + '"',
                                       style: TextStyle(color: Colors.black54)),
                                   onTap: () async {
                                     /// Await the bike return value from the fork form back button,
@@ -198,7 +187,7 @@ class _SettingsState extends State<Settings> {
                                           }),
                                     );
                                     setState(() {
-                                      selected = $bike;
+                                      _selectedBike = $bike;
                                     });
                                   }),
                             ),
@@ -252,7 +241,7 @@ class _SettingsState extends State<Settings> {
                                     },
                                   ));
                               setState(() {
-                                selected = $bike;
+                                _selectedBike = $bike;
                               });
                             },
                           ),
@@ -308,7 +297,7 @@ class _SettingsState extends State<Settings> {
                                             },
                                           ));
                                       setState(() {
-                                        selected = $bike;
+                                        _selectedBike = $bike;
                                       });
                                     }),
                               ),
@@ -364,7 +353,7 @@ class _SettingsState extends State<Settings> {
                                     },
                                   ));
                               setState(() {
-                                selected = $bike;
+                                _selectedBike = $bike;
                               });
                             },
                           ),
@@ -385,7 +374,7 @@ class _SettingsState extends State<Settings> {
                             return SettingsList(bike: $bike);
                           }));
                           setState(() {
-                            selected = $bike;
+                            _selectedBike = $bike;
                           });
                         }),
                   ),

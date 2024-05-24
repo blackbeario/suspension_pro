@@ -89,7 +89,7 @@ class _BikeFormState extends State<BikeForm> {
                   Column(
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
+                    children: [
                       Padding(
                         padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                         child: TextFormField(
@@ -165,9 +165,7 @@ class _BikeFormState extends State<BikeForm> {
                               color: CupertinoColors.quaternaryLabel,
                               child: Text('Save'),
                               onPressed: _bikeController.text.isNotEmpty
-                                  ? () async {
-                                      await _addUpdateBike();
-                                    }
+                                  ? () async => await _addUpdateBike()
                                   : null)
                           : Container(),
                     ],

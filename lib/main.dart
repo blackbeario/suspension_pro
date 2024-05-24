@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:suspension_pro/app_info.dart';
 import 'package:suspension_pro/models/user.dart';
+import 'package:suspension_pro/openai_form.dart';
 import './services/auth_service.dart';
 import './login.dart';
 import './profile.dart';
 import './settings.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   runApp(MyApp());
@@ -94,8 +96,8 @@ class _AppHomePageState extends State<AppHomePage> {
             label: 'Profile',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.info, size: 24),
-            label: 'Info',
+            icon: Icon(Icons.smart_toy_outlined, size: 24),
+            label: 'AI',
           ),
         ],
       ),
@@ -111,9 +113,9 @@ class _AppHomePageState extends State<AppHomePage> {
             return CupertinoTabView(
               builder: (BuildContext context) => Profile(user: widget.user),
             );
-            case 2:
+          case 2:
             return CupertinoTabView(
-              builder: (BuildContext context) => AppInfo(),
+              builder: (BuildContext context) => OpenAiRequest(userID: widget.user.id),
             );
         }
         return CircularProgressIndicator();

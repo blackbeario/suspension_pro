@@ -1,14 +1,15 @@
 import 'dart:async';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
+import 'package:suspension_pro/app_roadmap.dart';
+import 'package:suspension_pro/helpers.dart';
+import 'package:suspension_pro/profile_pic.dart';
+import 'package:suspension_pro/profile_username_form.dart';
+import 'package:suspension_pro/user_points.dart';
 import './services/auth_service.dart';
 import './services/db_service.dart';
 import 'package:flutter/cupertino.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
 import './models/user.dart';
-import 'imageActionSheet.dart';
 
 class Profile extends StatefulWidget {
   Profile({Key? key, required this.user}) : super(key: key);
@@ -19,146 +20,64 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
   final db = DatabaseService();
-  String? profilePic;
-  late String role;
-  bool usernameUpdated = false;
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    super.dispose();
-  }
-
-  Future<bool> _updateUser(uid, BuildContext context) {
-    db.updateUser(widget.user.id, _usernameController.text, widget.user.email!, role);
-    return Future.value(false);
-  }
-
-  _setUsername(value) {
-    _usernameController.text = value;
-  }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<AppUser?>(
-        stream: db.streamUser(widget.user.id),
-        builder: (context, snapshot) {
-          var myUser = snapshot.data;
-          if (myUser == null) {
-            return Center(child: CupertinoActivityIndicator(animating: true));
-          }
-          if (_usernameController.text == '') _setUsername(myUser.username!);
-          role = myUser.role!;
-          return CupertinoPageScaffold(
-            resizeToAvoidBottomInset: true,
-            navigationBar: CupertinoNavigationBar(
-              middle: Text(myUser.username ?? widget.user.email!),
-              trailing: CupertinoButton(child: Icon(Icons.power_settings_new), onPressed: () => _signOut(context)),
+      stream: db.streamUser(widget.user.id),
+      builder: (context, snapshot) {
+        var myUser = snapshot.data;
+        if (myUser == null) {
+          return Center(child: CupertinoActivityIndicator(animating: true));
+        }
+        
+        return CupertinoPageScaffold(
+          resizeToAvoidBottomInset: true,
+          navigationBar: CupertinoNavigationBar(
+            middle: Text(myUser.username ?? widget.user.email!),
+            trailing: CupertinoButton(child: Icon(Icons.power_settings_new), onPressed: () => _signOut(context)),
+          ),
+          child: Material(
+            color: Colors.white,
+            child: ListView(
+              children: [
+                Row(
+                  children: [
+                    ProfilePic(user: myUser),
+                    ProfileNameForm(user: myUser),
+                  ],
+                ),
+                UserPoints(user: myUser),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                  child: Divider(),
+                ),
+                ListTile(
+                  title: Text('Points Guide'),
+                  trailing: Icon(Icons.arrow_forward_ios),
+                  onTap: () => null,
+                ),
+                ListTile(
+                  title: Text('App Roadmap'),
+                  trailing: Icon(Icons.arrow_forward_ios),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => AppRoadmap())),
+                ),
+                ListTile(
+                  title: Text('Privacy Policy'),
+                  trailing: Icon(Icons.arrow_forward_ios),
+                  onTap: () => loadURL('https://vibesoftware.io/privacy/suspension_pro'),
+                ),
+                ListTile(
+                  title: Text('Terms & Conditions'),
+                  trailing: Icon(Icons.arrow_forward_ios),
+                  onTap: () => loadURL('https://vibesoftware.io/terms/suspension_pro'),
+                ),
+              ],
             ),
-            child: Material(
-              color: Colors.white,
-              child: ListView(
-                children: <Widget>[
-                  GestureDetector(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Stack(
-                          alignment: AlignmentDirectional.topStart,
-                          children: <Widget>[
-                            Padding(
-                                padding: EdgeInsets.all(20),
-                                child: CircleAvatar(
-                                  radius: 102.5,
-                                  child: ClipOval(
-                                    child: myUser.profilePic != '' && myUser.profilePic != null
-                                        ? CachedNetworkImage(
-                                            imageUrl: myUser.profilePic!,
-                                            width: 200,
-                                            height: 200,
-                                            fit: BoxFit.cover,
-                                            placeholder: (context, url) => CupertinoActivityIndicator(animating: true),
-                                            errorWidget: (context, url, error) => Image.asset('assets/genericUserPic.png'),
-                                          )
-                                        : Icon(Icons.photo_camera),
-                                  ),
-                                )),
-                          ],
-                        ),
-                      ],
-                    ),
-                    onTap: () => showCupertinoModalPopup(
-                        useRootNavigator: true, context: context, builder: (context) => ImageActionSheet(uid: widget.user.id)),
-                  ),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: TextFormField(
-                              autofocus: false,
-                              validator: (_usernameController) {
-                                if (_usernameController == null || _usernameController.isEmpty) return 'Please add a username';
-                                return null;
-                              },
-                              onEditingComplete: () {
-                                if (_formKey.currentState!.validate()) {
-                                  _updateUser(myUser.id, context);
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                }
-                              },
-                              decoration: InputDecoration(
-                                icon: Icon(Icons.person, size: 28, color: Colors.blue),
-                                isDense: true,
-                                helperText:
-                                    'Feel free to change this to whatever you like. \nYour email address will not change, and you \ndon\'t have to worry about other usernames.',
-                                filled: true,
-                                hoverColor: Colors.blue.shade100,
-                                border: OutlineInputBorder(),
-                                hintText: 'username',
-                              ),
-                              style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                              controller: _usernameController,
-                          ),
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.stars, color: Colors.blue),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text('Level: ' + role, style: TextStyle(color: Colors.black87)),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: Text(myUser.points.toString() + 'pts', style: TextStyle(color: Colors.blue)),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                          child: Text(
-                            'Share settings with others to raise your skill level! Move up from NEWBIE to PRO simply by sharing your suspension settings.',
-                          ),
-                        ),
-                        ListTile(
-                          title: Text('Points Guide'),
-                          trailing: Icon(Icons.arrow_forward_ios),
-                          onTap: () => null,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
+          ),
+        );
+      });
   }
 
   Future<bool> _signOut(BuildContext context) {
