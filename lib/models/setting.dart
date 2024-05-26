@@ -6,7 +6,7 @@ class Setting {
   final String? bike;
   final ProductSetting? fork;
   final ProductSetting? shock;
-  final int? riderWeight;
+  final String? riderWeight;
   final DateTime? updated;
   final String? frontTire;
   final String? rearTire;
@@ -31,13 +31,13 @@ class Setting {
 
   factory Setting.fromJson(Map<String, dynamic> json) {
     return Setting(
-      id: json['settingName'],
+      id: json['settingName'] ?? '',
       riderWeight: json['riderWeight'] ?? '',
-      bike: json['bike'],
-      fork: json['fork'] != null ? ProductSetting.fromJson(json['fork']) : null, // Map.from(json['fork'])
-      shock: json['shock'] != null ? ProductSetting.fromJson(json['shock']) : null,
-      frontTire: json['frontTire'] ?? '',
-      rearTire: json['rearTire'] ?? '',
+      bike: _parseBike(json['bike']),
+      fork: _parseProduct(json, true),
+      shock: _parseProduct(json, false),
+      frontTire: json['front_tire_pressure'].toString(),
+      rearTire: json['rear_tire_pressure'].toString(),
       updated: json['updated'] != null ? DateTime.fromMillisecondsSinceEpoch(json['updated']) : null,
       notes: json['notes'] ?? '',
     );
@@ -52,4 +52,89 @@ class Setting {
     'updated': updated?.millisecondsSinceEpoch,
     'notes': notes,
   };
+}
+
+String _parseBike(bike) {
+  if (bike.runtimeType != String) {
+    return bike['make'] + ' ' + bike['model'];
+  }
+  return bike;
+}
+
+ProductSetting? _parseProduct(Map json, bool isFront) {
+  if (isFront) {
+    if (json.containsKey('suspension_settings') && json['suspension_settings'].runtimeType != String) {
+      Map<String, dynamic> settings = json['suspension_settings'];
+      if (settings.containsKey('fork')) {
+        return ProductSetting.fromJson(settings['fork']);
+      }
+      if (settings.containsKey('front')) {
+        return ProductSetting.fromJson(settings['front']);
+      }
+      return ProductSetting.fromJson(settings);
+    }
+    // else if (json.containsKey('settings') && json['settings'].runtimeType != String) {
+    //   Map<String, dynamic> settings = json['settings'];
+    //   if (settings.containsKey('front')) {
+    //     return ProductSetting.fromJson(settings['front']);
+    //   }
+    //   return ProductSetting.fromJson(settings);
+    // }
+    // else if (json.containsKey('suspension') && json['suspension'].runtimeType != String) {
+    //   Map<String, dynamic> settings = json['suspension'];
+    //   if (settings.containsKey('front')) {
+    //     return ProductSetting.fromJson(settings['front']);
+    //   }
+    //   return ProductSetting.fromJson(settings);
+    // }
+    // else if (json.containsKey('components') && json['components'].runtimeType != String) {
+    //   Map<String, dynamic> settings = json['components'];
+    //   if (settings.containsKey('fork')) {
+    //     return ProductSetting.fromJson(settings['fork']['settings']);
+    //   }
+    //   if (settings.containsKey('front')) {
+    //     return ProductSetting.fromJson(settings['front']);
+    //   }
+    //   return ProductSetting.fromJson(settings);
+    // }
+    return null;
+  }
+
+  else {
+    if (json.containsKey('suspension_settings') && json['suspension_settings'].runtimeType != String) {
+      Map<String, dynamic> settings = json['suspension_settings'];
+      if (settings.containsKey('shock')) {
+        return ProductSetting.fromJson(settings['shock']);
+      }
+      if (settings.containsKey('rear')) {
+        return ProductSetting.fromJson(settings['rear']);
+      }
+      return ProductSetting.fromJson(settings);
+    }
+    // else if (json.containsKey('settings') && json['settings'].runtimeType != String) {
+    //   Map<String, dynamic> settings = json['settings'];
+    //   if (settings.containsKey('rear')) {
+    //     return ProductSetting.fromJson(settings['rear']);
+    //   }
+    //   return ProductSetting.fromJson(settings);
+    // }
+    // else if (json.containsKey('suspension') && json['suspension'].runtimeType != String) {
+    //   Map<String, dynamic> settings = json['suspension'];
+    //   if (settings.containsKey('rear')) {
+    //     return ProductSetting.fromJson(settings['rear']);
+    //   }
+    //   return ProductSetting.fromJson(settings);
+    // }
+    // else if (json.containsKey('components') && json['components'].runtimeType != String) {
+    //   Map<String, dynamic> settings = json['components'];
+    //   if (settings.containsKey('shock')) {
+    //     return ProductSetting.fromJson(settings['shock']['settings']);
+    //   }
+    //   if (settings.containsKey('rear')) {
+    //     return ProductSetting.fromJson(settings['rear']);
+    //   }
+    //   return ProductSetting.fromJson(settings);
+    // }
+    return null;
+  }
 }
