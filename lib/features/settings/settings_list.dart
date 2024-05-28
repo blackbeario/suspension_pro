@@ -3,11 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:suspension_pro/models/bike.dart';
 import 'package:suspension_pro/models/product_setting.dart';
 import 'setting_detail.dart';
-import './services/auth_service.dart';
-import './services/db_service.dart';
+import '../../services/auth_service.dart';
+import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
-import './models/user.dart';
-import 'models/setting.dart';
+import '../../models/user.dart';
+import '../../models/setting.dart';
 
 class SettingsList extends StatefulWidget {
   SettingsList({required this.bike});

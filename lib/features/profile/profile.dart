@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
-import 'package:suspension_pro/app_roadmap.dart';
-import 'package:suspension_pro/helpers.dart';
-import 'package:suspension_pro/profile_pic.dart';
-import 'package:suspension_pro/profile_username_form.dart';
-import 'package:suspension_pro/user_points.dart';
-import './services/auth_service.dart';
-import './services/db_service.dart';
+import 'package:suspension_pro/features/roadmap/app_roadmap.dart';
+import 'package:suspension_pro/utilities/helpers.dart';
+import 'package:suspension_pro/features/profile/profile_pic.dart';
+import 'package:suspension_pro/features/profile/profile_username_form.dart';
+import 'package:suspension_pro/features/profile/user_points.dart';
+import '../../services/auth_service.dart';
+import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
-import './models/user.dart';
+import '../../models/user.dart';
 
 class Profile extends StatefulWidget {
   Profile({Key? key, required this.user}) : super(key: key);

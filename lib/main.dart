@@ -3,11 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:suspension_pro/models/user.dart';
-import 'package:suspension_pro/openai_form.dart';
+import 'package:suspension_pro/features/forms/openai_form.dart';
 import './services/auth_service.dart';
-import './login.dart';
-import './profile.dart';
-import './settings.dart';
+import 'features/auth/login.dart';
+import 'features/profile/profile.dart';
+import 'features/settings/settings.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 

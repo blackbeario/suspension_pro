@@ -4,11 +4,11 @@ import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:suspension_pro/ai_response.dart';
-import 'package:suspension_pro/helpers.dart';
+import 'package:suspension_pro/models/ai_response.dart';
+import 'package:suspension_pro/utilities/helpers.dart';
 import 'package:suspension_pro/models/bike.dart';
 import 'package:suspension_pro/models/setting.dart';
-import './services/db_service.dart';
+import '../../services/db_service.dart';
 
 class OpenAiRequest extends StatefulWidget {
   OpenAiRequest({Key? key, required this.userID}) : super(key: key);

@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:suspension_pro/signup.dart';
+import 'package:suspension_pro/features/auth/signup.dart';
 // import 'package:suspension_pro/signup.dart';
-import './services/auth_service.dart'; // iOS
+import '../../services/auth_service.dart'; // iOS
 import 'package:flutter/cupertino.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';

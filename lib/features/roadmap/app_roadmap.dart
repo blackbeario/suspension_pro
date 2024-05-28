@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:suspension_pro/app_roadmap_item.dart';
+import 'package:suspension_pro/features/roadmap/app_roadmap_item.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:suspension_pro/suggestion_box.dart';
+import 'package:suspension_pro/features/roadmap/suggestion_box.dart';
 
 class AppRoadmap extends StatelessWidget {
   AppRoadmap({Key? key}) : super(key: key);

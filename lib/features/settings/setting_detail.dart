@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:suspension_pro/models/product_setting.dart';
-import './services/db_service.dart';
+import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:share_plus/share_plus.dart';
-import 'models/bike.dart';
-import 'models/user.dart';
+import '../../models/bike.dart';
+import '../../models/user.dart';
 
 class SettingDetails extends StatefulWidget {
   SettingDetails({required this.user, this.setting, this.bike, this.fork, this.shock, this.frontTire, this.rearTire, this.notes});

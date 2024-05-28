@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'fork_form.dart';
-import 'models/user.dart';
+import '../../models/user.dart';
 import 'shock_form.dart';
-import './services/db_service.dart';
+import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 
 // ignore: must_be_immutable
