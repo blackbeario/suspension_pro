@@ -27,6 +27,7 @@ dependencies:
   share_plus: ^8.0.3
   firebase_crashlytics: ^3.5.1
   chat_gpt_sdk: 3.0.7
+  shared_preferences:
 
 dev_dependencies:
   flutter_test:
