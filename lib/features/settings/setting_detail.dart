@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
-import './services/db_service.dart';
+import 'package:suspension_pro/models/product_setting.dart';
+import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:share_plus/share_plus.dart';
-import 'models/bike.dart';
-import 'models/user.dart';
+import '../../models/bike.dart';
+import '../../models/user.dart';
 
 class SettingDetails extends StatefulWidget {
-  SettingDetails({required this.user, this.setting, this.bike, this.fork, this.shock, this.frontTire, this.rearTire});
+  SettingDetails({required this.user, this.setting, this.bike, this.fork, this.shock, this.frontTire, this.rearTire, this.notes});
 
   final AppUser user;
-  final String? setting;
+  final String? setting, frontTire, rearTire, notes;
   final Bike? bike;
-  final Map? fork;
-  final Map? shock;
-  final String? frontTire;
-  final String? rearTire;
+  final ProductSetting? fork, shock;
 
   @override
   _SettingDetailsState createState() => _SettingDetailsState();
@@ -36,6 +34,7 @@ class _SettingDetailsState extends State<SettingDetails> {
   final _lsrShockController = TextEditingController();
   final _springRateShockController = TextEditingController();
   final _rearTireController = TextEditingController();
+  final _notesController = TextEditingController();
 
   @override
   void initState() {
@@ -45,20 +44,22 @@ class _SettingDetailsState extends State<SettingDetails> {
     var $shock = widget.shock;
     _settingNameController.text = $setting != null ? $setting : '';
 
-    _hscForkController.text = $fork?['HSC'] ?? '';
-    _lscForkController.text = $fork?['LSC'] ?? '';
-    _hsrForkController.text = $fork?['HSR'] ?? '';
-    _lsrForkController.text = $fork?['LSR'] ?? '';
-    _springRateForkController.text = $fork?['springRate'] ?? '';
+    _hscForkController.text = $fork?.hsc ?? '';
+    _lscForkController.text = $fork?.lsc ?? '';
+    _hsrForkController.text = $fork?.hsr ?? '';
+    _lsrForkController.text = $fork?.lsr ?? '';
+    _springRateForkController.text = $fork?.springRate ?? '';
 
-    _hscShockController.text = $shock?['HSC'] ?? '';
-    _lscShockController.text = $shock?['LSC'] ?? '';
-    _hsrShockController.text = $shock?['HSR'] ?? '';
-    _lsrShockController.text = $shock?['LSR'] ?? '';
-    _springRateShockController.text = $shock?['springRate'] ?? '';
+    _hscShockController.text = $shock?.hsc ?? '';
+    _lscShockController.text = $shock?.lsc ?? '';
+    _hsrShockController.text = $shock?.hsr ?? '';
+    _lsrShockController.text = $shock?.lsr ?? '';
+    _springRateShockController.text = $shock?.springRate ?? '';
 
     _frontTireController.text = widget.frontTire ?? '';
     _rearTireController.text = widget.rearTire ?? '';
+
+    _notesController.text = widget.notes ?? '';
   }
 
   @override
@@ -76,6 +77,7 @@ class _SettingDetailsState extends State<SettingDetails> {
     _settingNameController.dispose();
     _frontTireController.dispose();
     _rearTireController.dispose();
+    _notesController.dispose();
     super.dispose();
   }
 
@@ -97,6 +99,7 @@ class _SettingDetailsState extends State<SettingDetails> {
       _springRateShockController.text,
       _frontTireController.text,
       _rearTireController.text,
+      _notesController.text,
     );
     return Future.value(false);
   }
@@ -106,6 +109,8 @@ class _SettingDetailsState extends State<SettingDetails> {
     var $fork = widget.bike != null ? widget.bike!.fork : null;
     var $shock = widget.bike != null ? widget.bike!.shock : null;
 
+    // This would be saved in a singleton class if building this in 2024
+    // instead of repeating this all over the app. Rookie shit from 2020.
     return StreamBuilder<AppUser?>(
       stream: db.streamUser(widget.user.id),
       builder: (context, snapshot) {
@@ -126,6 +131,7 @@ class _SettingDetailsState extends State<SettingDetails> {
             ),
           ),
           child: Material(
+            color: Colors.white,
             child: ListView(
               scrollDirection: Axis.vertical,
               children: <Widget>[
@@ -156,17 +162,15 @@ class _SettingDetailsState extends State<SettingDetails> {
                           },
                         ),
                       ),
-                      SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
                             child: Column(children: <Widget>[
                               SizedBox(
                                 child: Text($fork != null ? $fork['brand'] + ' ' + $fork['model'] : 'No fork saved'),
-                                height: 40,
+                                height: 25,
                               ),
                               Container(
                                   padding: EdgeInsets.all(2),
@@ -177,11 +181,11 @@ class _SettingDetailsState extends State<SettingDetails> {
                                     shape: BoxShape.circle,
                                   ),
                                   child: Image.asset('assets/fork.png')),
-                              SizedBox(height: 20),
+                              SizedBox(height: 10),
                               TextField(
                                   style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                                   decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(10),
+                                    contentPadding: EdgeInsets.all(6),
                                     hintText: 'HSC',
                                     labelText: 'HSC',
                                   ),
@@ -190,7 +194,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                               TextField(
                                   style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                                   decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(10),
+                                    contentPadding: EdgeInsets.all(6),
                                     hintText: 'LSC',
                                     labelText: 'LSC',
                                   ),
@@ -199,7 +203,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                               TextField(
                                   style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                                   decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(10),
+                                    contentPadding: EdgeInsets.all(6),
                                     hintText: 'HSR',
                                     labelText: 'HSR',
                                   ),
@@ -208,7 +212,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                               TextField(
                                   style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                                   decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(10),
+                                    contentPadding: EdgeInsets.all(6),
                                     hintText: 'LSR',
                                     labelText: 'LSR',
                                   ),
@@ -217,7 +221,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                               TextField(
                                   style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                                   decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(10),
+                                    contentPadding: EdgeInsets.all(6),
                                     hintText: 'SPRING / PSI',
                                     labelText: 'SPRING / PSI',
                                   ),
@@ -226,7 +230,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                               TextField(
                                   style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                                   decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(10),
+                                    contentPadding: EdgeInsets.all(6),
                                     hintText: 'FRONT TIRE PSI',
                                     labelText: 'FRONT TIRE PSI',
                                   ),
@@ -239,7 +243,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                               children: <Widget>[
                                 SizedBox(
                                   child: Text($shock != null ? $shock['brand'] + ' ' + $shock['model'] : 'No shock saved'),
-                                  height: 40,
+                                  height: 25,
                                 ),
                                 Container(
                                     padding: EdgeInsets.all(2),
@@ -250,11 +254,11 @@ class _SettingDetailsState extends State<SettingDetails> {
                                       shape: BoxShape.circle,
                                     ),
                                     child: Image.asset('assets/shock.png')),
-                                SizedBox(height: 20),
+                                SizedBox(height: 10),
                                 TextField(
                                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(10),
+                                      contentPadding: EdgeInsets.all(6),
                                       hintText: 'HSC',
                                       labelText: 'HSC',
                                     ),
@@ -263,7 +267,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                                 TextField(
                                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(10),
+                                      contentPadding: EdgeInsets.all(6),
                                       hintText: 'LSC',
                                       labelText: 'LSC',
                                     ),
@@ -272,7 +276,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                                 TextField(
                                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(10),
+                                      contentPadding: EdgeInsets.all(6),
                                       hintText: 'HSR',
                                       labelText: 'HSR',
                                     ),
@@ -281,7 +285,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                                 TextField(
                                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(10),
+                                      contentPadding: EdgeInsets.all(6),
                                       hintText: 'LSR',
                                       labelText: 'LSR',
                                     ),
@@ -290,7 +294,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                                 TextField(
                                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(10),
+                                      contentPadding: EdgeInsets.all(6),
                                       hintText: 'SPRING / PSI',
                                       labelText: 'SPRING / PSI',
                                     ),
@@ -299,13 +303,28 @@ class _SettingDetailsState extends State<SettingDetails> {
                                 TextField(
                                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(10),
+                                      contentPadding: EdgeInsets.all(6),
                                       hintText: 'REAR TIRE PSI',
                                       labelText: 'REAR TIRE PSI',
                                     ),
                                     controller: _rearTireController,
                                     keyboardType: TextInputType.number),
                               ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      ExpansionTile(
+                        title: Text('Notes'),
+                        children: [
+                          TextField(
+                            minLines: 1,
+                            maxLines: 4,
+                            controller: _notesController,
+                            keyboardType: TextInputType.text,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(6),
+                              hintText: 'Add custom notes for this setting',
                             ),
                           ),
                         ],

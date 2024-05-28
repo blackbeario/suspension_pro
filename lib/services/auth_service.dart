@@ -26,7 +26,7 @@ class AuthService {
           email: email, password: password);
       return _userFromFirebase(credential.user);
     } on auth.FirebaseException catch (e) {
-      return e.message;
+      return e;
     }
   }
 

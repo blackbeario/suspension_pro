@@ -10,34 +10,22 @@ class DatabaseService extends ChangeNotifier {
 
   /// Settings collection stream.
   Stream<List<Setting>> streamSettings(String uid, String bikeid) {
-    var ref = _db
-        .collection('users')
-        .doc(uid)
-        .collection('bikes')
-        .doc(bikeid)
-        .collection('settings');
-    return ref.snapshots().map(
-        (list) => list.docs.map((doc) => Setting.fromFirestore(doc)).toList());
+    var ref = _db.collection('users').doc(uid).collection('bikes').doc(bikeid).collection('settings');
+    return ref.snapshots().map((list) => list.docs.map((doc) => Setting.fromFirestore(doc)).toList());
   }
 
   /// Bikes collection stream.
   Stream<List<Bike>> streamBikes(String uid) {
     // print('fetching bikes');
     var ref = _db.collection('users').doc(uid).collection('bikes').orderBy('index');
-    return ref.snapshots().map(
-        (list) => list.docs.map((doc) => Bike.fromFirestore(doc)).toList());
+    return ref.snapshots().map((list) => list.docs.map((doc) => Bike.fromFirestore(doc)).toList());
   }
 
   Stream<AppUser> streamUser(String id) {
-    return _db
-        .collection('users')
-        .doc(id)
-        .snapshots()
-        .map((snap) => AppUser.fromSnapshot(snap.data()!));
+    return _db.collection('users').doc(id).snapshots().map((snap) => AppUser.fromSnapshot(snap.data()!));
   }
 
-  Future<void> updateUser(
-      String uid, String username, String email, String status) async {
+  Future<void> updateUser(String uid, String username, String email, String status) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;
     return await _db.collection('users').doc(uid).set({
@@ -48,8 +36,7 @@ class DatabaseService extends ChangeNotifier {
     }, SetOptions(merge: true));
   }
 
-  Future<void> addSharePoints(
-      String uid, int previousPoints, String role) async {
+  Future<void> addSharePoints(String uid, int previousPoints, String role) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;
     String status = '';
@@ -75,28 +62,25 @@ class DatabaseService extends ChangeNotifier {
   Future<void> setProfilePic(String uid, String filePath) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;
-    return await _db.collection('users').doc(uid).set(
-        {'updated': $updated, 'profilePic': filePath}, SetOptions(merge: true));
+    return await _db.collection('users').doc(uid).set({'updated': $updated, 'profilePic': filePath}, SetOptions(merge: true));
   }
 
   Future<void> setBikePic(String uid, String bikeid, String filePath) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;
-    return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).set(
-        {'updated': $updated, 'bikePic': filePath}, SetOptions(merge: true));
-  }
-
-  /// Need to add required fork and shock fields with values.
-  Future<void> addUpdateBike(
-      String uid, String bikeid, Map? fork, Map? shock) async {
-    var $now = DateTime.now();
-    var $created = $now.millisecondsSinceEpoch;
     return await _db
         .collection('users')
         .doc(uid)
         .collection('bikes')
         .doc(bikeid)
-        .set({
+        .set({'updated': $updated, 'bikePic': filePath}, SetOptions(merge: true));
+  }
+
+  /// Need to add required fork and shock fields with values.
+  Future<void> addUpdateBike(String uid, String bikeid, Map? fork, Map? shock) async {
+    var $now = DateTime.now();
+    var $created = $now.millisecondsSinceEpoch;
+    return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).set({
       'created': $created,
       'index': 0,
       if (fork != null)
@@ -123,57 +107,24 @@ class DatabaseService extends ChangeNotifier {
   }
 
   Future<void> reorderBike(String uid, String bikeid, int index) async {
-    return await _db
-        .collection('users')
-        .doc(uid)
-        .collection('bikes')
-        .doc(bikeid)
-        .set({
+    return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).set({
       'index': index,
     }, SetOptions(merge: true));
   }
 
   Future<void> deleteBike(String uid, String bikeid) async {
-    return await _db
-        .collection('users')
-        .doc(uid)
-        .collection('bikes')
-        .doc(bikeid)
-        .delete();
+    return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).delete();
   }
 
   Future<void> deleteSetting(String uid, String bikeid, String sid) async {
-    return await _db
-        .collection('users')
-        .doc(uid)
-        .collection('bikes')
-        .doc(bikeid)
-        .collection('settings')
-        .doc(sid)
-        .delete();
+    return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).collection('settings').doc(sid).delete();
   }
 
-  Future<void> updateFork(
-      String uid,
-      String bikeid,
-      String year,
-      String travel,
-      String damper,
-      String offset,
-      String wheelsize,
-      String brand,
-      String model,
-      String spacers,
-      String spacing,
-      String serial) async {
+  Future<void> updateFork(String uid, String bikeid, String year, String travel, String damper, String offset, String wheelsize,
+      String brand, String model, String spacers, String spacing, String serial) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
-    return await _db
-        .collection('users')
-        .doc(uid)
-        .collection('bikes')
-        .doc(bikeid)
-        .set({
+    return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).set({
       'fork': {
         'updated': updated,
         'year': year,
@@ -190,16 +141,11 @@ class DatabaseService extends ChangeNotifier {
     }, SetOptions(merge: true));
   }
 
-  Future<void> updateShock(String uid, String bikeid, String year,
-      String stroke, String brand, String model, String spacers, String serial) async {
+  Future<void> updateShock(
+      String uid, String bikeid, String year, String stroke, String brand, String model, String spacers, String serial) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
-    return await _db
-        .collection('users')
-        .doc(uid)
-        .collection('bikes')
-        .doc(bikeid)
-        .set({
+    return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).set({
       'shock': {
         'updated': updated,
         'year': year,
@@ -223,50 +169,17 @@ class DatabaseService extends ChangeNotifier {
     });
   }
 
-  Future<void> updateSetting(
-    String uid,
-    String bikeid,
-    String settingId,
-    String hscFork,
-    String lscFork,
-    String hsrFork,
-    String lsrFork,
-    String springFork,
-    String hscShock,
-    String lscShock,
-    String hsrShock,
-    String lsrShock,
-    String springShock,
-    String frontTire,
-    String rearTire
-  ) async {
+  Future<void> updateSetting(String uid, bikeid, settingId, hscFork, lscFork, hsrFork, lsrFork, springFork, hscShock, lscShock, hsrShock,
+      lsrShock, springShock, frontTire, rearTire, notes) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
-    return await _db
-        .collection('users')
-        .doc(uid)
-        .collection('bikes')
-        .doc(bikeid)
-        .collection('settings')
-        .doc(settingId)
-        .set({
+    return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).collection('settings').doc(settingId).set({
       'updated': updated,
-      'fork': {
-        'HSC': hscFork,
-        'LSC': lscFork,
-        'HSR': hsrFork,
-        'LSR': lsrFork,
-        'springRate': springFork
-      },
-      'shock': {
-        'HSC': hscShock,
-        'LSC': lscShock,
-        'HSR': hsrShock,
-        'LSR': lsrShock,
-        'springRate': springShock
-      },
+      'fork': {'HSC': hscFork, 'LSC': lscFork, 'HSR': hsrFork, 'LSR': lsrFork, 'springRate': springFork},
+      'shock': {'HSC': hscShock, 'LSC': lscShock, 'HSR': hsrShock, 'LSR': lsrShock, 'springRate': springShock},
       'frontTire': frontTire,
-      'rearTire': rearTire
+      'rearTire': rearTire,
+      'notes': notes
     }, SetOptions(merge: true));
   }
 }

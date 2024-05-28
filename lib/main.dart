@@ -2,18 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:suspension_pro/features/onboarding/onboarding.dart';
 import 'package:suspension_pro/models/user.dart';
+import 'package:suspension_pro/features/forms/openai_form.dart';
 import './services/auth_service.dart';
-import './login.dart';
-import './profile.dart';
-import './settings.dart';
+import 'features/auth/login.dart';
+import 'features/profile/profile.dart';
+import 'features/settings/settings.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final bool showHome = prefs.getBool('showHome') ?? false;
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  runApp(MyApp());
+  runApp(MyApp(showHome: showHome));
 }
 
 enum DeviceType { Phone, Tablet }
@@ -25,7 +32,9 @@ DeviceType getDeviceType() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key, required this.showHome}) : super(key: key);
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  final bool showHome;
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +51,11 @@ class MyApp extends StatelessWidget {
         ],
         debugShowCheckedModeBanner: false,
         theme: CupertinoThemeData(
-            primaryColor: Color(0xFF007AFF), // iOS 10's default blue
-            primaryContrastingColor: Color(0xFFFFFFFF),
-            barBackgroundColor: Color(0xFFE5E5EA)),
-        home: AuthenticationWrapper(),
+          primaryColor: Color(0xFF007AFF), // iOS 10's default blue
+          primaryContrastingColor: Color(0xFFFFFFFF),
+          barBackgroundColor: Color(0xFFE5E5EA),
+        ),
+        home: showHome ? AuthenticationWrapper() : Onboarding(),
       ),
     );
   }
@@ -77,19 +87,23 @@ class AppHomePage extends StatefulWidget {
   State<AppHomePage> createState() => _AppHomePageState();
 }
 
-class _AppHomePageState extends State<AppHomePage> with SingleTickerProviderStateMixin {
+class _AppHomePageState extends State<AppHomePage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.settings),
+            icon: Icon(CupertinoIcons.settings, size: 24),
             label: 'Settings',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.profile_circled),
+            icon: Icon(CupertinoIcons.profile_circled, size: 24),
             label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.smart_toy_outlined, size: 24),
+            label: 'AI',
           ),
         ],
       ),
@@ -104,6 +118,10 @@ class _AppHomePageState extends State<AppHomePage> with SingleTickerProviderStat
           case 1:
             return CupertinoTabView(
               builder: (BuildContext context) => Profile(user: widget.user),
+            );
+          case 2:
+            return CupertinoTabView(
+              builder: (BuildContext context) => OpenAiRequest(userID: widget.user.id),
             );
         }
         return CircularProgressIndicator();
