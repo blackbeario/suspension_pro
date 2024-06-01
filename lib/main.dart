@@ -20,7 +20,7 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  runApp(MyApp(showHome: showHome));
+  runApp(MyApp(showHome: false));
 }
 
 enum DeviceType { Phone, Tablet }
