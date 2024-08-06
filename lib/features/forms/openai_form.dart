@@ -43,11 +43,10 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
     "suspension_settings": {
       "fork": {
         "sag": "",
-        "springRate": "",
+        "air_pressure": "",
         "compression": {"high_speed": "", "low_speed": ""},
         "rebound": {"high_speed": "", "low_speed": ""},
         "volume_spacers": "",
-        "tire_pressure": "",
       },
       "shock": {
         "sag": "",
@@ -68,8 +67,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
       responseFormat: ResponseFormat.jsonObject,
       maxToken: 300,
       seed: 1,
-      model:
-          Gpt41106PreviewChatModel(), //GptTurbo1106Model //GptTurboChatModel() // Gpt4ChatModel() seems to provide more detail, but is slower
+      model: GptTurbo1106Model(),
     );
 
     final ChatCTResponse? response =
@@ -161,7 +159,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                 children: [
                   CupertinoButton.filled(
                     child: Text('Save'),
-                    onPressed: null,
+                    onPressed: () {},
                   ),
                   CupertinoButton.filled(
                     child: Text('Dismiss'),

@@ -18,7 +18,7 @@ class Setting {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Setting(
       id: doc.id,
-      riderWeight: data['riderWeight'] ?? 0,
+      riderWeight: data['riderWeight'] ?? '',
       bike: data['bike'] ?? '',
       fork: data['fork'] != null ? ProductSetting.fromJson(data['fork']) : null,
       shock: data['shock'] != null ? ProductSetting.fromJson(data['shock']) : null,

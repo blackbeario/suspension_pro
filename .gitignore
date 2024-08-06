@@ -30,6 +30,9 @@
 .pub/
 /build/
 
+# Firestore
+firestore.rules
+
 # Web related
 lib/generated_plugin_registrant.dart
 
