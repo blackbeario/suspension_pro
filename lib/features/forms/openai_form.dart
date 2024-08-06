@@ -159,7 +159,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                 children: [
                   CupertinoButton.filled(
                     child: Text('Save'),
-                    onPressed: null,
+                    onPressed: () {},
                   ),
                   CupertinoButton.filled(
                     child: Text('Dismiss'),

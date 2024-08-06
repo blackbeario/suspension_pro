@@ -6,13 +6,13 @@ class ProductSetting {
 
   factory ProductSetting.fromJson(Map<String, dynamic> json) {
     return ProductSetting(
-      sag: json['sag'] ?? '',
-      springRate: json['springRate'] ?? json['spring_rate'] ?? json['air_pressure'] ?? json['pressure'] ?? '',
-      preload: json['preload'] ?? '',
-      hsc: json['HSC'] ?? json['high_speed_compression'] ?? json["compression"]["high_speed"] ?? '',
-      lsc: json['LSC'] ?? json['low_speed_compression'] ?? json["compression"]["low_speed"] ?? '',
-      hsr: json['HSR'] ?? json['high_speed_rebound'] ?? json["rebound"]["low_speed"] ?? '',
-      lsr: json['LSR'] ?? json['low_speed_rebound'] ?? json["rebound"]["low_speed"] ?? '',
+      sag: json['sag'].toString(),
+      springRate: json['springRate'].toString() ?? json['spring_rate'].toString() ?? json['air_pressure'].toString() ?? json['pressure'].toString() ?? '',
+      preload: json['preload'].toString() ?? '',
+      hsc: json['HSC'] ?? json['high_speed_compression'] ?? json["compression"]["high_speed"].toString() ?? '',
+      lsc: json['LSC'] ?? json['low_speed_compression'] ?? json["compression"]["low_speed"].toString() ?? '',
+      hsr: json['HSR'] ?? json['high_speed_rebound'] ?? json["rebound"]["low_speed"].toString() ?? '',
+      lsr: json['LSR'] ?? json['low_speed_rebound'] ?? json["rebound"]["low_speed"].toString() ?? '',
       // compression: json['compression_damping'] ?? _parseValue(json['compression']) ?? '',
       // rebound: json['rebound_damping'] ?? _parseValue(json['rebound']) ?? '',
       volume_spacers: json['volume_spacers'].toString()

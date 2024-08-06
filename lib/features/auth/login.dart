@@ -59,7 +59,8 @@ class LoginPageState extends State<LoginPage> {
                         color: Color.fromARGB(255, 0, 0, 0),
                       ),
                     ],
-                  )),
+                  ),
+                ),
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(0, 200, 0, 0),
