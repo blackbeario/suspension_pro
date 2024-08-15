@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:suspension_pro/features/settings/settings_form_field.dart';
 import 'package:suspension_pro/models/product_setting.dart';
+import 'package:suspension_pro/utilities/helpers.dart';
 import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:share_plus/share_plus.dart';
 import '../../models/bike.dart';
 import '../../models/user.dart';
 
@@ -22,85 +23,46 @@ class _SettingDetailsState extends State<SettingDetails> {
   final _formKey = GlobalKey<FormState>();
   final db = DatabaseService();
   final _settingNameController = TextEditingController();
-  final _hscForkController = TextEditingController();
-  final _lscForkController = TextEditingController();
-  final _hsrForkController = TextEditingController();
-  final _lsrForkController = TextEditingController();
-  final _springRateForkController = TextEditingController();
-  final _frontTireController = TextEditingController();
-  final _hscShockController = TextEditingController();
-  final _lscShockController = TextEditingController();
-  final _hsrShockController = TextEditingController();
-  final _lsrShockController = TextEditingController();
-  final _springRateShockController = TextEditingController();
-  final _rearTireController = TextEditingController();
+  late String _hscFork,
+      _lscFork,
+      _hsrFork,
+      _lsrFork,
+      _springRateFork,
+      _frontTire,
+      _hscShock,
+      _lscShock,
+      _hsrShock,
+      _lsrShock,
+      _springRateShock,
+      _rearTire;
   final _notesController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    var $setting = widget.setting;
-    var $fork = widget.fork;
-    var $shock = widget.shock;
+    String? $setting = widget.setting;
+    ProductSetting? $fork = widget.fork;
+    ProductSetting? $shock = widget.shock;
     _settingNameController.text = $setting != null ? $setting : '';
-
-    _hscForkController.text = $fork?.hsc ?? '';
-    _lscForkController.text = $fork?.lsc ?? '';
-    _hsrForkController.text = $fork?.hsr ?? '';
-    _lsrForkController.text = $fork?.lsr ?? '';
-    _springRateForkController.text = $fork?.springRate ?? '';
-
-    _hscShockController.text = $shock?.hsc ?? '';
-    _lscShockController.text = $shock?.lsc ?? '';
-    _hsrShockController.text = $shock?.hsr ?? '';
-    _lsrShockController.text = $shock?.lsr ?? '';
-    _springRateShockController.text = $shock?.springRate ?? '';
-
-    _frontTireController.text = widget.frontTire ?? '';
-    _rearTireController.text = widget.rearTire ?? '';
-
     _notesController.text = widget.notes ?? '';
-  }
-
-  @override
-  void dispose() {
-    _hscForkController.dispose();
-    _lscForkController.dispose();
-    _hsrForkController.dispose();
-    _lsrForkController.dispose();
-    _springRateForkController.dispose();
-    _hscShockController.dispose();
-    _lscShockController.dispose();
-    _hsrShockController.dispose();
-    _lsrShockController.dispose();
-    _springRateShockController.dispose();
-    _settingNameController.dispose();
-    _frontTireController.dispose();
-    _rearTireController.dispose();
-    _notesController.dispose();
-    super.dispose();
+    _hscFork = $fork?.hsc ?? '';
+    _lscFork = $fork?.lsc ?? '';
+    _hsrFork = $fork?.hsr ?? '';
+    _lsrFork = $fork?.lsr ?? '';
+    _springRateFork = $fork?.springRate ?? '';
+    _frontTire = widget.frontTire ?? '';
+    _hscShock = $shock?.hsc ?? '';
+    _lscShock = $shock?.lsc ?? '';
+    _hsrShock = $shock?.hsr ?? '';
+    _lsrShock = $shock?.lsr ?? '';
+    _springRateShock = $shock?.springRate ?? '';
+    _rearTire = widget.rearTire ?? '';
   }
 
   Future<bool> _updateSetting(bikeId, BuildContext context) {
     Navigator.pop(context);
-    db.updateSetting(
-      widget.user.id,
-      bikeId,
-      _settingNameController.text,
-      _hscForkController.text,
-      _lscForkController.text,
-      _hsrForkController.text,
-      _lsrForkController.text,
-      _springRateForkController.text,
-      _hscShockController.text,
-      _lscShockController.text,
-      _hsrShockController.text,
-      _lsrShockController.text,
-      _springRateShockController.text,
-      _frontTireController.text,
-      _rearTireController.text,
-      _notesController.text,
-    );
+    db.updateSetting(widget.user.id, bikeId, _settingNameController.text, _hscFork, _lscFork, _hsrFork, _lsrFork, _springRateFork,
+        _hscShock, _lscShock, _hsrShock, _lsrShock, _springRateShock, _frontTire, _rearTire, _notesController.text);
     return Future.value(false);
   }
 
@@ -109,8 +71,7 @@ class _SettingDetailsState extends State<SettingDetails> {
     var $fork = widget.bike != null ? widget.bike!.fork : null;
     var $shock = widget.bike != null ? widget.bike!.shock : null;
 
-    // This would be saved in a singleton class if building this in 2024
-    // instead of repeating this all over the app. Rookie shit from 2020.
+    // TODO: user should be saved in a singleton class
     return StreamBuilder<AppUser?>(
       stream: db.streamUser(widget.user.id),
       builder: (context, snapshot) {
@@ -127,7 +88,7 @@ class _SettingDetailsState extends State<SettingDetails> {
               label: Text('Share'),
               icon: Icon(CupertinoIcons.share, size: 20),
               onPressed: () =>
-                  _share(context, myUser, widget.setting!, $fork, widget.fork, $shock, widget.shock, widget.frontTire, widget.rearTire),
+                  share(context, myUser, widget.setting!, $fork, widget.fork, $shock, widget.shock, widget.frontTire, widget.rearTire),
             ),
           ),
           child: Material(
@@ -182,60 +143,22 @@ class _SettingDetailsState extends State<SettingDetails> {
                                   ),
                                   child: Image.asset('assets/fork.png')),
                               SizedBox(height: 10),
-                              TextField(
-                                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(6),
-                                    hintText: 'HSC',
-                                    labelText: 'HSC',
-                                  ),
-                                  controller: _hscForkController,
-                                  keyboardType: TextInputType.number),
-                              TextField(
-                                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(6),
-                                    hintText: 'LSC',
-                                    labelText: 'LSC',
-                                  ),
-                                  controller: _lscForkController,
-                                  keyboardType: TextInputType.number),
-                              TextField(
-                                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(6),
-                                    hintText: 'HSR',
-                                    labelText: 'HSR',
-                                  ),
-                                  controller: _hsrForkController,
-                                  keyboardType: TextInputType.number),
-                              TextField(
-                                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(6),
-                                    hintText: 'LSR',
-                                    labelText: 'LSR',
-                                  ),
-                                  controller: _lsrForkController,
-                                  keyboardType: TextInputType.number),
-                              TextField(
-                                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(6),
-                                    hintText: 'SPRING / PSI',
-                                    labelText: 'SPRING / PSI',
-                                  ),
-                                  controller: _springRateForkController,
-                                  keyboardType: TextInputType.number),
-                              TextField(
-                                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(6),
-                                    hintText: 'FRONT TIRE PSI',
-                                    labelText: 'FRONT TIRE PSI',
-                                  ),
-                                  controller: _frontTireController,
-                                  keyboardType: TextInputType.number),
+                              SettingsFormField(
+                                  label: 'HSC', value: widget.fork?.hsc, onValueChange: (val) => setState(() => _hscFork = val)),
+                              SettingsFormField(
+                                  label: 'LSC', value: widget.fork?.lsc, onValueChange: (val) => setState(() => _lscFork = val)),
+                              SettingsFormField(
+                                  label: 'HSR', value: widget.fork?.hsr, onValueChange: (val) => setState(() => _hsrFork = val)),
+                              SettingsFormField(
+                                  label: 'LSR', value: widget.fork?.lsr, onValueChange: (val) => setState(() => _lsrFork = val)),
+                              SettingsFormField(
+                                  label: 'SPRING / PSI',
+                                  value: widget.fork?.springRate,
+                                  onValueChange: (val) => setState(() => _springRateFork = val)),
+                              SettingsFormField(
+                                  label: 'FRONT TIRE PSI',
+                                  value: widget.frontTire,
+                                  onValueChange: (val) => setState(() => _frontTire = val)),
                             ]),
                           ),
                           Expanded(
@@ -255,60 +178,22 @@ class _SettingDetailsState extends State<SettingDetails> {
                                     ),
                                     child: Image.asset('assets/shock.png')),
                                 SizedBox(height: 10),
-                                TextField(
-                                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(6),
-                                      hintText: 'HSC',
-                                      labelText: 'HSC',
-                                    ),
-                                    controller: _hscShockController,
-                                    keyboardType: TextInputType.number),
-                                TextField(
-                                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(6),
-                                      hintText: 'LSC',
-                                      labelText: 'LSC',
-                                    ),
-                                    controller: _lscShockController,
-                                    keyboardType: TextInputType.number),
-                                TextField(
-                                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(6),
-                                      hintText: 'HSR',
-                                      labelText: 'HSR',
-                                    ),
-                                    controller: _hsrShockController,
-                                    keyboardType: TextInputType.number),
-                                TextField(
-                                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(6),
-                                      hintText: 'LSR',
-                                      labelText: 'LSR',
-                                    ),
-                                    controller: _lsrShockController,
-                                    keyboardType: TextInputType.number),
-                                TextField(
-                                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(6),
-                                      hintText: 'SPRING / PSI',
-                                      labelText: 'SPRING / PSI',
-                                    ),
-                                    controller: _springRateShockController,
-                                    keyboardType: TextInputType.number),
-                                TextField(
-                                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(6),
-                                      hintText: 'REAR TIRE PSI',
-                                      labelText: 'REAR TIRE PSI',
-                                    ),
-                                    controller: _rearTireController,
-                                    keyboardType: TextInputType.number),
+                                SettingsFormField(
+                                    label: 'HSC', value: widget.shock?.hsc, onValueChange: (val) => setState(() => _hscShock = val)),
+                                SettingsFormField(
+                                    label: 'LSC', value: widget.shock?.lsc, onValueChange: (val) => setState(() => _lscShock = val)),
+                                SettingsFormField(
+                                    label: 'HSR', value: widget.shock?.hsr, onValueChange: (val) => setState(() => _hsrShock = val)),
+                                SettingsFormField(
+                                    label: 'LSR', value: widget.shock?.lsr, onValueChange: (val) => setState(() => _lsrShock = val)),
+                                SettingsFormField(
+                                    label: 'SPRING / PSI',
+                                    value: widget.shock?.springRate,
+                                    onValueChange: (val) => setState(() => _springRateShock = val)),
+                                SettingsFormField(
+                                    label: 'REAR TIRE PSI',
+                                    value: widget.rearTire,
+                                    onValueChange: (val) => setState(() => _rearTire = val)),
                               ],
                             ),
                           ),
@@ -350,25 +235,5 @@ class _SettingDetailsState extends State<SettingDetails> {
         );
       },
     );
-  }
-
-  Future _share(context, AppUser myUser, String setting, fork, forkSettings, shock, shockSettings, frontTire, rearTire) async {
-    late String text;
-    if (shock != null) {
-      text =
-          "Suspension Pro '$setting' shared by ${myUser.username} \n\n${fork['year'] + ' ' + fork['brand'] + ' ' + fork['model']} Fork Settings: \n$forkSettings, \n\n${shock['year'] + ' ' + shock['brand'] + ' ' + shock['model']} Shock Settings: \n$shockSettings, \n\nFront Tire: \n$frontTire, /n/nRear Tire: \n$rearTire \n\nGet the Suspension Pro App for iOS soon on the Apple AppStore!";
-    } else {
-      text =
-          "Suspension Pro '$setting' shared by ${myUser.username} \n\n${fork['year'] + ' ' + fork['brand'] + ' ' + fork['model']} Fork Settings: \n$forkSettings, \n\nFront Tire: \n$frontTire, /n/nRear Tire: \n$rearTire \n\nGet the Suspension Pro App for iOS soon on the Apple AppStore!";
-    }
-    Share.share(text, subject: setting);
-    await _addSharePoints(myUser, 1);
-  }
-
-  _addSharePoints(AppUser myUser, int value) {
-    // Not updated since we're passing in the user. Need to get user from a stream.
-    int? currentPoints = myUser.points ?? 0;
-    String role = myUser.role!;
-    db.addSharePoints(widget.user.id, currentPoints, role);
   }
 }
