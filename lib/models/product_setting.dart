@@ -7,8 +7,8 @@ class ProductSetting {
   factory ProductSetting.fromJson(Map<String, dynamic> json) {
     return ProductSetting(
       sag: json['sag'].toString(),
-      springRate: json['springRate'].toString() ?? json['spring_rate'].toString() ?? json['air_pressure'].toString() ?? json['pressure'].toString() ?? '',
-      preload: json['preload'].toString() ?? '',
+      springRate: json['springRate'] ?? json['spring_rate'].toString() ?? json['air_pressure'] ?? json['pressure'].toString() ?? '',
+      preload: json['preload'] ?? json['preload'].toString() ?? '',
       hsc: json['HSC'] ?? json['high_speed_compression'] ?? json["compression"]["high_speed"].toString() ?? '',
       lsc: json['LSC'] ?? json['low_speed_compression'] ?? json["compression"]["low_speed"].toString() ?? '',
       hsr: json['HSR'] ?? json['high_speed_rebound'] ?? json["rebound"]["low_speed"].toString() ?? '',
@@ -32,10 +32,3 @@ class ProductSetting {
     // volume_spacers: json['volume_spacers'] ?? ''
   };
 }
-
-// String? _parseValue(value) {
-//   if (value.runtimeType != String) {
-//     return null;
-//   }
-//   return value;
-// }

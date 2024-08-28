@@ -1,5 +1,9 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:suspension_pro/services/db_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+final db = DatabaseService();
 
 loadURL(String url) async {
   final Uri uri = Uri.parse(url);
@@ -23,4 +27,19 @@ dynamic getEnv(String key, {dynamic defaultValue}) {
     return false;
   }
   return value.toString();
+}
+
+Future share(context, String username, String role, int points, String setting, fork, forkSettings, shock, shockSettings, frontTire,
+    rearTire) async {
+  late String text;
+
+  if (shock != null) {
+    text =
+        "Suspension Pro '$setting' shared by ${username} \n\n${fork['year'] + ' ' + fork['brand'] + ' ' + fork['model']} Fork Settings: \n$forkSettings, \n\n${shock['year'] + ' ' + shock['brand'] + ' ' + shock['model']} Shock Settings: \n$shockSettings, \n\nFront Tire: \n$frontTire, /n/nRear Tire: \n$rearTire \n\nGet the Suspension Pro App for iOS soon on the Apple AppStore!";
+  } else {
+    text =
+        "Suspension Pro '$setting' shared by ${username} \n\n${fork['year'] + ' ' + fork['brand'] + ' ' + fork['model']} Fork Settings: \n$forkSettings, \n\nFront Tire: \n$frontTire, /n/nRear Tire: \n$rearTire \n\nGet the Suspension Pro App for iOS soon on the Apple AppStore!";
+  }
+  await Share.share(text, subject: setting);
+  await db.addSharePoints(points, role);
 }

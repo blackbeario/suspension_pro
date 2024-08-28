@@ -5,14 +5,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:suspension_pro/models/ai_response.dart';
+import 'package:suspension_pro/models/user_singleton.dart';
 import 'package:suspension_pro/utilities/helpers.dart';
 import 'package:suspension_pro/models/bike.dart';
 import 'package:suspension_pro/models/setting.dart';
 import '../../services/db_service.dart';
 
 class OpenAiRequest extends StatefulWidget {
-  OpenAiRequest({Key? key, required this.userID}) : super(key: key);
-  final String userID;
+  OpenAiRequest({Key? key}) : super(key: key);
 
   @override
   _OpenAiRequestState createState() => _OpenAiRequestState();
@@ -20,6 +20,7 @@ class OpenAiRequest extends StatefulWidget {
 
 class _OpenAiRequestState extends State<OpenAiRequest> {
   final db = DatabaseService();
+  final String uid = UserSingleton().id;
   final _formKey = GlobalKey<FormState>();
   final _riderWeightController = TextEditingController();
   final _trailCondtionsController = TextEditingController();
@@ -28,9 +29,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
   late String _selectedShockName;
   final openAI = OpenAI.instance.build(
     token: getEnv('OPEN_API'),
-    baseOption: HttpSetup(
-        receiveTimeout: const Duration(seconds: 30),
-        connectTimeout: const Duration(seconds: 30)),
+    baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 30), connectTimeout: const Duration(seconds: 30)),
     enableLog: true,
   );
   Setting? response;
@@ -70,8 +69,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
       model: GptTurbo1106Model(),
     );
 
-    final ChatCTResponse? response =
-        await openAI.onChatCompletion(request: request);
+    final ChatCTResponse? response = await openAI.onChatCompletion(request: request);
     return response;
   }
 
@@ -86,9 +84,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
+          color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
       child: FutureBuilder(
         future: chatComplete(),
         builder: (context, snapshot) {
@@ -135,9 +131,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                 child: ListTile(
                   contentPadding: EdgeInsets.all(0),
                   title: Text('AI Suggestions'),
-                  trailing: CupertinoButton(
-                      child: Icon(Icons.close, size: 20),
-                      onPressed: () => Navigator.of(context).pop()),
+                  trailing: CupertinoButton(child: Icon(Icons.close, size: 20), onPressed: () => Navigator.of(context).pop()),
                 ),
               ),
               Padding(
@@ -149,10 +143,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
               ),
               responseErr != null
                   ? Text(responseErr.toString())
-                  : AiResponseWidget(
-                      response: response!,
-                      forkName: _selectedForkName,
-                      shockName: _selectedShockName),
+                  : AiResponseWidget(response: response!, forkName: _selectedForkName, shockName: _selectedShockName),
               SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -211,16 +202,10 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
               onSelectedItemChanged: (value) {
                 setState(() {
                   _selectedBike = bikes[value];
-                  _selectedForkName = _selectedBike?.fork != null
-                      ? (_selectedBike?.fork?['brand'] +
-                          ' ' +
-                          _selectedBike?.fork?['model'])
-                      : '';
-                  _selectedShockName = _selectedBike?.shock != null
-                      ? (_selectedBike?.shock?['brand'] +
-                          ' ' +
-                          _selectedBike?.shock?['model'])
-                      : '';
+                  _selectedForkName =
+                      _selectedBike?.fork != null ? (_selectedBike?.fork?['brand'] + ' ' + _selectedBike?.fork?['model']) : '';
+                  _selectedShockName =
+                      _selectedBike?.shock != null ? (_selectedBike?.shock?['brand'] + ' ' + _selectedBike?.shock?['model']) : '';
                 });
               },
             ),
@@ -248,27 +233,23 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                        'Generate AI suspension suggestions by selecting a bike, entering trail conditions and rider weight.'),
+                    Text('Generate AI suspension suggestions by selecting a bike, entering trail conditions and rider weight.'),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      child: Text(
-                          'Include type of trail, (ex: downhill, flow, jump line) and also conditions (ex: steep, wet, loose, etc.)'),
+                      child:
+                          Text('Include type of trail, (ex: downhill, flow, jump line) and also conditions (ex: steep, wet, loose, etc.)'),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
                       child: RichText(
                         text: TextSpan(
                           text: 'Results are returned from ',
-                          style: DefaultTextStyle.of(context)
-                              .style
-                              .copyWith(fontSize: 14),
+                          style: DefaultTextStyle.of(context).style.copyWith(fontSize: 14),
                           children: [
                             TextSpan(
                               text: 'OpenAI',
                               style: new TextStyle(color: Colors.blue),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () => loadURL('https://openai.com/'),
+                              recognizer: TapGestureRecognizer()..onTap = () => loadURL('https://openai.com/'),
                             ),
                             TextSpan(text: ' utilizing ChatGPT.'),
                           ],
@@ -281,13 +262,13 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                       color: Colors.white,
                       elevation: 1,
                       child: StreamBuilder<List<Bike>>(
-                        stream: db.streamBikes(widget.userID),
+                        stream: db.streamBikes(),
                         builder: (context, snapshot) {
                           List<Bike>? bikes = snapshot.data;
                           if (!snapshot.hasData || snapshot.hasError) {
                             return Text('Cannot fetch list of user bikes');
                           }
-                          return _getBikes(widget.userID, bikes!, context);
+                          return _getBikes(uid, bikes!, context);
                         },
                       ),
                     ),
@@ -296,10 +277,8 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                       Column(
                         children: [
                           Text(_selectedBike!.id),
-                          if (_selectedForkName.isNotEmpty)
-                            Text(_selectedForkName),
-                          if (_selectedShockName.isNotEmpty)
-                            Text(_selectedShockName),
+                          if (_selectedForkName.isNotEmpty) Text(_selectedForkName),
+                          if (_selectedShockName.isNotEmpty) Text(_selectedShockName),
                         ],
                       ),
 
@@ -309,9 +288,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                         padding: const EdgeInsets.only(top: 20),
                         child: TextFormField(
                           validator: (_riderWeightController) {
-                            if (_riderWeightController == null ||
-                                _riderWeightController.isEmpty)
-                              return 'Please enter rider weight';
+                            if (_riderWeightController == null || _riderWeightController.isEmpty) return 'Please enter rider weight';
                             return null;
                           },
                           decoration: InputDecoration(
@@ -322,8 +299,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                             border: OutlineInputBorder(),
                             hintText: 'rider weight',
                           ),
-                          style:
-                              TextStyle(fontSize: 18, color: Colors.grey[700]),
+                          style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                           controller: _riderWeightController,
                           keyboardType: TextInputType.text,
                         ),
@@ -337,8 +313,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                           minLines: 1,
                           maxLines: 4,
                           validator: (_trailCondtionsController) {
-                            if (_trailCondtionsController == null ||
-                                _trailCondtionsController.isEmpty)
+                            if (_trailCondtionsController == null || _trailCondtionsController.isEmpty)
                               return 'Please describe trail conditions';
                             return null;
                           },
@@ -350,27 +325,22 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                             border: OutlineInputBorder(),
                             hintText: 'trail conditions',
                           ),
-                          style:
-                              TextStyle(fontSize: 18, color: Colors.grey[700]),
+                          style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                           controller: _trailCondtionsController,
                           keyboardType: TextInputType.text,
                         ),
                       ),
 
                     // submit widget
-                    if (_riderWeightController.text.isNotEmpty &&
-                        _trailCondtionsController.text.isNotEmpty)
+                    if (_riderWeightController.text.isNotEmpty && _trailCondtionsController.text.isNotEmpty)
                       CupertinoButton(
                           disabledColor: CupertinoColors.quaternarySystemFill,
                           color: CupertinoColors.activeBlue,
-                          child: Text('Get Suggestions',
-                              style: TextStyle(color: Colors.white)),
+                          child: Text('Get Suggestions', style: TextStyle(color: Colors.white)),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               showCupertinoModalPopup(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) => _aiResultsDialog());
+                                  barrierDismissible: false, context: context, builder: (context) => _aiResultsDialog());
                             }
                           }),
                   ],
@@ -383,4 +353,3 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
     );
   }
 }
-

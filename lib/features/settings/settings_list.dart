@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:suspension_pro/models/bike.dart';
 import 'package:suspension_pro/models/product_setting.dart';
+import 'package:suspension_pro/models/setting.dart';
+import 'package:suspension_pro/models/user_singleton.dart';
 import 'setting_detail.dart';
 import '../../services/auth_service.dart';
 import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
-import '../../models/user.dart';
-import '../../models/setting.dart';
 
 class SettingsList extends StatefulWidget {
   SettingsList({required this.bike});
@@ -19,7 +19,9 @@ class SettingsList extends StatefulWidget {
 
 class _SettingsListState extends State<SettingsList> {
   final db = DatabaseService();
-  Widget _getSettings(user, Bike bike, List<Setting> settings, context) {
+  final String uid = UserSingleton().id;
+  
+  Widget _getSettings(Bike bike, List<Setting> settings, context) {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: settings.length,
@@ -31,13 +33,12 @@ class _SettingsListState extends State<SettingsList> {
         String? notes = settings[index].notes ?? null;
         return Dismissible(
           background: ListTile(
-            tileColor:
-                CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
+            tileColor: CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
             trailing: Icon(Icons.delete, color: CupertinoColors.systemRed),
           ),
           direction: DismissDirection.horizontal,
           onDismissed: (direction) => setState(() {
-            db.deleteSetting(user.id, bike.id, settings[index].id);
+            db.deleteSetting(bike.id, settings[index].id);
             settings.removeAt(index);
           }),
           key: PageStorageKey(settings[index]),
@@ -54,7 +55,6 @@ class _SettingsListState extends State<SettingsList> {
                     builder: (context) {
                       // Return the settings detail form screen.
                       return SettingDetails(
-                        user: user,
                         bike: widget.bike,
                         setting: settings[index].id,
                         fork: fork,
@@ -72,71 +72,47 @@ class _SettingsListState extends State<SettingsList> {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
-    return StreamBuilder<AppUser?>(
-        stream: authService.user,
-        builder: (context, snapshot) {
-          var myUser = snapshot.data;
-          if (myUser == null) {
-            return Center(
-              child: Text('Loading...',
-                  style: CupertinoTheme.of(context).textTheme.navTitleTextStyle),
-            );
-          }
-          return CupertinoPageScaffold(
-              resizeToAvoidBottomInset: true,
-              navigationBar: CupertinoNavigationBar(
-                leading: CupertinoButton(
-                    child: BackButtonIcon(),
-                    onPressed: () => Navigator.pop(context, widget.bike.id)),
-                middle: Text('Settings / ' + widget.bike.id),
-                trailing: CupertinoButton(
-                    child: Icon(Icons.power_settings_new),
-                    onPressed: () => _requestPop(context)),
+    return CupertinoPageScaffold(
+        resizeToAvoidBottomInset: true,
+        navigationBar: CupertinoNavigationBar(
+          leading: CupertinoButton(child: BackButtonIcon(), onPressed: () => Navigator.pop(context, widget.bike.id)),
+          middle: Text('Settings / ' + widget.bike.id),
+          trailing: CupertinoButton(child: Icon(Icons.power_settings_new), onPressed: () => _requestPop(context)),
+        ),
+        child: Card(
+          color: Colors.white,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              StreamBuilder<List<Setting>>(
+                  stream: db.streamSettings(widget.bike.id),
+                  builder: (context, snapshot) {
+                    var settings = snapshot.data;
+                    if (settings == null) {
+                      return Center(child: CircularProgressIndicator.adaptive());
+                    }
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text('Error...', style: CupertinoTheme.of(context).textTheme.navTitleTextStyle),
+                      );
+                    }
+                    return _getSettings(widget.bike, settings, context);
+                  }),
+              CupertinoButton(
+                color: CupertinoColors.activeBlue,
+                child: Text('Add Setting'),
+                onPressed: () => Navigator.of(context).push(CupertinoPageRoute(
+                    fullscreenDialog: true,
+                    builder: (context) {
+                      // We need to return the shock detail screen here.
+                      return SettingDetails(bike: widget.bike);
+                    })),
               ),
-              child: Card(
-                color: Colors.white,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    StreamBuilder<List<Setting>>(
-                        stream: db.streamSettings(myUser.id, widget.bike.id),
-                        builder: (context, snapshot) {
-                          var settings = snapshot.data;
-                          if (settings == null) {
-                            return Center(
-                              child: CircularProgressIndicator.adaptive()
-                            );
-                          }
-                          if (snapshot.hasError) {
-                            return Center(
-                              child: Text('Error...',
-                                  style: CupertinoTheme.of(context)
-                                      .textTheme
-                                      .navTitleTextStyle),
-                            );
-                          }
-                          return _getSettings(
-                              myUser, widget.bike, settings, context);
-                        }),
-                    CupertinoButton(
-                      color: CupertinoColors.activeBlue,
-                      child: Text('Add Setting'),
-                      onPressed: () =>
-                          Navigator.of(context).push(CupertinoPageRoute(
-                              fullscreenDialog: true,
-                              builder: (context) {
-                                // We need to return the shock detail screen here.
-                                return SettingDetails(
-                                    user: myUser, bike: widget.bike);
-                              })),
-                    ),
-                    Expanded(child: Container())
-                  ],
-                ),
-              ));
-        });
+              Expanded(child: Container())
+            ],
+          ),
+        ));
   }
 
   Future<bool> _requestPop(BuildContext context) {

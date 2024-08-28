@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:suspension_pro/services/db_service.dart';
 
 class ForkForm extends StatefulWidget {
-  ForkForm({required this.uid, this.bikeId, this.fork, this.forkCallback});
+  ForkForm({this.bikeId, this.fork, this.forkCallback});
 
-  final uid;
   final String? bikeId;
   final Map? fork;
   final Function(Map val)? forkCallback;
@@ -63,7 +62,6 @@ class _ForkFormState extends State<ForkForm> {
   Future<bool> _updateFork(bike, BuildContext context) {
     Navigator.pop(context);
     db.updateFork(
-        widget.uid,
         widget.bikeId!,
         _yearController.text,
         _travelController.text,

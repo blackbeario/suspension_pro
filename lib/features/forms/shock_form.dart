@@ -3,9 +3,8 @@ import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 
 class ShockForm extends StatefulWidget {
-  ShockForm({@required this.uid, this.bike, this.shock, this.shockCallback});
+  ShockForm({this.bike, this.shock, this.shockCallback});
 
-  final uid;
   final String? bike;
   final Map? shock;
   final Function(Map val)? shockCallback;
@@ -50,7 +49,6 @@ class _ShockFormState extends State<ShockForm> {
   Future<bool> _updateShock(bike, BuildContext context) {
     Navigator.pop(context);
     db.updateShock(
-        widget.uid,
         widget.bike!,
         _yearController.text,
         _strokeController.text,
