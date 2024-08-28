@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:suspension_pro/models/user_singleton.dart';
 import '../../models/bike.dart';
 import 'settings_list.dart';
 import '../forms/shock_form.dart';
 import '../../services/auth_service.dart';
 import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
-import '../../models/user.dart';
 import '../forms/bikeform.dart';
 import '../forms/fork_form.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -16,9 +16,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'dart:io';
 
 class Settings extends StatefulWidget {
-  Settings({required this.user, this.bike});
+  Settings({this.bike});
 
-  final AppUser user;
   final String? bike;
   @override
   _SettingsState createState() => _SettingsState();
@@ -26,6 +25,7 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   final db = DatabaseService();
+  final String uid = UserSingleton().id;
   late Bike? _selectedBike = Bike(id: '');
   FirebaseStorage storage = FirebaseStorage.instanceFor(bucket: 'gs://suspension-pro.appspot.com/');
   late String downloadUrl = '';
@@ -56,7 +56,7 @@ class _SettingsState extends State<Settings> {
     );
     if (croppedImage != null) {
       _imageFile = File(croppedImage.path);
-      _uploadToFirebase(widget.user.id, bikeid, _imageFile!);
+      _uploadToFirebase(uid, bikeid, _imageFile!);
       setState(() {});
     }
   }
@@ -67,14 +67,14 @@ class _SettingsState extends State<Settings> {
     UploadTask uploadTask = ref.putFile(imageFile);
     uploadTask.whenComplete(() async {
       downloadUrl = await ref.getDownloadURL();
-      db.setBikePic(uid, bikeid, downloadUrl);
+      db.setBikePic(bikeid, downloadUrl);
     }).catchError((error) {
       print(error);
       return error;
     });
   }
 
-  Widget _getBikes(uid, bikes, context) {
+  Widget _listBikes(uid, bikes, context) {
     return ReorderableListView.builder(
       onReorder: (oldIndex, newIndex) {
         setState(() {
@@ -85,7 +85,7 @@ class _SettingsState extends State<Settings> {
           bikes.insert(newIndex, bike);
           for (Bike bike in bikes) {
             bike.index = bikes.indexOf(bike);
-            db.reorderBike(uid, bike.id, bike.index!);
+            db.reorderBike(bike.id, bike.index!);
           }
         });
       },
@@ -147,11 +147,7 @@ class _SettingsState extends State<Settings> {
                             color: CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
                           ),
                           child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, mainAxisSize: MainAxisSize.max, children: [
-                            Container(
-                                padding: EdgeInsets.all(2),
-                                width: 35,
-                                height: 35,
-                                child: Image.asset('assets/fork.png')),
+                            Container(padding: EdgeInsets.all(2), width: 35, height: 35, child: Image.asset('assets/fork.png')),
                             Container(
                               padding: EdgeInsets.zero,
                               alignment: Alignment.centerLeft,
@@ -162,9 +158,14 @@ class _SettingsState extends State<Settings> {
                                   title: Text(fork["year"].toString() + ' ' + fork["brand"] + ' ' + fork["model"],
                                       style: TextStyle(color: Colors.black87)),
                                   subtitle: Text(
-                                      fork["travel"].toString() + 'mm / ' + fork["damper"] + ' / ' 
-                                        + fork["offset"].toString() + 'mm / '
-                                        + fork["wheelsize"].toString() + '"',
+                                      fork["travel"].toString() +
+                                          'mm / ' +
+                                          fork["damper"] +
+                                          ' / ' +
+                                          fork["offset"].toString() +
+                                          'mm / ' +
+                                          fork["wheelsize"].toString() +
+                                          '"',
                                       style: TextStyle(color: Colors.black54)),
                                   onTap: () async {
                                     /// Await the bike return value from the fork form back button,
@@ -182,7 +183,7 @@ class _SettingsState extends State<Settings> {
                                                     child: BackButtonIcon(), onPressed: () => Navigator.pop(context, $bike.id)),
                                                 middle: Text(fork['brand'] + ' ' + fork['model']),
                                               ),
-                                              child: ForkForm(uid: uid, bikeId: $bike.id, fork: fork),
+                                              child: ForkForm(bikeId: $bike.id, fork: fork),
                                             );
                                           }),
                                     );
@@ -236,7 +237,7 @@ class _SettingsState extends State<Settings> {
                                               CupertinoButton(child: BackButtonIcon(), onPressed: () => Navigator.pop(context, $bike.id)),
                                           middle: Text('Add Fork'),
                                         ),
-                                        child: ForkForm(uid: uid, bikeId: $bike.id, fork: fork),
+                                        child: ForkForm(bikeId: $bike.id, fork: fork),
                                       );
                                     },
                                   ));
@@ -292,7 +293,7 @@ class _SettingsState extends State<Settings> {
                                                       child: BackButtonIcon(), onPressed: () => Navigator.pop(context, $bike.id)),
                                                   middle: Text(shock['brand'] + ' ' + shock['model']),
                                                 ),
-                                                child: ShockForm(uid: uid, bike: $bike.id, shock: shock),
+                                                child: ShockForm(bike: $bike.id, shock: shock),
                                               );
                                             },
                                           ));
@@ -348,7 +349,7 @@ class _SettingsState extends State<Settings> {
                                               CupertinoButton(child: BackButtonIcon(), onPressed: () => Navigator.pop(context, $bike.id)),
                                           middle: Text('Add Shock'),
                                         ),
-                                        child: ShockForm(uid: uid, bike: $bike.id, shock: shock),
+                                        child: ShockForm(bike: $bike.id, shock: shock),
                                       );
                                     },
                                   ));
@@ -423,11 +424,11 @@ class _SettingsState extends State<Settings> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   StreamBuilder<List<Bike>>(
-                      stream: db.streamBikes(widget.user.id),
+                      stream: db.streamBikes(),
                       builder: (context, snapshot) {
                         var bikes = snapshot.data;
                         if (!snapshot.hasData) return Center(child: CupertinoActivityIndicator(animating: true));
-                        return _getBikes(widget.user.id, bikes, context);
+                        return _listBikes(uid, bikes, context);
                       }),
                   SizedBox(height: 20),
                   CupertinoButton(
@@ -436,7 +437,7 @@ class _SettingsState extends State<Settings> {
                     onPressed: () => Navigator.of(context).push(CupertinoPageRoute(
                         fullscreenDialog: true,
                         builder: (context) {
-                          return BikeForm(uid: widget.user.id);
+                          return BikeForm();
                         })),
                   ),
                   SizedBox(height: 20),
@@ -461,8 +462,8 @@ class _SettingsState extends State<Settings> {
                   isDestructiveAction: true,
                   onPressed: () {
                     Navigator.pop(context, true);
-                    if (component == null) db.deleteBike(uid, bikeId);
-                    if (component != null) db.deleteField(uid, bikeId, component);
+                    if (component == null) db.deleteBike(bikeId);
+                    if (component != null) db.deleteField(bikeId, component);
                   }),
               CupertinoDialogAction(
                 child: Text('Cancel'),

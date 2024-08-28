@@ -28,7 +28,7 @@ class _ProfileNameFormState extends State<ProfileNameForm> {
   }
 
   Future<bool> _updateUser(uid, BuildContext context) {
-    db.updateUser(widget.user.id, _usernameController.text, widget.user.email!, widget.user.role!);
+    db.updateUser(_usernameController.text, widget.user.email!, widget.user.role!);
     return Future.value(false);
   }
 

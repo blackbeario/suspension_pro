@@ -1,11 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:suspension_pro/features/onboarding/onboarding.dart';
-import 'package:suspension_pro/models/user.dart';
 import 'package:suspension_pro/features/forms/openai_form.dart';
+import 'package:suspension_pro/models/user_singleton.dart';
 import './services/auth_service.dart';
 import 'features/auth/login.dart';
 import 'features/profile/profile.dart';
@@ -20,7 +21,7 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  runApp(MyApp(showHome: false)); //showHome
+  runApp(MyApp(showHome: showHome));
 }
 
 enum DeviceType { Phone, Tablet }
@@ -38,7 +39,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print(getDeviceType());
     return MultiProvider(
       providers: [
         Provider<AuthService>(create: (_) => AuthService()),
@@ -64,14 +64,19 @@ class MyApp extends StatelessWidget {
 class AuthenticationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    //Instance to know the authentication state.
     final authService = Provider.of<AuthService>(context);
-    return StreamBuilder<AppUser?>(
+    return StreamBuilder<User?>(
         stream: authService.user,
-        builder: (_, AsyncSnapshot<AppUser?> snapshot) {
+        builder: (_, AsyncSnapshot<User?> snapshot) {
           if (snapshot.connectionState == ConnectionState.active) {
-            final AppUser? user = snapshot.data;
-            return user == null ? LoginPage() : AppHomePage(user);
+            final User? user = snapshot.data;
+            if (user != null) {
+              // set UserSingleton properties
+              UserSingleton().setId = user.uid;
+              UserSingleton().setEmail = user.email ?? '';
+              return AppHomePage();
+            } else
+              return LoginPage();
           } else {
             return Scaffold(body: Center(child: CircularProgressIndicator()));
           }
@@ -80,9 +85,6 @@ class AuthenticationWrapper extends StatelessWidget {
 }
 
 class AppHomePage extends StatefulWidget {
-  AppHomePage(this.user);
-  final AppUser user;
-
   @override
   State<AppHomePage> createState() => _AppHomePageState();
 }
@@ -113,15 +115,15 @@ class _AppHomePageState extends State<AppHomePage> {
         switch (index) {
           case 0:
             return CupertinoTabView(
-              builder: (BuildContext context) => Settings(user: widget.user),
+              builder: (BuildContext context) => Settings(),
             );
           case 1:
             return CupertinoTabView(
-              builder: (BuildContext context) => Profile(user: widget.user),
+              builder: (BuildContext context) => Profile(),
             );
           case 2:
             return CupertinoTabView(
-              builder: (BuildContext context) => OpenAiRequest(userID: widget.user.id),
+              builder: (BuildContext context) => OpenAiRequest(),
             );
         }
         return CircularProgressIndicator();

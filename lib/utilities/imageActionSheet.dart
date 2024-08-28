@@ -53,7 +53,7 @@ class ImageActionSheet extends StatelessWidget {
     UploadTask uploadTask = ref.putFile(imageFile);
     uploadTask.whenComplete(() async {
       downloadUrl = await ref.getDownloadURL();
-      db.setProfilePic(uid, downloadUrl);
+      db.setProfilePic(downloadUrl);
     }).catchError((onError) {
       print(onError);
     });
