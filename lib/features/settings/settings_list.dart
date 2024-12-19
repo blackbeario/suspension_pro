@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:suspension_pro/models/bike.dart';
-import 'package:suspension_pro/models/product_setting.dart';
+import 'package:suspension_pro/models/component.dart';
 import 'package:suspension_pro/models/setting.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
 import 'setting_detail.dart';
@@ -26,8 +26,8 @@ class _SettingsListState extends State<SettingsList> {
       shrinkWrap: true,
       itemCount: settings.length,
       itemBuilder: (context, index) {
-        ProductSetting? fork = settings[index].fork ?? null;
-        ProductSetting? shock = settings[index].shock ?? null;
+        Component? fork = settings[index].fork ?? null;
+        Component? shock = settings[index].shock ?? null;
         String? frontTire = settings[index].frontTire ?? null;
         String? rearTire = settings[index].rearTire ?? null;
         String? notes = settings[index].notes ?? null;
@@ -76,7 +76,7 @@ class _SettingsListState extends State<SettingsList> {
         resizeToAvoidBottomInset: true,
         navigationBar: CupertinoNavigationBar(
           leading: CupertinoButton(child: BackButtonIcon(), onPressed: () => Navigator.pop(context, widget.bike.id)),
-          middle: Text('Settings / ' + widget.bike.id),
+          middle: Text(widget.bike.id),
           trailing: CupertinoButton(child: Icon(Icons.power_settings_new), onPressed: () => _requestPop(context)),
         ),
         child: Card(

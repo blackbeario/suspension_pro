@@ -48,7 +48,7 @@ class _ProfileState extends State<Profile> {
                       ProfileNameForm(user: myUser),
                     ],
                   ),
-                  UserPoints(user: myUser),
+                  // UserPoints(user: myUser),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                     child: Divider(),

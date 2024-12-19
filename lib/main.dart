@@ -4,8 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:suspension_pro/features/in_app_purchases/buy_credits.dart';
+import 'package:suspension_pro/features/in_app_purchases/in_app_bloc.dart';
 import 'package:suspension_pro/features/onboarding/onboarding.dart';
 import 'package:suspension_pro/features/forms/openai_form.dart';
+import 'package:suspension_pro/hive_helper/register_adapters.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
 import './services/auth_service.dart';
 import 'features/auth/login.dart';
@@ -20,6 +24,8 @@ Future<void> main() async {
   final bool showHome = prefs.getBool('showHome') ?? false;
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
+  await Hive.initFlutter();
+  registerAdapters();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   runApp(MyApp(showHome: showHome));
 }
@@ -96,12 +102,12 @@ class _AppHomePageState extends State<AppHomePage> {
       tabBar: CupertinoTabBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.settings, size: 24),
-            label: 'Settings',
+            icon: Icon(Icons.format_list_bulleted_rounded, size: 24),
+            label: 'Bikes',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.profile_circled, size: 24),
-            label: 'Profile',
+            icon: Icon(CupertinoIcons.settings, size: 24),
+            label: 'App',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.smart_toy_outlined, size: 24),
@@ -123,7 +129,17 @@ class _AppHomePageState extends State<AppHomePage> {
             );
           case 2:
             return CupertinoTabView(
-              builder: (BuildContext context) => OpenAiRequest(),
+              builder: (BuildContext context) {
+                final InAppBloc _bloc = InAppBloc();
+                return ListenableBuilder(
+                    listenable: _bloc,
+                    builder: (context, widget) {
+                      if (_bloc.credits == 0) {
+                        return BuyCredits();
+                      }
+                      return OpenAiRequest();
+                    });
+              },
             );
         }
         return CircularProgressIndicator();

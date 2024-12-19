@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/widgets.dart';
 import 'package:suspension_pro/models/bike.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
 import 'dart:async';
 import '../models/user.dart';
 import '../models/setting.dart';
 
-class DatabaseService extends ChangeNotifier {
+class DatabaseService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final String uid = UserSingleton().id;
 

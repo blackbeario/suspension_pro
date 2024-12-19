@@ -24,13 +24,10 @@ class AppRoadmap extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppRoadmapItem(value: 'Offline Support (May)'),
-                    AppRoadmapItem(value: 'ChatGPT suspension suggestions based on bike model and rider weight (May)'),
-                    AppRoadmapItem(value: 'Create database for importing suspension products dynamically (June)'),
-                    AppRoadmapItem(value: 'Additional support for less common suspension products (June)'),
-                    AppRoadmapItem(value: 'Custom user app backgrounds (July)'),
-                    AppRoadmapItem(value: 'Flush out user points rewards (TBD)'),
-                    AppRoadmapItem(value: 'Animations of the fork/shock dials when a user inputs settings (TBD)'),
+                    AppRoadmapItem(value: 'HIVE Offline Support'),
+                    AppRoadmapItem(value: 'Import suspension products dynamically'),
+                    AppRoadmapItem(value: 'Support for less common suspension products'),
+                    AppRoadmapItem(value: 'Custom user app backgrounds'),
                   ],
                 ),
               ),

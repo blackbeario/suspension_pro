@@ -1,5 +1,5 @@
 app_identifier("io.blackbear.suspensionPro") # The bundle identifier of your app
-apple_id("dev@blackbear.io") # Your Apple email address
+apple_id("support@vibesoftware.io") # Your Apple email address
 
 itc_team_id("123714817") # App Store Connect Team ID
 team_id("R4N5ST9G54") # Developer Portal Team ID
