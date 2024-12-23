@@ -16,7 +16,16 @@ class ComponentAdapter extends TypeAdapter<Component> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Component();
+    return Component(
+      sag: fields[0] as String,
+      springRate: fields[1] as String,
+      preload: fields[2] as String,
+      hsc: fields[3] as String,
+      lsc: fields[4] as String,
+      hsr: fields[5] as String,
+      lsr: fields[6] as String,
+      volume_spacers: fields[7] as String,
+    );
   }
 
   @override

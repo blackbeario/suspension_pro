@@ -6,7 +6,6 @@ import 'package:suspension_pro/models/user_singleton.dart';
 import 'package:suspension_pro/utilities/helpers.dart';
 import 'package:suspension_pro/features/profile/profile_pic.dart';
 import 'package:suspension_pro/features/profile/profile_username_form.dart';
-import 'package:suspension_pro/features/profile/user_points.dart';
 import '../../services/auth_service.dart';
 import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
