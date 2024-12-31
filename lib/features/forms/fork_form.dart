@@ -92,7 +92,7 @@ class _ForkFormState extends State<ForkForm> {
                     width: double.infinity,
                     decoration: BoxDecoration(color: Colors.white),
                     child: Container(
-                        margin: EdgeInsets.only(top: 10),
+                        margin: EdgeInsets.only(top: 0),
                         padding: EdgeInsets.all(2),
                         width: 75,
                         height: 75,
@@ -186,10 +186,10 @@ class _ForkFormState extends State<ForkForm> {
                     disabledColor: CupertinoColors.quaternarySystemFill,
                     color: CupertinoColors.activeBlue,
                     child:
-                        widget.bikeId != null ? Text('Save') : Text('Continue'),
+                        widget.bikeId != '' ? Text('Save') : Text('Continue'),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        widget.bikeId != null
+                        widget.bikeId != ''
                             ? _updateFork(widget.bikeId, context)
                             : widget.forkCallback!({
                                 'year': _yearController.text,

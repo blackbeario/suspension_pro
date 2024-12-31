@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:suspension_pro/features/settings/settings_form_field.dart';
 import 'package:suspension_pro/features/settings/share_button.dart';
 import 'package:suspension_pro/models/bike.dart';
-import 'package:suspension_pro/models/product_setting.dart';
+import 'package:suspension_pro/models/component.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:suspension_pro/services/db_service.dart';
 
@@ -11,7 +11,7 @@ class SettingDetails extends StatefulWidget {
 
   final String? setting, frontTire, rearTire, notes;
   final Bike? bike;
-  final ProductSetting? fork, shock;
+  final Component? fork, shock;
 
   @override
   _SettingDetailsState createState() => _SettingDetailsState();
@@ -39,8 +39,8 @@ class _SettingDetailsState extends State<SettingDetails> {
   void initState() {
     super.initState();
     String? $setting = widget.setting;
-    ProductSetting? $fork = widget.fork;
-    ProductSetting? $shock = widget.shock;
+    Component? $fork = widget.fork;
+    Component? $shock = widget.shock;
     _settingNameController.text = $setting != null ? $setting : '';
     _notesController.text = widget.notes ?? '';
     _hscFork = $fork?.hsc ?? '';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:suspension_pro/models/bike.dart';
-import 'package:suspension_pro/models/product_setting.dart';
+import 'package:suspension_pro/models/component.dart';
 import 'package:suspension_pro/models/setting.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
 import 'setting_detail.dart';
@@ -20,20 +20,21 @@ class SettingsList extends StatefulWidget {
 class _SettingsListState extends State<SettingsList> {
   final db = DatabaseService();
   final String uid = UserSingleton().id;
-  
+
   Widget _getSettings(Bike bike, List<Setting> settings, context) {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: settings.length,
       itemBuilder: (context, index) {
-        ProductSetting? fork = settings[index].fork ?? null;
-        ProductSetting? shock = settings[index].shock ?? null;
+        Component? fork = settings[index].fork ?? null;
+        Component? shock = settings[index].shock ?? null;
         String? frontTire = settings[index].frontTire ?? null;
         String? rearTire = settings[index].rearTire ?? null;
         String? notes = settings[index].notes ?? null;
         return Dismissible(
           background: ListTile(
-            tileColor: CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
+            tileColor:
+                CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
             trailing: Icon(Icons.delete, color: CupertinoColors.systemRed),
           ),
           direction: DismissDirection.horizontal,
@@ -75,9 +76,13 @@ class _SettingsListState extends State<SettingsList> {
     return CupertinoPageScaffold(
         resizeToAvoidBottomInset: true,
         navigationBar: CupertinoNavigationBar(
-          leading: CupertinoButton(child: BackButtonIcon(), onPressed: () => Navigator.pop(context, widget.bike.id)),
-          middle: Text('Settings / ' + widget.bike.id),
-          trailing: CupertinoButton(child: Icon(Icons.power_settings_new), onPressed: () => _requestPop(context)),
+          leading: CupertinoButton(
+              child: BackButtonIcon(),
+              onPressed: () => Navigator.pop(context, widget.bike.id)),
+          middle: Text(widget.bike.id),
+          trailing: CupertinoButton(
+              child: Icon(Icons.power_settings_new),
+              onPressed: () => _requestPop(context)),
         ),
         child: Card(
           color: Colors.white,
@@ -90,11 +95,15 @@ class _SettingsListState extends State<SettingsList> {
                   builder: (context, snapshot) {
                     var settings = snapshot.data;
                     if (settings == null) {
-                      return Center(child: CircularProgressIndicator.adaptive());
+                      return Center(
+                          child: CircularProgressIndicator.adaptive());
                     }
                     if (snapshot.hasError) {
                       return Center(
-                        child: Text('Error...', style: CupertinoTheme.of(context).textTheme.navTitleTextStyle),
+                        child: Text('Error...',
+                            style: CupertinoTheme.of(context)
+                                .textTheme
+                                .navTitleTextStyle),
                       );
                     }
                     return _getSettings(widget.bike, settings, context);

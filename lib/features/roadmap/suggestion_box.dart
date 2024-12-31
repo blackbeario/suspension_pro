@@ -35,7 +35,7 @@ class _SuggestionBoxState extends State<SuggestionBox> {
                   contentPadding: EdgeInsets.all(6),
                   filled: true,
                   border: OutlineInputBorder(),
-                  hintText: 'Ideas for this app? Let us know!',
+                  hintText: 'Ideas for this app?',
                 ),
                 style: TextStyle(fontSize: 12, overflow: TextOverflow.fade),
                 controller: _suggestionController,

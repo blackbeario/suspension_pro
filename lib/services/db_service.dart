@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/widgets.dart';
 import 'package:suspension_pro/models/bike.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
 import 'dart:async';
 import '../models/user.dart';
 import '../models/setting.dart';
 
-class DatabaseService extends ChangeNotifier {
+class DatabaseService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final String uid = UserSingleton().id;
 
@@ -79,31 +78,32 @@ class DatabaseService extends ChangeNotifier {
   }
 
   /// Need to add required fork and shock fields with values.
-  Future<void> addUpdateBike(String bikeid, Map? fork, Map? shock) async {
+  Future<void> addUpdateBike(Bike bike) async {
     var $now = DateTime.now();
     var $created = $now.millisecondsSinceEpoch;
-    return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).set({
+    return await _db.collection('users').doc(uid).collection('bikes').doc(bike.id).set({
       'created': $created,
       'index': 0,
-      if (fork != null)
+      'yearModel': bike.yearModel,
+      if (bike.fork != null)
         'fork': {
-          'year': fork['year'],
-          'travel': fork['travel'],
-          'damper': fork['damper'],
-          'offset': fork['offset'],
-          'wheelsize': fork['wheelsize'],
-          'brand': fork['brand'],
-          'model': fork['model'],
-          'spacers': fork['spacers'],
-          'spacing': fork['spacing']
+          'year': bike.fork!['year'],
+          'travel': bike.fork!['travel'],
+          'damper': bike.fork!['damper'],
+          'offset': bike.fork!['offset'],
+          'wheelsize': bike.fork!['wheelsize'],
+          'brand': bike.fork!['brand'],
+          'model': bike.fork!['model'],
+          'spacers': bike.fork!['spacers'],
+          'spacing': bike.fork!['spacing']
         },
-      if (shock != null)
+      if (bike.shock != null)
         'shock': {
-          'year': shock['year'],
-          'stroke': shock['stroke'],
-          'brand': shock['brand'],
-          'model': shock['model'],
-          'spacers': shock['spacers']
+          'year': bike.shock!['year'],
+          'stroke': bike.shock!['stroke'],
+          'brand': bike.shock!['brand'],
+          'model': bike.shock!['model'],
+          'spacers': bike.shock!['spacers']
         }
     }, SetOptions(merge: true));
   }

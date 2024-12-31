@@ -1,33 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hive/hive.dart';
-import 'package:suspension_pro/hive_helper/hive_types.dart';
-import 'package:suspension_pro/hive_helper/hive_adapters.dart';
-import 'package:suspension_pro/hive_helper/fields/setting_fields.dart';
 import 'package:suspension_pro/models/component.dart';
 
-
-part 'setting.g.dart';
-
-
-@HiveType(typeId: HiveTypes.setting, adapterName: HiveAdapters.setting)
-class Setting extends HiveObject{
-	@HiveField(SettingFields.id)
+class Setting {
   final String id;
-	@HiveField(SettingFields.bike)
   final String? bike;
-	@HiveField(SettingFields.fork)
   final Component? fork;
-	@HiveField(SettingFields.shock)
   final Component? shock;
-	@HiveField(SettingFields.riderWeight)
   final String? riderWeight;
-	@HiveField(SettingFields.updated)
   final DateTime? updated;
-	@HiveField(SettingFields.frontTire)
   final String? frontTire;
-	@HiveField(SettingFields.rearTire)
   final String? rearTire;
-	@HiveField(SettingFields.notes)
   final String? notes;
 
   Setting({required this.id, this.bike, this.fork, this.shock, this.riderWeight, this.updated, this.frontTire, this.rearTire, this.notes});
@@ -91,6 +73,30 @@ Component? _parseProduct(Map json, bool isFront) {
       }
       return Component.fromJson(settings);
     }
+    // else if (json.containsKey('settings') && json['settings'].runtimeType != String) {
+    //   Map<String, dynamic> settings = json['settings'];
+    //   if (settings.containsKey('front')) {
+    //     return Component.fromJson(settings['front']);
+    //   }
+    //   return Component.fromJson(settings);
+    // }
+    // else if (json.containsKey('suspension') && json['suspension'].runtimeType != String) {
+    //   Map<String, dynamic> settings = json['suspension'];
+    //   if (settings.containsKey('front')) {
+    //     return Component.fromJson(settings['front']);
+    //   }
+    //   return Component.fromJson(settings);
+    // }
+    // else if (json.containsKey('components') && json['components'].runtimeType != String) {
+    //   Map<String, dynamic> settings = json['components'];
+    //   if (settings.containsKey('fork')) {
+    //     return Component.fromJson(settings['fork']['settings']);
+    //   }
+    //   if (settings.containsKey('front')) {
+    //     return Component.fromJson(settings['front']);
+    //   }
+    //   return Component.fromJson(settings);
+    // }
     return null;
   }
 
@@ -105,6 +111,30 @@ Component? _parseProduct(Map json, bool isFront) {
       }
       return Component.fromJson(settings);
     }
+    // else if (json.containsKey('settings') && json['settings'].runtimeType != String) {
+    //   Map<String, dynamic> settings = json['settings'];
+    //   if (settings.containsKey('rear')) {
+    //     return Component.fromJson(settings['rear']);
+    //   }
+    //   return Component.fromJson(settings);
+    // }
+    // else if (json.containsKey('suspension') && json['suspension'].runtimeType != String) {
+    //   Map<String, dynamic> settings = json['suspension'];
+    //   if (settings.containsKey('rear')) {
+    //     return Component.fromJson(settings['rear']);
+    //   }
+    //   return Component.fromJson(settings);
+    // }
+    // else if (json.containsKey('components') && json['components'].runtimeType != String) {
+    //   Map<String, dynamic> settings = json['components'];
+    //   if (settings.containsKey('shock')) {
+    //     return Component.fromJson(settings['shock']['settings']);
+    //   }
+    //   if (settings.containsKey('rear')) {
+    //     return Component.fromJson(settings['rear']);
+    //   }
+    //   return Component.fromJson(settings);
+    // }
     return null;
   }
 }

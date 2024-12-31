@@ -41,9 +41,7 @@ class LoginPageState extends State<LoginPage> {
             image: DecorationImage(image: AssetImage('assets/josh_lower_hareball.jpg'), 
             alignment: Alignment.center, fit: BoxFit.fitHeight),
           ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: ListView(
           children: <Widget>[
             Padding(
               padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
