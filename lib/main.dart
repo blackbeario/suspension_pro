@@ -1,3 +1,4 @@
+import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,6 +12,7 @@ import 'package:suspension_pro/features/onboarding/onboarding.dart';
 import 'package:suspension_pro/features/forms/openai_form.dart';
 import 'package:suspension_pro/hive_helper/register_adapters.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
+import 'package:suspension_pro/utilities/offline_widget.dart';
 import './services/auth_service.dart';
 import 'features/auth/login.dart';
 import 'features/profile/profile.dart';
@@ -40,7 +42,8 @@ DeviceType getDeviceType() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key, required this.showHome}) : super(key: key);
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
   final bool showHome;
 
   @override
@@ -49,19 +52,21 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider<AuthService>(create: (_) => AuthService()),
       ],
-      child: CupertinoApp(
-        localizationsDelegates: [
-          DefaultMaterialLocalizations.delegate,
-          DefaultCupertinoLocalizations.delegate,
-          DefaultWidgetsLocalizations.delegate,
-        ],
-        debugShowCheckedModeBanner: false,
-        theme: CupertinoThemeData(
-          primaryColor: Color(0xFF007AFF), // iOS 10's default blue
-          primaryContrastingColor: Color(0xFFFFFFFF),
-          barBackgroundColor: Color(0xFFE5E5EA),
+      child: ConnectivityAppWrapper(
+        app: CupertinoApp(
+          localizationsDelegates: [
+            DefaultMaterialLocalizations.delegate,
+            DefaultCupertinoLocalizations.delegate,
+            DefaultWidgetsLocalizations.delegate,
+          ],
+          debugShowCheckedModeBanner: false,
+          theme: CupertinoThemeData(
+            primaryColor: Color(0xFF007AFF), // iOS 10's default blue
+            primaryContrastingColor: Color(0xFFFFFFFF),
+            barBackgroundColor: Color(0xFFE5E5EA),
+          ),
+          home: showHome ? AuthenticationWrapper() : Onboarding(),
         ),
-        home: showHome ? AuthenticationWrapper() : Onboarding(),
       ),
     );
   }
@@ -80,7 +85,10 @@ class AuthenticationWrapper extends StatelessWidget {
               // set UserSingleton properties
               UserSingleton().setId = user.uid;
               UserSingleton().setEmail = user.email ?? '';
-              return AppHomePage();
+              return ConnectivityWidgetWrapper(
+                offlineWidget: OfflineWidget(),
+                child: AppHomePage(),
+              );
             } else
               return LoginPage();
           } else {

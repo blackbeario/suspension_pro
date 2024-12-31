@@ -1,4 +1,6 @@
 // import 'dart:io';
+import 'package:connectivity_checker/connectivity_checker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:suspension_pro/features/in_app_purchases/in_app_bloc.dart';
 import 'package:suspension_pro/features/in_app_purchases/presentation/connection_check_tile.dart';
@@ -71,34 +73,45 @@ class _BuyCreditsState extends State<BuyCredits> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Buy AI Credits'),
-      ),
-      body: Stack(
-        children: stack,
-      ),
-    );
-    // return ListenableBuilder(
-    //     listenable: _bloc,
-    //     builder: (context, widget) {
-    // if (_bloc.credits < 5) {
-    //   return CupertinoAlertDialog(
-    //     title: Text('Warning: Low Credits'),
-    //     content: Text(
-    //         'You have less than 5 credits remaining. \n Please purchase additional credits to continue generating AI suggestions.'),
-    //     actions: [
-    //       CupertinoDialogAction(
-    //         child: Text('Not Now'),
-    //         onPressed: () {
-    //           Navigator.pop(context, 'Discard');
-    //         },
-    //       ),
-    //       CupertinoDialogAction(child: Text('Buy More'), onPressed: () {} // TODO: Add buy credits screen,
-    //           ),
-    //     ],
-    //   );
-    // }
-    //   return ElevatedButton(onPressed: () => _service.buyCredits(), child: Text('Buy Credits'));
-    // });
+        appBar: CupertinoNavigationBar(
+          leading: SizedBox(
+            width: 60,
+            child: ConnectivityWidgetWrapper(
+              alignment: Alignment.centerLeft,
+              offlineWidget: Icon(Icons.wifi_off, size: 24, color: Colors.red),
+            ),
+          ),
+          middle: const Text('Buy AI Credits'),
+        ),
+        body: ConnectivityWidgetWrapper(
+          alignment: Alignment.center,
+          stacked: false,
+          offlineWidget:
+              Center(child: Text('You cannot buy credits while offline')),
+          child: Stack(children: stack),
+        )
+        // return ListenableBuilder(
+        //     listenable: _bloc,
+        //     builder: (context, widget) {
+        // if (_bloc.credits < 5) {
+        //   return CupertinoAlertDialog(
+        //     title: Text('Warning: Low Credits'),
+        //     content: Text(
+        //         'You have less than 5 credits remaining. \n Please purchase additional credits to continue generating AI suggestions.'),
+        //     actions: [
+        //       CupertinoDialogAction(
+        //         child: Text('Not Now'),
+        //         onPressed: () {
+        //           Navigator.pop(context, 'Discard');
+        //         },
+        //       ),
+        //       CupertinoDialogAction(child: Text('Buy More'), onPressed: () {}
+        //           ),
+        //     ],
+        //   );
+        // }
+        //   return ElevatedButton(onPressed: () => _service.buyCredits(), child: Text('Buy Credits'));
+        // });
+        );
   }
 }
