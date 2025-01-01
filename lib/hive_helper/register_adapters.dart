@@ -7,7 +7,7 @@ import 'package:suspension_pro/models/shock.dart';
 
 void registerAdapters() {
 	Hive.registerAdapter(BikeAdapter());
-	Hive.registerAdapter(ComponentAdapter());
+	Hive.registerAdapter(ComponentSettingAdapter());
 	Hive.registerAdapter(SettingAdapter());
 	Hive.registerAdapter(ForkAdapter());
 	Hive.registerAdapter(ShockAdapter());
