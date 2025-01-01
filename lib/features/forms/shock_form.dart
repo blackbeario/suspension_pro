@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:suspension_pro/models/shock.dart';
 import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -6,7 +7,7 @@ class ShockForm extends StatefulWidget {
   ShockForm({this.bikeId, this.shock, this.shockCallback});
 
   final String? bikeId;
-  final Map? shock;
+  final Shock? shock;
   final Function(Map val)? shockCallback;
 
   @override
@@ -27,12 +28,12 @@ class _ShockFormState extends State<ShockForm> {
   void initState() {
     super.initState();
     var $shock = widget.shock;
-    _yearController.text = $shock?['year'] ?? '';
-    _brandController.text = $shock?['brand'] ?? '';
-    _modelController.text = $shock?['model'] ?? '';
-    _spacersController.text = $shock?['spacers'] ?? '';
-    _strokeController.text = $shock?['stroke'] ?? '';
-    _serialNumberController.text = $shock?['serial'] ?? '';
+    _yearController.text = $shock?.year ?? '';
+    _brandController.text = $shock?.brand ?? '';
+    _modelController.text = $shock?.model ?? '';
+    _spacersController.text = $shock?.spacers ?? '';
+    _strokeController.text = $shock?.stroke ?? '';
+    _serialNumberController.text = $shock?.serialNumber ?? '';
   }
 
   @override

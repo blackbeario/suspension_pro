@@ -2,17 +2,17 @@ import 'package:hive/hive.dart';
 import 'package:suspension_pro/hive_helper/hive_types.dart';
 import 'package:suspension_pro/hive_helper/hive_adapters.dart';
 
-part 'component.g.dart';
+part 'component_setting.g.dart';
 
 @HiveType(typeId: HiveTypes.component, adapterName: HiveAdapters.component)
-class Component extends HiveObject{
+class ComponentSetting extends HiveObject{
   // AI might return a variety of keys when parsed as JSON
   // so we try to account for the most common and deal with the failures
   final String? sag, springRate, preload, hsc, lsc, hsr, lsr, volume_spacers;
-  Component({this.sag, this.springRate, this.preload, this.hsc, this.lsc, this.hsr, this.lsr, this.volume_spacers});
+  ComponentSetting({this.sag, this.springRate, this.preload, this.hsc, this.lsc, this.hsr, this.lsr, this.volume_spacers});
 
-  factory Component.fromJson(Map<String, dynamic> json) {
-    return Component(
+  factory ComponentSetting.fromJson(Map<String, dynamic> json) {
+    return ComponentSetting(
       sag: json['sag'].toString(),
       springRate: json['springRate'] ?? json['spring_rate'].toString() ?? json['air_pressure'] ?? json['pressure'].toString() ?? '',
       preload: json['preload'] ?? json['preload'].toString() ?? '',

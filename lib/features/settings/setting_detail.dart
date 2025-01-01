@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:suspension_pro/features/settings/settings_form_field.dart';
 import 'package:suspension_pro/features/settings/share_button.dart';
 import 'package:suspension_pro/models/bike.dart';
-import 'package:suspension_pro/models/component.dart';
+import 'package:suspension_pro/models/component_setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:suspension_pro/services/db_service.dart';
 
@@ -11,7 +11,7 @@ class SettingDetails extends StatefulWidget {
 
   final String? setting, frontTire, rearTire, notes;
   final Bike? bike;
-  final Component? fork, shock;
+  final ComponentSetting? fork, shock;
 
   @override
   _SettingDetailsState createState() => _SettingDetailsState();
@@ -39,8 +39,8 @@ class _SettingDetailsState extends State<SettingDetails> {
   void initState() {
     super.initState();
     String? $setting = widget.setting;
-    Component? $fork = widget.fork;
-    Component? $shock = widget.shock;
+    ComponentSetting? $fork = widget.fork;
+    ComponentSetting? $shock = widget.shock;
     _settingNameController.text = $setting != null ? $setting : '';
     _notesController.text = widget.notes ?? '';
     _hscFork = $fork?.hsc ?? '';
@@ -114,7 +114,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                       Expanded(
                         child: Column(children: <Widget>[
                           SizedBox(
-                            child: Text($fork != null ? $fork['brand'] + ' ' + $fork['model'] : 'No fork saved'),
+                            child: Text($fork != null ? $fork.brand + ' ' + $fork.model : 'No fork saved'),
                             height: 25,
                           ),
                           Container(
@@ -143,7 +143,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                         child: Column(
                           children: <Widget>[
                             SizedBox(
-                              child: Text($shock != null ? $shock['brand'] + ' ' + $shock['model'] : 'No shock saved'),
+                              child: Text($shock != null ? $shock.brand + ' ' + $shock.model : 'No shock saved'),
                               height: 25,
                             ),
                             Container(

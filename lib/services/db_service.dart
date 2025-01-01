@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:suspension_pro/models/bike.dart';
+import 'package:suspension_pro/models/fork.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
 import 'dart:async';
 import '../models/user.dart';
@@ -87,23 +88,23 @@ class DatabaseService {
       'yearModel': bike.yearModel,
       if (bike.fork != null)
         'fork': {
-          'year': bike.fork!['year'],
-          'travel': bike.fork!['travel'],
-          'damper': bike.fork!['damper'],
-          'offset': bike.fork!['offset'],
-          'wheelsize': bike.fork!['wheelsize'],
-          'brand': bike.fork!['brand'],
-          'model': bike.fork!['model'],
-          'spacers': bike.fork!['spacers'],
-          'spacing': bike.fork!['spacing']
+          'year': bike.fork!.year,
+          'travel': bike.fork!.travel,
+          'damper': bike.fork!.damper,
+          'offset': bike.fork!.offset,
+          'wheelsize': bike.fork!.wheelsize,
+          'brand': bike.fork!.brand,
+          'model': bike.fork!.model,
+          'spacers': bike.fork!.spacers,
+          'spacing': bike.fork!.spacing
         },
       if (bike.shock != null)
         'shock': {
-          'year': bike.shock!['year'],
-          'stroke': bike.shock!['stroke'],
-          'brand': bike.shock!['brand'],
-          'model': bike.shock!['model'],
-          'spacers': bike.shock!['spacers']
+          'year': bike.shock!.year,
+          'stroke': bike.shock!.stroke,
+          'brand': bike.shock!.brand,
+          'model': bike.shock!.model,
+          'spacers': bike.shock!.spacers
         }
     }, SetOptions(merge: true));
   }
@@ -122,23 +123,22 @@ class DatabaseService {
     return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).collection('settings').doc(sid).delete();
   }
 
-  Future<void> updateFork(String bikeid, String year, String travel, String damper, String offset, String wheelsize,
-      String brand, String model, String spacers, String spacing, String serial) async {
+  Future<void> updateFork(Fork fork) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
-    return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).set({
+    return await _db.collection('users').doc(uid).collection('bikes').doc(fork.bikeId).set({
       'fork': {
         'updated': updated,
-        'year': year,
-        'travel': travel,
-        'damper': damper,
-        'offset': offset,
-        'wheelsize': wheelsize,
-        'brand': brand,
-        'model': model,
-        'spacers': spacers,
-        'spacing': spacing,
-        'serial': serial,
+        'year': fork.year,
+        'travel': fork.travel,
+        'damper': fork.damper,
+        'offset': fork.offset,
+        'wheelsize': fork.wheelsize,
+        'brand': fork.brand,
+        'model': fork.model,
+        'spacers': fork.spacers,
+        'spacing': fork.spacing,
+        'serial': fork.serialNumber,
       }
     }, SetOptions(merge: true));
   }

@@ -1,35 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'component.dart';
+part of 'component_setting.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class ComponentAdapter extends TypeAdapter<Component> {
+class ComponentAdapter extends TypeAdapter<ComponentSetting> {
   @override
   final int typeId = 1;
 
   @override
-  Component read(BinaryReader reader) {
+  ComponentSetting read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Component(
-      sag: fields[0] as String,
-      springRate: fields[1] as String,
-      preload: fields[2] as String,
-      hsc: fields[3] as String,
-      lsc: fields[4] as String,
-      hsr: fields[5] as String,
-      lsr: fields[6] as String,
-      volume_spacers: fields[7] as String,
-    );
+    return ComponentSetting();
   }
 
   @override
-  void write(BinaryWriter writer, Component obj) {
+  void write(BinaryWriter writer, ComponentSetting obj) {
     writer.writeByte(0);
   }
 

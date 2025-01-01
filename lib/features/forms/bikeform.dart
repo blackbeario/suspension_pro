@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:suspension_pro/models/bike.dart';
+import 'package:suspension_pro/models/fork.dart';
+import 'package:suspension_pro/models/shock.dart';
 import 'package:suspension_pro/services/db_service.dart';
 import 'fork_form.dart';
 import 'shock_form.dart';
@@ -28,8 +30,8 @@ class _BikeFormState extends State<BikeForm> {
   bool _isVisibleForkForm = false;
   bool _isVisibleShockForm = false;
   String _enteredText = '';
-  late Map? fork = {};
-  late Map? shock = {};
+  late Fork? fork;
+  late Shock? shock;
 
   void showForkForm(forkValues) async {
     setState(() {
@@ -77,8 +79,8 @@ class _BikeFormState extends State<BikeForm> {
 
   Future<bool> _addUpdateBike() async {
     Navigator.pop(context);
-    final box = await Hive.openBox('bikes');
-    final bike = Bike(id: _bikeController.text, yearModel: int.parse(_yearModelController.text), fork: fork, shock: shock);
+    final Box box = await Hive.openBox('bikes');
+    final Bike bike = Bike(id: _bikeController.text, yearModel: int.parse(_yearModelController.text), fork: fork, shock: shock);
     box.put(_bikeController.text, bike);
     print(box.get(_bikeController.text));
 
