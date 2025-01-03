@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:suspension_pro/models/shock.dart';
 import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -6,7 +8,7 @@ class ShockForm extends StatefulWidget {
   ShockForm({this.bikeId, this.shock, this.shockCallback});
 
   final String? bikeId;
-  final Map? shock;
+  final Shock? shock;
   final Function(Map val)? shockCallback;
 
   @override
@@ -27,12 +29,12 @@ class _ShockFormState extends State<ShockForm> {
   void initState() {
     super.initState();
     var $shock = widget.shock;
-    _yearController.text = $shock?['year'] ?? '';
-    _brandController.text = $shock?['brand'] ?? '';
-    _modelController.text = $shock?['model'] ?? '';
-    _spacersController.text = $shock?['spacers'] ?? '';
-    _strokeController.text = $shock?['stroke'] ?? '';
-    _serialNumberController.text = $shock?['serial'] ?? '';
+    _yearController.text = $shock?.year ?? '';
+    _brandController.text = $shock?.brand ?? '';
+    _modelController.text = $shock?.model ?? '';
+    _spacersController.text = $shock?.spacers ?? '';
+    _strokeController.text = $shock?.stroke ?? '';
+    _serialNumberController.text = $shock?.serialNumber ?? '';
   }
 
   @override
@@ -46,16 +48,19 @@ class _ShockFormState extends State<ShockForm> {
     super.dispose();
   }
 
-  Future<bool> _updateShock(bike, BuildContext context) {
+  Future<bool> _updateShock(bikeId, BuildContext context) async {
     Navigator.pop(context);
-    db.updateShock(
-        widget.bikeId!,
-        _yearController.text,
-        _strokeController.text,
-        _brandController.text,
-        _modelController.text,
-        _spacersController.text,
-        _serialNumberController.text);
+    final Box box = await Hive.openBox('shocks');
+    final Shock shock = Shock(
+        bikeId: bikeId,
+        year: _yearController.text,
+        brand: _brandController.text,
+        model: _modelController.text,
+        spacers: _spacersController.text,
+        stroke: _strokeController.text,
+        serialNumber: _serialNumberController.text);
+    box.put(bikeId, shock);
+    db.updateShock(bikeId, shock);
     return Future.value(false);
   }
 

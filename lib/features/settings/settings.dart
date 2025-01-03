@@ -2,8 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:suspension_pro/models/bike.dart';
+import 'package:suspension_pro/models/fork.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
-import '../../models/bike.dart';
 import 'settings_list.dart';
 import '../forms/shock_form.dart';
 import '../../services/auth_service.dart';
@@ -98,7 +99,7 @@ class _SettingsState extends State<Settings> {
       itemBuilder: (context, index) {
         Bike $bike = bikes[index];
         String bikeName = _parseBikeName($bike);
-        var fork = $bike.fork;
+        Fork? fork = $bike.fork;
         var shock = $bike.shock;
         return Dismissible(
           background: ListTile(
@@ -174,21 +175,21 @@ class _SettingsState extends State<Settings> {
                                       contentPadding: EdgeInsets.zero,
                                       dense: true,
                                       title: Text(
-                                          fork["year"].toString() +
+                                          fork.year +
                                               ' ' +
-                                              fork["brand"] +
+                                              fork.brand +
                                               ' ' +
-                                              fork["model"],
+                                              fork.model,
                                           style:
                                               TextStyle(color: Colors.black87)),
                                       subtitle: Text(
-                                          fork["travel"].toString() +
+                                          (fork.travel ?? '') +
                                               'mm / ' +
-                                              fork["damper"] +
+                                              (fork.damper ?? '') +
                                               ' / ' +
-                                              fork["offset"].toString() +
+                                              (fork.offset ?? '') +
                                               'mm / ' +
-                                              fork["wheelsize"].toString() +
+                                              (fork.wheelsize ?? '') +
                                               '"',
                                           style:
                                               TextStyle(color: Colors.black54)),
@@ -212,9 +213,7 @@ class _SettingsState extends State<Settings> {
                                                             Navigator.pop(
                                                                 context,
                                                                 $bike.id)),
-                                                    middle: Text(fork['brand'] +
-                                                        ' ' +
-                                                        fork['model']),
+                                                    middle: Text(fork.brand + ' ' + fork.model),
                                                   ),
                                                   child: ForkForm(
                                                       bikeId: $bike.id,
@@ -318,16 +317,10 @@ class _SettingsState extends State<Settings> {
                                     contentPadding: EdgeInsets.zero,
                                     dense: true,
                                     title: Text(
-                                        shock["year"].toString() +
-                                            ' ' +
-                                            shock["brand"] +
-                                            ' ' +
-                                            shock["model"],
-                                        style:
-                                            TextStyle(color: Colors.black87)),
-                                    subtitle: Text(shock["stroke"] ?? '',
-                                        style:
-                                            TextStyle(color: Colors.black54)),
+                                      shock.year + ' ' + shock.brand + ' ' + shock.model,
+                                      style: TextStyle(color: Colors.black87)),
+                                    subtitle: Text(shock.stroke ?? '',
+                                      style: TextStyle(color: Colors.black54)),
                                     onTap: () async {
                                       /// Await the bike return value from the shock form back button.
                                       await Navigator.push(
@@ -346,9 +339,8 @@ class _SettingsState extends State<Settings> {
                                                       onPressed: () =>
                                                           Navigator.pop(context,
                                                               $bike.id)),
-                                                  middle: Text(shock['brand'] +
-                                                      ' ' +
-                                                      shock['model']),
+                                                  middle: Text(shock.brand + ' ' +
+                                                      shock.model),
                                                 ),
                                                 child: ShockForm(
                                                     bikeId: $bike.id,
@@ -466,9 +458,9 @@ class _SettingsState extends State<Settings> {
         leading: SizedBox(
           width: 60,
           child: ConnectivityWidgetWrapper(
-              alignment: Alignment.centerLeft,
-              offlineWidget: Icon(Icons.wifi_off, size: 24, color: Colors.red),
-              ),
+            alignment: Alignment.centerLeft,
+            offlineWidget: Icon(Icons.wifi_off, size: 24, color: Colors.red),
+          ),
         ),
         middle: Text('Bikes & Settings'),
         trailing: CupertinoButton(

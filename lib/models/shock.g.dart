@@ -1,47 +1,50 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'bike.dart';
+part of 'shock.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class BikeAdapter extends TypeAdapter<Bike> {
+class ShockAdapter extends TypeAdapter<Shock> {
   @override
-  final int typeId = 0;
+  final int typeId = 4;
 
   @override
-  Bike read(BinaryReader reader) {
+  Shock read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Bike(
-      id: fields[0] as String,
-      yearModel: fields[1] as int?,
-      fork: fields[2] as Fork?,
-      shock: fields[3] as Shock?,
-      index: fields[4] as int?,
-      bikePic: fields[5] as String?,
+    return Shock(
+      bikeId: fields[0] as String,
+      year: fields[1] as String,
+      brand: fields[2] as String,
+      model: fields[3] as String,
+      spacers: fields[4] as String?,
+      stroke: fields[5] as String?,
+      serialNumber: fields[6] as String?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Bike obj) {
+  void write(BinaryWriter writer, Shock obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
-      ..write(obj.id)
+      ..write(obj.bikeId)
       ..writeByte(1)
-      ..write(obj.yearModel)
+      ..write(obj.year)
       ..writeByte(2)
-      ..write(obj.fork)
+      ..write(obj.brand)
       ..writeByte(3)
-      ..write(obj.shock)
+      ..write(obj.model)
       ..writeByte(4)
-      ..write(obj.index)
+      ..write(obj.spacers)
       ..writeByte(5)
-      ..write(obj.bikePic);
+      ..write(obj.stroke)
+      ..writeByte(6)
+      ..write(obj.serialNumber);
   }
 
   @override
@@ -50,7 +53,7 @@ class BikeAdapter extends TypeAdapter<Bike> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is BikeAdapter &&
+      other is ShockAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
