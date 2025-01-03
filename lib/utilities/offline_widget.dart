@@ -17,10 +17,12 @@ class _OfflineWidgetState extends State<OfflineWidget> {
   }
 
   showOfflineMessage() async {
-    setState(() => isShown = !isShown);
-    Future.delayed(const Duration(seconds: 5), () {
+    if (mounted) {
       setState(() => isShown = !isShown);
-    });
+      Future.delayed(const Duration(seconds: 5), () {
+        setState(() => isShown = !isShown);
+      });
+    }
   }
 
   @override

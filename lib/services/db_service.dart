@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:suspension_pro/models/bike.dart';
 import 'package:suspension_pro/models/fork.dart';
+import 'package:suspension_pro/models/shock.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
 import 'dart:async';
 import '../models/user.dart';
@@ -143,18 +144,18 @@ class DatabaseService {
     }, SetOptions(merge: true));
   }
 
-  Future<void> updateShock(String bikeid, String year, String stroke, String brand, String model, String spacers, String serial) async {
+  Future<void> updateShock(String bikeid, Shock shock) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
     return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).set({
       'shock': {
         'updated': updated,
-        'year': year,
-        'stroke': stroke,
-        'brand': brand,
-        'model': model,
-        'spacers': spacers,
-        'serial': serial,
+        'year': shock.year,
+        'stroke': shock.stroke,
+        'brand': shock.brand,
+        'model': shock.model,
+        'spacers': shock.spacers,
+        'serial': shock.serialNumber
       }
     }, SetOptions(merge: true));
   }
