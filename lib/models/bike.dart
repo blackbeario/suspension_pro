@@ -3,6 +3,8 @@ import 'package:hive/hive.dart';
 import 'package:suspension_pro/hive_helper/hive_types.dart';
 import 'package:suspension_pro/hive_helper/hive_adapters.dart';
 import 'package:suspension_pro/hive_helper/fields/bike_fields.dart';
+import 'package:suspension_pro/models/fork.dart';
+import 'package:suspension_pro/models/shock.dart';
 
 part 'bike.g.dart';
 
@@ -13,9 +15,9 @@ class Bike extends HiveObject{
 	@HiveField(BikeFields.yearModel)
   final int? yearModel;
 	@HiveField(BikeFields.fork)
-  final Map? fork;
+  final Fork? fork;
 	@HiveField(BikeFields.shock)
-  final Map? shock;
+  final Shock? shock;
 	@HiveField(BikeFields.index)
   int? index;
 	@HiveField(BikeFields.bikePic)
@@ -29,8 +31,8 @@ class Bike extends HiveObject{
     return Bike(
       id: doc.id,
       yearModel: data["yearModel"] ?? null,
-      fork: data["fork"] ?? null,
-      shock: data["shock"] ?? null,
+      fork: Fork.fromJson(doc.id, data["fork"]),
+      shock: data["shock"] != null ? Shock.fromJson(doc.id, data["shock"]) : null,
       index: data["index"] ?? null,
       bikePic: data['bikePic'] ?? '',
     );

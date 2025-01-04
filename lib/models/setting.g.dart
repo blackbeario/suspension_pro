@@ -19,8 +19,8 @@ class SettingAdapter extends TypeAdapter<Setting> {
     return Setting(
       id: fields[0] as String,
       bike: fields[1] as String?,
-      fork: fields[2] as Component?,
-      shock: fields[3] as Component?,
+      fork: fields[2] as ComponentSetting?,
+      shock: fields[3] as ComponentSetting?,
       riderWeight: fields[4] as String?,
       updated: fields[5] as DateTime?,
       frontTire: fields[6] as String?,

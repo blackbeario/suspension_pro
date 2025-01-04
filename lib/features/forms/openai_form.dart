@@ -6,10 +6,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:suspension_pro/models/ai_response.dart';
+import 'package:suspension_pro/services/db_service.dart';
 import 'package:suspension_pro/utilities/helpers.dart';
 import 'package:suspension_pro/models/bike.dart';
 import 'package:suspension_pro/models/setting.dart';
-import '../../services/db_service.dart';
 
 class OpenAiRequest extends StatefulWidget {
   OpenAiRequest({Key? key}) : super(key: key);
@@ -212,14 +212,10 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                 setState(() {
                   _selectedBike = bikes[value];
                   _selectedForkName = _selectedBike?.fork != null
-                      ? (_selectedBike?.fork?['brand'] +
-                          ' ' +
-                          _selectedBike?.fork?['model'])
+                      ? (_selectedBike!.fork!.brand + ' ' + _selectedBike!.fork!.model)
                       : '';
                   _selectedShockName = _selectedBike?.shock != null
-                      ? (_selectedBike?.shock?['brand'] +
-                          ' ' +
-                          _selectedBike?.shock?['model'])
+                      ? (_selectedBike!.shock!.brand + ' ' + _selectedBike!.shock!.model)
                       : '';
                 });
               },

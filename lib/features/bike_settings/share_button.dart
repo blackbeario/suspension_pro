@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:suspension_pro/features/bike_settings/setting_detail.dart';
+import 'package:suspension_pro/models/fork.dart';
+import 'package:suspension_pro/models/shock.dart';
 import 'package:suspension_pro/models/user.dart';
 import 'package:suspension_pro/utilities/helpers.dart';
 
@@ -13,8 +15,8 @@ class ShareButton extends StatelessWidget {
   }) : super(key: key);
 
   final SettingDetails widget;
-  final Map? $fork;
-  final Map? $shock;
+  final Fork? $fork;
+  final Shock? $shock;
 
   @override
   Widget build(BuildContext context) {

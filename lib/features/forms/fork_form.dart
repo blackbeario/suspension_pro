@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hive/hive.dart';
+import 'package:suspension_pro/models/fork.dart';
 import 'package:suspension_pro/services/db_service.dart';
 
 class ForkForm extends StatefulWidget {
   ForkForm({this.bikeId, this.fork, this.forkCallback});
 
   final String? bikeId;
-  final Map? fork;
+  final Fork? fork;
   final Function(Map val)? forkCallback;
 
   @override
@@ -32,16 +34,16 @@ class _ForkFormState extends State<ForkForm> {
   void initState() {
     super.initState();
     var $fork = widget.fork;
-    _yearController.text = $fork?['year'] ?? '';
-    _brandController.text = $fork?['brand'] ?? '';
-    _modelController.text = $fork?['model'] ?? '';
-    _travelController.text = $fork?['travel'] ?? '';
-    _damperController.text = $fork?['damper'] ?? '';
-    _offsetController.text = $fork?['offset'] ?? '';
-    _wheelsizeController.text = $fork?['wheelsize'] ?? '';
-    _spacingController.text = $fork?['spacing'] ?? '';
-    _spacersController.text = $fork?['spacers'] ?? '';
-    _serialNumberController.text = $fork?['serial'] ?? '';
+    _yearController.text = $fork?.year ?? '';
+    _brandController.text = $fork?.brand ?? '';
+    _modelController.text = $fork?.model ?? '';
+    _travelController.text = $fork?.travel ?? '';
+    _damperController.text = $fork?.damper ?? '';
+    _offsetController.text = $fork?.offset ?? '';
+    _wheelsizeController.text = $fork?.wheelsize ?? '';
+    _spacingController.text = $fork?.spacing ?? '';
+    _spacersController.text = $fork?.spacers ?? '';
+    _serialNumberController.text = $fork?.serialNumber ?? '';
   }
 
   @override
@@ -59,20 +61,23 @@ class _ForkFormState extends State<ForkForm> {
     super.dispose();
   }
 
-  Future<bool> _updateFork(bike, BuildContext context) {
+  Future<bool> _updateFork(bikeId, BuildContext context) async {
     Navigator.pop(context);
-    db.updateFork(
-        widget.bikeId!,
-        _yearController.text,
-        _travelController.text,
-        _damperController.text,
-        _offsetController.text,
-        _wheelsizeController.text,
-        _brandController.text,
-        _modelController.text,
-        _spacersController.text,
-        _spacingController.text,
-        _serialNumberController.text);
+    final Box box = await Hive.openBox('forks');
+    final Fork fork = Fork(
+        bikeId: bikeId,
+        year: _yearController.text,
+        travel: _travelController.text,
+        damper: _damperController.text,
+        offset: _offsetController.text,
+        wheelsize: _wheelsizeController.text,
+        brand: _brandController.text,
+        model: _modelController.text,
+        spacers: _spacersController.text,
+        spacing: _spacingController.text,
+        serialNumber: _serialNumberController.text);
+    box.put(bikeId, fork);
+    db.updateFork(bikeId, fork);
     return Future.value(false);
   }
 

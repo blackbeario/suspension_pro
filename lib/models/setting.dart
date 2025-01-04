@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:suspension_pro/hive_helper/hive_types.dart';
 import 'package:suspension_pro/hive_helper/hive_adapters.dart';
 import 'package:suspension_pro/hive_helper/fields/setting_fields.dart';
-import 'package:suspension_pro/models/component.dart';
+import 'package:suspension_pro/models/component_setting.dart';
 
 
 part 'setting.g.dart';
@@ -16,9 +16,9 @@ class Setting extends HiveObject{
 	@HiveField(SettingFields.bike)
   final String? bike;
 	@HiveField(SettingFields.fork)
-  final Component? fork;
+  final ComponentSetting? fork;
 	@HiveField(SettingFields.shock)
-  final Component? shock;
+  final ComponentSetting? shock;
 	@HiveField(SettingFields.riderWeight)
   final String? riderWeight;
 	@HiveField(SettingFields.updated)
@@ -38,8 +38,8 @@ class Setting extends HiveObject{
       id: doc.id,
       riderWeight: data['riderWeight'] ?? '',
       bike: data['bike'] ?? '',
-      fork: data['fork'] != null ? Component.fromJson(data['fork']) : null,
-      shock: data['shock'] != null ? Component.fromJson(data['shock']) : null,
+      fork: data['fork'] != null ? ComponentSetting.fromJson(data['fork']) : null,
+      shock: data['shock'] != null ? ComponentSetting.fromJson(data['shock']) : null,
       frontTire: data['frontTire'] ?? '',
       rearTire: data['rearTire'] ?? '',
       updated: data['updated'] != null ? DateTime.fromMillisecondsSinceEpoch(data['updated']) : null,
@@ -79,17 +79,17 @@ String _parseBike(bike) {
   return bike;
 }
 
-Component? _parseProduct(Map json, bool isFront) {
+ComponentSetting? _parseProduct(Map json, bool isFront) {
   if (isFront) {
     if (json.containsKey('suspension_settings') && json['suspension_settings'].runtimeType != String) {
       Map<String, dynamic> settings = json['suspension_settings'];
       if (settings.containsKey('fork')) {
-        return Component.fromJson(settings['fork']);
+        return ComponentSetting.fromJson(settings['fork']);
       }
       if (settings.containsKey('front')) {
-        return Component.fromJson(settings['front']);
+        return ComponentSetting.fromJson(settings['front']);
       }
-      return Component.fromJson(settings);
+      return ComponentSetting.fromJson(settings);
     }
     return null;
   }
@@ -98,12 +98,12 @@ Component? _parseProduct(Map json, bool isFront) {
     if (json.containsKey('suspension_settings') && json['suspension_settings'].runtimeType != String) {
       Map<String, dynamic> settings = json['suspension_settings'];
       if (settings.containsKey('shock')) {
-        return Component.fromJson(settings['shock']);
+        return ComponentSetting.fromJson(settings['shock']);
       }
       if (settings.containsKey('rear')) {
-        return Component.fromJson(settings['rear']);
+        return ComponentSetting.fromJson(settings['rear']);
       }
-      return Component.fromJson(settings);
+      return ComponentSetting.fromJson(settings);
     }
     return null;
   }

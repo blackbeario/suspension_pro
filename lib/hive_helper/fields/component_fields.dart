@@ -1,4 +1,4 @@
-class ComponentFields {
+class ComponentSettingFields {
 	static const int sag = 0;
   static const int springRate = 1;
   static const int preload = 2;

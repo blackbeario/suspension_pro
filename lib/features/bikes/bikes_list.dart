@@ -110,17 +110,12 @@ class _BikesListState extends State<BikesList> {
                                   child: ListTile(
                                       contentPadding: EdgeInsets.zero,
                                       dense: true,
-                                      title: Text(fork["year"].toString() + ' ' + fork["brand"] + ' ' + fork["model"],
+                                      title: Text(fork.year + ' ' + fork.brand + ' ' + fork.model,
                                           style: TextStyle(color: Colors.black87)),
                                       subtitle: Text(
-                                          fork["travel"].toString() +
-                                              'mm / ' +
-                                              fork["damper"] +
-                                              ' / ' +
-                                              fork["offset"].toString() +
-                                              'mm / ' +
-                                              fork["wheelsize"].toString() +
-                                              '"',
+                                          (fork.travel ?? '') + 'mm / ' + (fork.damper ?? '') +
+                                              ' / ' + (fork.offset ?? '') + 'mm / ' +
+                                              (fork.wheelsize ?? '') + '"',
                                           style: TextStyle(color: Colors.black54)),
                                       onTap: () async {
                                         /// Await the bike return value from the fork form back button,
@@ -137,7 +132,7 @@ class _BikesListState extends State<BikesList> {
                                                     leading: CupertinoButton(
                                                         child: BackButtonIcon(),
                                                         onPressed: () => Navigator.pop(context, $bike.id)),
-                                                    middle: Text(fork['brand'] + ' ' + fork['model']),
+                                                    middle: Text(fork.brand + ' ' + fork.model),
                                                   ),
                                                   child: ForkForm(bikeId: $bike.id, fork: fork),
                                                 );
@@ -231,9 +226,9 @@ class _BikesListState extends State<BikesList> {
                                 child: ListTile(
                                     contentPadding: EdgeInsets.zero,
                                     dense: true,
-                                    title: Text(shock["year"].toString() + ' ' + shock["brand"] + ' ' + shock["model"],
+                                    title: Text(shock.year + ' ' + shock.brand + ' ' + shock.model,
                                         style: TextStyle(color: Colors.black87)),
-                                    subtitle: Text(shock["stroke"] ?? '', style: TextStyle(color: Colors.black54)),
+                                    subtitle: Text(shock.stroke ?? '', style: TextStyle(color: Colors.black54)),
                                     onTap: () async {
                                       /// Await the bike return value from the shock form back button.
                                       await Navigator.push(
@@ -249,7 +244,7 @@ class _BikesListState extends State<BikesList> {
                                                   leading: CupertinoButton(
                                                       child: BackButtonIcon(),
                                                       onPressed: () => Navigator.pop(context, $bike.id)),
-                                                  middle: Text(shock['brand'] + ' ' + shock['model']),
+                                                  middle: Text(shock.brand + ' ' + shock.model),
                                                 ),
                                                 child: ShockForm(bikeId: $bike.id, shock: shock),
                                               );
