@@ -59,17 +59,10 @@ class _ProfileState extends State<Profile> {
                       ProfileNameForm(user: myUser),
                     ],
                   ),
-                  // UserPoints(user: myUser),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                     child: Divider(),
                   ),
-                  // ListTile(
-                  //   title: Text('Points Guide'),
-                  //   trailing: Icon(Icons.arrow_forward_ios),
-                  //   onTap: () => null,
-                  // ),
-
                   ListTile(
                     title: Text('App Roadmap'),
                     trailing: Icon(Icons.arrow_forward_ios),

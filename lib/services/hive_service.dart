@@ -10,6 +10,15 @@ class HiveService {
     }
   }
 
+  getAllFromBox(String boxName) async {
+    try {
+      final box = await Hive.openBox(boxName);
+      return await box.get;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   getFromBox(String boxName, String key) async {
     try {
       final box = await Hive.openBox(boxName);

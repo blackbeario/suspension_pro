@@ -8,15 +8,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:suspension_pro/features/in_app_purchases/buy_credits.dart';
 import 'package:suspension_pro/features/in_app_purchases/in_app_bloc.dart';
+import 'package:suspension_pro/features/connectivity/connectivity_bloc.dart';
 import 'package:suspension_pro/features/onboarding/onboarding.dart';
 import 'package:suspension_pro/features/forms/openai_form.dart';
 import 'package:suspension_pro/hive_helper/register_adapters.dart';
+import 'package:suspension_pro/models/user.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
-import 'package:suspension_pro/utilities/offline_widget.dart';
+import 'package:suspension_pro/services/db_service.dart';
 import './services/auth_service.dart';
 import 'features/auth/login.dart';
 import 'features/profile/profile.dart';
-import 'features/settings/settings.dart';
+import 'features/bikes/bikes_list_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -27,7 +29,8 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
   await Hive.initFlutter();
-  registerAdapters();
+  await registerAdapters();
+  await ConnectivityBloc().checkConnectivity();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   runApp(MyApp(showHome: showHome));
 }
@@ -42,8 +45,7 @@ DeviceType getDeviceType() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key, required this.showHome}) : super(key: key);
-  static final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   final bool showHome;
 
   @override
@@ -75,26 +77,48 @@ class MyApp extends StatelessWidget {
 class AuthenticationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
-    return StreamBuilder<User?>(
-        stream: authService.user,
-        builder: (_, AsyncSnapshot<User?> snapshot) {
-          if (snapshot.connectionState == ConnectionState.active) {
-            final User? user = snapshot.data;
-            if (user != null) {
-              // set UserSingleton properties
-              UserSingleton().setId = user.uid;
-              UserSingleton().setEmail = user.email ?? '';
-              return ConnectivityWidgetWrapper(
-                offlineWidget: OfflineWidget(),
-                child: AppHomePage(),
-              );
-            } else
-              return LoginPage();
-          } else {
-            return Scaffold(body: Center(child: CircularProgressIndicator()));
-          }
-        });
+    final ConnectivityBloc _connectionBloc = ConnectivityBloc();
+    final DatabaseService db = DatabaseService();
+    return ListenableBuilder(
+      listenable: _connectionBloc,
+      builder: (context, widget) {
+
+        // App is ONLINE
+        if (_connectionBloc.isConnected) {
+          final authService = Provider.of<AuthService>(context);
+          return StreamBuilder<User?>(
+              stream: authService.user,
+              builder: (_, AsyncSnapshot<User?> snapshot) {
+                if (snapshot.connectionState == ConnectionState.active) {
+                  final User? user = snapshot.data;
+                  if (user != null) {
+                    // set UserSingleton properties
+                    UserSingleton().uid = user.uid;
+                    UserSingleton().email = user.email ?? '';
+
+                    // Get the Firebase user doc for username and pro_account status
+                    return StreamBuilder<AppUser?>(
+                        stream: db.streamUser(),
+                        builder: (context, snapshot) {
+                          final AppUser? fbUser = snapshot.data;
+                          if (fbUser == null) {
+                            return Center(child: CupertinoActivityIndicator(animating: true));
+                          }
+                          UserSingleton().username = fbUser.username ?? 'Guest';
+                          UserSingleton().proAccount = fbUser.proAccount ?? false;
+                          return AppHomePage();
+                        });
+                  } else
+                    return LoginPage();
+                } else {
+                  return Scaffold(body: Center(child: CircularProgressIndicator()));
+                }
+              });
+        }
+        // App is OFFLINE 
+        return UserSingleton().username == '' ? LoginPage() : AppHomePage();
+      },
+    );
   }
 }
 
@@ -129,7 +153,7 @@ class _AppHomePageState extends State<AppHomePage> {
         switch (index) {
           case 0:
             return CupertinoTabView(
-              builder: (BuildContext context) => Settings(),
+              builder: (BuildContext context) => BikesListScreen(),
             );
           case 1:
             return CupertinoTabView(

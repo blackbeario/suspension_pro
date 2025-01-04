@@ -3,10 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:suspension_pro/models/bike.dart';
 import 'package:suspension_pro/models/component.dart';
 import 'package:suspension_pro/models/setting.dart';
-import 'package:suspension_pro/models/user_singleton.dart';
 import 'setting_detail.dart';
-import '../../services/auth_service.dart';
-import '../../services/db_service.dart';
+import 'package:suspension_pro/services/auth_service.dart';
+import 'package:suspension_pro/services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 
 class SettingsList extends StatefulWidget {
@@ -19,7 +18,6 @@ class SettingsList extends StatefulWidget {
 
 class _SettingsListState extends State<SettingsList> {
   final db = DatabaseService();
-  final String uid = UserSingleton().id;
 
   Widget _getSettings(Bike bike, List<Setting> settings, context) {
     return ListView.builder(
@@ -33,8 +31,7 @@ class _SettingsListState extends State<SettingsList> {
         String? notes = settings[index].notes ?? null;
         return Dismissible(
           background: ListTile(
-            tileColor:
-                CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
+            tileColor: CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
             trailing: Icon(Icons.delete, color: CupertinoColors.systemRed),
           ),
           direction: DismissDirection.horizontal,
