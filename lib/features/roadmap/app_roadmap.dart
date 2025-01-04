@@ -18,16 +18,19 @@ class AppRoadmap extends StatelessWidget {
         child: ListView(
           children: [
             ListTile(
-              title: Text('List of projected plans for this app'),
+              title: Text('List of app plans'),
               subtitle: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppRoadmapItem(value: 'HIVE Offline Support'),
+                    AppRoadmapItem(value: 'Populate bikes and components from HIVE'),
+                    AppRoadmapItem(value: 'Populate settings from HIVE'),
+                    AppRoadmapItem(value: 'Implement workmanager plugin for backround sync'),
+                    AppRoadmapItem(value: 'Set bool flag for synced data. If remote sync fails set flag to false and try workmanager method'),
                     AppRoadmapItem(value: 'Import suspension products dynamically'),
                     AppRoadmapItem(value: 'Support for less common suspension products'),
-                    AppRoadmapItem(value: 'Custom user app backgrounds'),
+                    AppRoadmapItem(value: 'Custom user app backgrounds / better themeing'),
                   ],
                 ),
               ),

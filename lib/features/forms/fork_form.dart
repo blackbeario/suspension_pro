@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 import 'package:suspension_pro/models/fork.dart';
+import 'package:hive/hive.dart';
+import 'package:suspension_pro/models/fork.dart';
 import 'package:suspension_pro/services/db_service.dart';
 
 class ForkForm extends StatefulWidget {
   ForkForm({this.bikeId, this.fork, this.forkCallback});
 
   final String? bikeId;
+  final Fork? fork;
   final Fork? fork;
   final Function(Map val)? forkCallback;
 
@@ -44,6 +47,16 @@ class _ForkFormState extends State<ForkForm> {
     _spacingController.text = $fork?.spacing ?? '';
     _spacersController.text = $fork?.spacers ?? '';
     _serialNumberController.text = $fork?.serialNumber ?? '';
+    _yearController.text = $fork?.year ?? '';
+    _brandController.text = $fork?.brand ?? '';
+    _modelController.text = $fork?.model ?? '';
+    _travelController.text = $fork?.travel ?? '';
+    _damperController.text = $fork?.damper ?? '';
+    _offsetController.text = $fork?.offset ?? '';
+    _wheelsizeController.text = $fork?.wheelsize ?? '';
+    _spacingController.text = $fork?.spacing ?? '';
+    _spacersController.text = $fork?.spacers ?? '';
+    _serialNumberController.text = $fork?.serialNumber ?? '';
   }
 
   @override
@@ -61,6 +74,7 @@ class _ForkFormState extends State<ForkForm> {
     super.dispose();
   }
 
+  Future<bool> _updateFork(bikeId, BuildContext context) async {
   Future<bool> _updateFork(bikeId, BuildContext context) async {
     Navigator.pop(context);
     final Box box = await Hive.openBox('forks');

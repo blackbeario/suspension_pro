@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:suspension_pro/models/bike.dart';
 import 'package:suspension_pro/models/fork.dart';
@@ -79,8 +80,8 @@ class _BikeFormState extends State<BikeForm> {
 
   Future<bool> _addUpdateBike() async {
     Navigator.pop(context);
-    final box = await Hive.openBox('bikes');
-    final bike = Bike(id: _bikeController.text, yearModel: int.parse(_yearModelController.text), fork: fork, shock: shock);
+    final Box box = await Hive.openBox('bikes');
+    final Bike bike = Bike(id: _bikeController.text, yearModel: int.parse(_yearModelController.text), fork: fork, shock: shock);
     box.put(_bikeController.text, bike);
     print(box.get(_bikeController.text));
 
@@ -119,17 +120,23 @@ class _BikeFormState extends State<BikeForm> {
                           focusNode: yearNode,
                           enabled: !_isVisibleShockForm,
                           autofocus: false,
+                          maxLength: 4,
                           decoration: InputDecoration(
-                              isDense: true,
-                              filled: true,
-                              hoverColor: Colors.blue.shade100,
-                              helper: _yearModelController.text.length < 4 ? Text('4 digits') : SizedBox(height: 20),
-                              border: OutlineInputBorder(),
-                              hintText: 'Year',
-                              focusedErrorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-                              errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-                              // errorText: _yearModelController.text.length < 4 ? '4 digits' : '√',
-                              errorStyle: TextStyle(color: Colors.grey[700])),
+                            counterText: '',
+                            suffixIcon: _yearModelController.text.length != 4 ?  null : Icon(Icons.check),
+                            suffixIconColor: Colors.green,
+                            suffixIconConstraints: BoxConstraints(maxWidth: 40),
+                            isDense: true,
+                            filled: true,
+                            hoverColor: Colors.blue.shade100,
+                            helper: _yearModelController.text.length < 4 ? Text('4 digits') : SizedBox(height: 20),
+                            border: OutlineInputBorder(),
+                            hintText: 'Year',
+                            focusedErrorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                            errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                            // errorText: _yearModelController.text.length < 4 ? '4 digits' : '√',
+                            errorStyle: TextStyle(color: Colors.grey[700]),
+                          ),
                           style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                           controller: _yearModelController,
                           keyboardType: TextInputType.text,
@@ -195,7 +202,7 @@ class _BikeFormState extends State<BikeForm> {
                 Visibility(
                   visible: _isVisibleForkForm,
                   maintainState: true,
-                  child: ForkForm(bikeId: _getBikeName(), fork: fork, forkCallback: (val) => showForkForm(val)),
+                  child: ForkForm(bikeId: _getBikeName(), fork: _getFork(), forkCallback: (val) => showForkForm(val)),
                 ),
                 Visibility(
                   child: TextButton(
@@ -213,7 +220,7 @@ class _BikeFormState extends State<BikeForm> {
                   maintainState: true,
                   visible: _isVisibleShockForm,
                   child:
-                      ShockForm(bikeId: _getBikeName(), shock: shock, shockCallback: (val) => showShockForm(fork, val)),
+                      ShockForm(bikeId: _getBikeName(), shock: _getShock(), shockCallback: (val) => showShockForm(fork, val)),
                 ),
                 SizedBox(height: 20),
                 widget.bike != null
@@ -247,10 +254,30 @@ class _BikeFormState extends State<BikeForm> {
     return '';
   }
 
+  Fork? _getFork() {
+    if (widget.bike != null) {
+      if (widget.bike!.fork != null) {
+        return widget.bike!.fork;
+      } else
+        return null;
+    }
+    return null;
+  }
+
   String _getBikeName() {
     if (widget.bike != null) {
       return widget.bike!.id;
     }
     return '';
+  }
+
+  Shock? _getShock() {
+    if (widget.bike != null) {
+      if (widget.bike!.shock != null) {
+        return widget.bike!.shock;
+      } else
+        return null;
+    }
+    return null;
   }
 }
