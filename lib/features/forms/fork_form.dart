@@ -61,7 +61,7 @@ class _ForkFormState extends State<ForkForm> {
     super.dispose();
   }
 
-  Future<bool> _updateFork(bikeId, BuildContext context) async {
+  void _updateFork(bikeId, BuildContext context) async {
     Navigator.pop(context);
     final Box box = await Hive.openBox('forks');
     final Fork fork = Fork(
@@ -77,8 +77,7 @@ class _ForkFormState extends State<ForkForm> {
         spacing: _spacingController.text,
         serialNumber: _serialNumberController.text);
     box.put(bikeId, fork);
-    db.updateFork(fork);
-    return Future.value(false);
+    db.updateFork(bikeId, fork);
   }
 
   @override

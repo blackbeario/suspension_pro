@@ -27,9 +27,8 @@ class _ProfileNameFormState extends State<ProfileNameForm> {
     super.dispose();
   }
 
-  Future<bool> _updateUser(uid, BuildContext context) {
-    db.updateUser(_usernameController.text, widget.user.email!, widget.user.role!);
-    return Future.value(false);
+  void _updateUser() {
+    db.updateUser(_usernameController.text, widget.user.email!);
   }
 
   @override
@@ -51,7 +50,7 @@ class _ProfileNameFormState extends State<ProfileNameForm> {
                 },
                 onEditingComplete: () {
                   if (_formKey.currentState!.validate()) {
-                    _updateUser(widget.user.id, context);
+                    _updateUser();
                     FocusManager.instance.primaryFocus?.unfocus();
                   }
                 },

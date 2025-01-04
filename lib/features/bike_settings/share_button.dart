@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:suspension_pro/features/settings/setting_detail.dart';
+import 'package:suspension_pro/features/bike_settings/setting_detail.dart';
 import 'package:suspension_pro/models/fork.dart';
 import 'package:suspension_pro/models/shock.dart';
 import 'package:suspension_pro/models/user.dart';
@@ -32,7 +32,7 @@ class ShareButton extends StatelessWidget {
           return TextButton.icon(
             label: Text('Share'),
             icon: Icon(CupertinoIcons.share, size: 20),
-            onPressed: () => share(context, myUser.username!, myUser.role!, myUser.points!, widget.setting!, $fork, widget.fork, $shock, widget.shock, widget.frontTire, widget.rearTire),
+            onPressed: () => share(context, myUser.username!, widget.setting!, $fork, widget.fork, $shock, widget.shock, widget.frontTire, widget.rearTire),
           );
         });
   }

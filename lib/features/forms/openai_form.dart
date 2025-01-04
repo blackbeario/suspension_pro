@@ -6,7 +6,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:suspension_pro/models/ai_response.dart';
-import 'package:suspension_pro/models/user_singleton.dart';
 import 'package:suspension_pro/services/db_service.dart';
 import 'package:suspension_pro/utilities/helpers.dart';
 import 'package:suspension_pro/models/bike.dart';
@@ -21,7 +20,6 @@ class OpenAiRequest extends StatefulWidget {
 
 class _OpenAiRequestState extends State<OpenAiRequest> {
   final db = DatabaseService();
-  final String uid = UserSingleton().id;
   final _formKey = GlobalKey<FormState>();
   final _riderWeightController = TextEditingController();
   final _trailCondtionsController = TextEditingController();
@@ -195,7 +193,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
     });
   }
 
-  Widget _getBikes(String uid, List<Bike> bikes, BuildContext context) {
+  Widget _getBikes(List<Bike> bikes, BuildContext context) {
     return CupertinoButton.filled(
       child: Text('Select Bike'),
       onPressed: () {
@@ -290,7 +288,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                             if (!snapshot.hasData || snapshot.hasError) {
                               return Text('Cannot fetch list of user bikes');
                             }
-                            return _getBikes(uid, bikes!, context);
+                            return _getBikes(bikes!, context);
                           },
                         ),
                       ),

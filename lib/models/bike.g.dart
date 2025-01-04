@@ -19,8 +19,8 @@ class BikeAdapter extends TypeAdapter<Bike> {
     return Bike(
       id: fields[0] as String,
       yearModel: fields[1] as int?,
-      fork: fields[2] as Fork?,
-      shock: fields[3] as Shock?,
+      fork: fields[2] as Fork,
+      shock: fields[3] as Shock,
       index: fields[4] as int?,
       bikePic: fields[5] as String?,
     );

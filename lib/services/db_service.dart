@@ -9,7 +9,7 @@ import '../models/setting.dart';
 
 class DatabaseService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final String uid = UserSingleton().id;
+  final String uid = UserSingleton().uid;
 
   /// Settings collection stream.
   Stream<List<Setting>> streamSettings(String bikeid) {
@@ -28,39 +28,38 @@ class DatabaseService {
     return _db.collection('users').doc(uid).snapshots().map((snap) => AppUser.fromSnapshot(snap.data()!));
   }
 
-  Future<void> updateUser(String username, String email, String status) async {
+  Future<void> updateUser(String username, String email) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;
     return await _db.collection('users').doc(uid).set({
       'updated': $updated,
       'username': username,
       'email': email,
-      'role': status,
     }, SetOptions(merge: true));
   }
 
-  Future<void> addSharePoints(int previousPoints, String role) async {
-    var $now = DateTime.now();
-    var $updated = $now.millisecondsSinceEpoch;
-    String status = '';
-    int newPoints = previousPoints + 1;
-    if (role == 'admin')
-      status = 'admin';
-    else if (newPoints < 5)
-      status = 'newbie';
-    else if (newPoints >= 5)
-      status = 'Cat 3';
-    else if (newPoints >= 10)
-      status = 'Cat 2';
-    else if (newPoints >= 25)
-      status = 'Cat 1';
-    else if (newPoints >= 50) status = 'Pro';
-    return await _db.collection('users').doc(uid).set({
-      'updated': $updated,
-      'points': newPoints,
-      'role': status,
-    }, SetOptions(merge: true));
-  }
+  // Future<void> addSharePoints(int previousPoints, String role) async {
+  //   var $now = DateTime.now();
+  //   var $updated = $now.millisecondsSinceEpoch;
+  //   String status = '';
+  //   int newPoints = previousPoints + 1;
+  //   if (role == 'admin')
+  //     status = 'admin';
+  //   else if (newPoints < 5)
+  //     status = 'newbie';
+  //   else if (newPoints >= 5)
+  //     status = 'Cat 3';
+  //   else if (newPoints >= 10)
+  //     status = 'Cat 2';
+  //   else if (newPoints >= 25)
+  //     status = 'Cat 1';
+  //   else if (newPoints >= 50) status = 'Pro';
+  //   return await _db.collection('users').doc(uid).set({
+  //     'updated': $updated,
+  //     'points': newPoints,
+  //     'role': status,
+  //   }, SetOptions(merge: true));
+  // }
 
   Future<void> setProfilePic(String filePath) async {
     var $now = DateTime.now();
@@ -124,7 +123,7 @@ class DatabaseService {
     return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).collection('settings').doc(sid).delete();
   }
 
-  Future<void> updateFork(Fork fork) async {
+  Future<void> updateFork(String bikeid, Fork fork) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
     return await _db.collection('users').doc(uid).collection('bikes').doc(fork.bikeId).set({
@@ -155,7 +154,7 @@ class DatabaseService {
         'brand': shock.brand,
         'model': shock.model,
         'spacers': shock.spacers,
-        'serial': shock.serialNumber
+        'serial': shock.serialNumber,
       }
     }, SetOptions(merge: true));
   }

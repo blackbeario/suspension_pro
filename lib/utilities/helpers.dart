@@ -29,7 +29,7 @@ dynamic getEnv(String key, {dynamic defaultValue}) {
   return value.toString();
 }
 
-Future share(context, String username, String role, int points, String setting, fork, forkSettings, shock, shockSettings, frontTire,
+Future share(context, String username, String setting, fork, forkSettings, shock, shockSettings, frontTire,
     rearTire) async {
   late String text;
 
@@ -41,5 +41,5 @@ Future share(context, String username, String role, int points, String setting, 
         "Suspension Pro '$setting' shared by ${username} \n\n${fork['year'] + ' ' + fork['brand'] + ' ' + fork['model']} Fork Settings: \n$forkSettings, \n\nFront Tire: \n$frontTire, /n/nRear Tire: \n$rearTire \n\nGet the Suspension Pro App for iOS soon on the Apple AppStore!";
   }
   await Share.share(text, subject: setting);
-  await db.addSharePoints(points, role);
+  // await db.addSharePoints(role);
 }

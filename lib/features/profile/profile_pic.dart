@@ -31,7 +31,7 @@ class ProfilePic extends StatelessWidget {
         ),
       ),
       onTap: () =>
-          showCupertinoModalPopup(useRootNavigator: true, context: context, builder: (context) => ImageActionSheet(uid: user.id)),
+          showCupertinoModalPopup(useRootNavigator: true, context: context, builder: (context) => ImageActionSheet()),
     );
   }
 }

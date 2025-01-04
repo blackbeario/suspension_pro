@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:suspension_pro/features/settings/settings_form_field.dart';
-import 'package:suspension_pro/features/settings/share_button.dart';
+import 'package:suspension_pro/features/bike_settings/settings_form_field.dart';
+import 'package:suspension_pro/features/bike_settings/share_button.dart';
 import 'package:suspension_pro/models/bike.dart';
 import 'package:suspension_pro/models/component_setting.dart';
 import 'package:flutter/cupertino.dart';

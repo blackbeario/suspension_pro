@@ -17,9 +17,7 @@ class LoginPageState extends State<LoginPage> {
 
   // Toggles the password show status
   void _toggle() {
-    setState(() {
-      _hidePassword = !_hidePassword;
-    });
+    setState(() => _hidePassword = !_hidePassword);
   }
 
   // final bool kIsWeb = identical(0, 0.0);

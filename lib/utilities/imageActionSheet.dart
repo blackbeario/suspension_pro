@@ -1,18 +1,17 @@
-// ignore_for_file: body_might_complete_normally_catch_error
-
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:suspension_pro/models/user_singleton.dart';
 import 'package:suspension_pro/services/db_service.dart';
 
 // ignore: must_be_immutable
 class ImageActionSheet extends StatelessWidget {
   final db = DatabaseService();
 
-  ImageActionSheet({required this.uid});
-  final String uid;
+  ImageActionSheet();
+  final String uid = UserSingleton().uid;
   FirebaseStorage storage = FirebaseStorage.instanceFor(bucket: 'gs://suspension-pro.appspot.com/');
   late String downloadUrl = '';
   File? _imageFile;
@@ -55,7 +54,7 @@ class ImageActionSheet extends StatelessWidget {
       downloadUrl = await ref.getDownloadURL();
       db.setProfilePic(downloadUrl);
     }).catchError((onError) {
-      print(onError);
+      throw onError;
     });
   }
 
