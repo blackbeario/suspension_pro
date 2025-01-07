@@ -1,16 +1,32 @@
-class AppUser {
+import 'package:hive/hive.dart';
+import 'package:suspension_pro/hive_helper/hive_types.dart';
+import 'package:suspension_pro/hive_helper/hive_adapters.dart';
+import 'package:suspension_pro/hive_helper/fields/app_user_fields.dart';
+
+
+part 'user.g.dart';
+
+
+@HiveType(typeId: HiveTypes.appUser, adapterName: HiveAdapters.appUser)
+class AppUser extends HiveObject{
+	@HiveField(AppUserFields.id)
   final String id;
+	@HiveField(AppUserFields.username)
   final String? username;
+	@HiveField(AppUserFields.profilePic)
   final String? profilePic;
-  final String? email;
+	@HiveField(AppUserFields.email)
+  final String email;
+	@HiveField(AppUserFields.created)
   final DateTime? created;
+	@HiveField(AppUserFields.proAccount)
   final bool? proAccount;
 
   AppUser({
     required this.id,
     this.username,
     this.profilePic,
-    this.email,
+    required this.email,
     this.created,
     this.proAccount,
   });

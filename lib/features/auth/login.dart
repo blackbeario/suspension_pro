@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:suspension_pro/features/auth/signup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/src/provider.dart';
-import 'package:suspension_pro/models/user.dart';
 import 'package:suspension_pro/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -146,14 +145,16 @@ class LoginPageState extends State<LoginPage> {
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
                                   if (widget.online) {
-                                    var result = await authService.signInWithFirebase(_email.text.trim(), _password.text.trim());
+                                    var result =
+                                        await authService.signInWithFirebase(_email.text.trim(), _password.text.trim());
                                     if (result.runtimeType == FirebaseAuthException) {
-                                      _showLoginFailure(context, result.message);
+                                      _showLoginFailure(context, result.message, result.details);
                                     }
                                   } else {
-                                    var result = await authService.signInWithHive(_email.text.trim(), _password.text.trim());
+                                    var result =
+                                        await authService.signInWithHive(_email.text.trim(), _password.text.trim());
                                     if (result.message != null) {
-                                      _showLoginFailure(context, result.message);
+                                      _showLoginFailure(context, result.message, result.details);
                                     }
                                   }
                                 }
@@ -169,10 +170,7 @@ class LoginPageState extends State<LoginPage> {
                             child: Text('Create New Account', style: style.copyWith(color: Colors.white, fontSize: 14)),
                             onPressed: () {
                               Navigator.of(context).push(CupertinoPageRoute(
-                                  // fullscreenDialog: true,
-                                  builder: (context) {
-                                return SignUpPage();
-                              }));
+                                  builder: (context) => SignUpPage()));
                             }),
                         Text('Version: Beta 0.1.4',
                             style: TextStyle(color: Colors.white54, fontSize: 12), textAlign: TextAlign.center),
@@ -195,15 +193,19 @@ class LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  Future<bool> _showLoginFailure(BuildContext context, message) {
-    showCupertinoDialog(
+  Future<bool> _showLoginFailure(BuildContext context, dynamic message, dynamic details) {
+    showAdaptiveDialog(
         context: context,
         builder: (BuildContext context) {
-          return CupertinoAlertDialog(
+          return AlertDialog.adaptive(
             title: Text(message),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                  child: Text('Okay'), isDestructiveAction: true, onPressed: () => Navigator.pop(context, 'Discard')),
+            content: Text(details),
+            actions: [
+              TextButton(
+                style: TextButton.styleFrom(textStyle: Theme.of(context).textTheme.labelLarge),
+                child: Text('Okay'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
             ],
           );
         });

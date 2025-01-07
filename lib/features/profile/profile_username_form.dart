@@ -28,7 +28,7 @@ class _ProfileNameFormState extends State<ProfileNameForm> {
   }
 
   void _updateUser() {
-    db.updateUser(_usernameController.text, widget.user.email!);
+    db.updateUser(_usernameController.text, widget.user.email);
   }
 
   @override

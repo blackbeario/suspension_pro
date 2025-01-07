@@ -88,7 +88,7 @@ class _OfflineWidgetState extends State<OfflineWidget> {
             'When internet is available\n'
             'data is then synced remotely.',
           ),
-          actions: <Widget>[
+          actions: [
             TextButton(
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
