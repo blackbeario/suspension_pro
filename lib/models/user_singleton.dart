@@ -12,8 +12,7 @@ class UserSingleton extends ChangeNotifier {
   String _username = '';
   String _uid = '';
   late String _profilePic;
-  late String _email;
-  late String _role;
+  String _email = '';
   bool _proAccount = false;
 
   // Getter and setter methods for user information
@@ -31,9 +30,6 @@ class UserSingleton extends ChangeNotifier {
 
   String get email => _email;
   void set email(String email) => _email = email;
-
-  String get role => _role;
-  void set role(String age) => _role = role;
 
   bool get proAccount => _proAccount;
   void set proAccount(bool proAccount) {

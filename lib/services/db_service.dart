@@ -126,7 +126,7 @@ class DatabaseService {
   Future<void> updateFork(String bikeid, Fork fork) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
-    return await _db.collection('users').doc(uid).collection('bikes').doc(fork.bikeId).set({
+    return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).set({
       'fork': {
         'updated': updated,
         'year': fork.year,

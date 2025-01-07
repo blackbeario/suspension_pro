@@ -15,6 +15,7 @@ import 'package:suspension_pro/hive_helper/register_adapters.dart';
 import 'package:suspension_pro/models/user.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
 import 'package:suspension_pro/services/db_service.dart';
+import 'package:suspension_pro/services/hive_service.dart';
 import './services/auth_service.dart';
 import 'features/auth/login.dart';
 import 'features/profile/profile.dart';
@@ -78,11 +79,11 @@ class AuthenticationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ConnectivityBloc _connectionBloc = ConnectivityBloc();
-    final DatabaseService db = DatabaseService();
+    final DatabaseService _db = DatabaseService();
+    final HiveService _hive = HiveService();
     return ListenableBuilder(
       listenable: _connectionBloc,
       builder: (context, widget) {
-
         // App is ONLINE
         if (_connectionBloc.isConnected) {
           final authService = Provider.of<AuthService>(context);
@@ -98,7 +99,7 @@ class AuthenticationWrapper extends StatelessWidget {
 
                     // Get the Firebase user doc for username and pro_account status
                     return StreamBuilder<AppUser?>(
-                        stream: db.streamUser(),
+                        stream: _db.streamUser(),
                         builder: (context, snapshot) {
                           final AppUser? fbUser = snapshot.data;
                           if (fbUser == null) {
@@ -109,14 +110,20 @@ class AuthenticationWrapper extends StatelessWidget {
                           return AppHomePage();
                         });
                   } else
-                    return LoginPage();
+                    return LoginPage(online: true);
                 } else {
                   return Scaffold(body: Center(child: CircularProgressIndicator()));
                 }
               });
         }
-        // App is OFFLINE 
-        return UserSingleton().username == '' ? LoginPage() : AppHomePage();
+        // App is OFFLINE
+        return UserSingleton().uid == ''
+            ? ListenableBuilder(
+                listenable: UserSingleton(),
+                builder: (context, widget) {
+                  return UserSingleton().uid == '' ? LoginPage(online: false) : AppHomePage();
+                })
+            : AppHomePage();
       },
     );
   }

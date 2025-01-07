@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
@@ -34,9 +35,7 @@ class _SignUpPageState extends State<SignUpPage> {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage("assets/cupcake.jpg"),
-              alignment: Alignment.topCenter,
-              fit: BoxFit.fitHeight),
+              image: AssetImage("assets/cupcake.jpg"), alignment: Alignment.topCenter, fit: BoxFit.fitHeight),
         ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(30, 450, 30, 0),
@@ -51,8 +50,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     controller: emailController,
                     padding: EdgeInsets.all(10.0),
                     placeholder: "email",
-                    style: style.copyWith(
-                        color: Colors.black, fontWeight: FontWeight.bold),
+                    style: style.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Padding(
@@ -62,39 +60,25 @@ class _SignUpPageState extends State<SignUpPage> {
                     controller: passwordController,
                     placeholder: "password",
                     obscureText: _hidePassword,
-                    style: style.copyWith(
-                        color: Colors.black, fontWeight: FontWeight.bold),
+                    style: style.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
                     suffix: TextButton(
                         onPressed: _toggle,
-                        child: Icon(
-                            _hidePassword ? Icons.lock : Icons.lock_open,
-                            color: CupertinoColors.inactiveGray)),
+                        child: Icon(_hidePassword ? Icons.lock : Icons.lock_open, color: CupertinoColors.inactiveGray)),
                   ),
                 ),
                 SizedBox(height: 10),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 20.0, horizontal: 0.0),
+                  padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 0.0),
                   child: Material(
                     elevation: 1.0,
                     borderRadius: BorderRadius.circular(8.0),
                     color: CupertinoColors.activeBlue,
                     child: CupertinoButton(
-                      onPressed: () {
-                        authService
-                            .createUser(
-                              emailController.text.trim(),
-                              passwordController.text.trim(),
-                            )
-                            .then((authResult) => {
-                                  if (authResult.id != null)
-                                    {
-                                      authService.createUserData(authResult.id, authResult.email),
-                                      Navigator.pop(context)
-                                    }
-                                  else
-                                    {_showSignUpErrors(context, authResult)}
-                                });
+                      onPressed: () async {
+                        dynamic result =
+                            await authService.createFirebaseUser(emailController.text.trim(), passwordController.text.trim());
+                        if (result.runtimeType == User) Navigator.pop(context);
+                        else _showSignUpErrors(context, result);
                       },
                       child: Text(
                         "Sign Up",

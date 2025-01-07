@@ -17,7 +17,7 @@ class AppUser {
 
   factory AppUser.fromSnapshot(Map<String, dynamic> data) => AppUser(
         id: data['id'] ?? '',
-        username: data['username'] ?? 'change me',
+        username: data['username'] ?? 'Guest',
         profilePic: data['profilePic'] ?? '',
         email: data['email'] ?? '',
         proAccount: data['proAccount'] ?? false,

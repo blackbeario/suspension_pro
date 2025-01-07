@@ -1,13 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:suspension_pro/features/auth/signup.dart';
-// import 'package:suspension_pro/signup.dart';
-import '../../services/auth_service.dart'; // iOS
 import 'package:flutter/cupertino.dart';
-// ignore: implementation_imports
 import 'package:provider/src/provider.dart';
+import 'package:suspension_pro/models/user.dart';
+import 'package:suspension_pro/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
+  LoginPage({required this.online});
+
+  final bool online;
   createState() => LoginPageState();
 }
 
@@ -36,30 +38,32 @@ class LoginPageState extends State<LoginPage> {
       child: Container(
         padding: EdgeInsets.all(30),
         decoration: BoxDecoration(
-            image: DecorationImage(image: AssetImage('assets/josh_lower_hareball.jpg'), 
-            alignment: Alignment.center, fit: BoxFit.fitHeight),
-          ),
+          image: DecorationImage(
+              image: AssetImage('assets/josh_lower_hareball.jpg'), alignment: Alignment.center, fit: BoxFit.fitHeight),
+        ),
         child: ListView(
           children: <Widget>[
             Padding(
               padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
-              child: Text('Suspension Pro',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 38,
-                    fontWeight: FontWeight.bold,
-                    shadows: <Shadow>[
-                      Shadow(
-                        offset: Offset(1.0, 1.0),
-                        blurRadius: 3.0,
-                        color: Color.fromARGB(255, 0, 0, 0),
-                      ),
-                    ],
-                  ),
+              child: Text(
+                'Suspension Pro',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 38,
+                  fontWeight: FontWeight.bold,
+                  shadows: <Shadow>[
+                    Shadow(
+                      offset: Offset(1.0, 1.0),
+                      blurRadius: 3.0,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ],
                 ),
+              ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(0, 200, 0, 0),
+              padding: EdgeInsets.fromLTRB(0, 300, 0, 20),
               child: Text('Record and share your bike \nsuspension products and settings',
                   style: TextStyle(
                     color: Colors.white,
@@ -87,17 +91,16 @@ class LoginPageState extends State<LoginPage> {
                           child: TextFormField(
                             controller: _email,
                             decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              contentPadding: EdgeInsets.only(left: 10, right: 10),
-                              border: OutlineInputBorder(
-                                borderSide: const BorderSide(style: BorderStyle.none),
-                                borderRadius: const BorderRadius.all(Radius.circular(6.0))),
-                              hintText: 'email',
-                              hintStyle: TextStyle(fontWeight: FontWeight.w300)
-                            ),
+                                filled: true,
+                                fillColor: Colors.white,
+                                contentPadding: EdgeInsets.only(left: 10, right: 10),
+                                border: OutlineInputBorder(
+                                    borderSide: const BorderSide(style: BorderStyle.none),
+                                    borderRadius: const BorderRadius.all(Radius.circular(6.0))),
+                                hintText: 'email',
+                                hintStyle: TextStyle(fontWeight: FontWeight.w300)),
                             keyboardType: TextInputType.emailAddress,
-                            style: style.copyWith(color: Colors.black), 
+                            style: style.copyWith(color: Colors.black),
                             validator: (_email) {
                               if (_email == null || _email.isEmpty) return 'Enter email address';
                               return null;
@@ -113,14 +116,15 @@ class LoginPageState extends State<LoginPage> {
                               fillColor: Colors.white,
                               contentPadding: EdgeInsets.only(left: 10, right: 10),
                               border: OutlineInputBorder(
-                                borderSide: const BorderSide(style: BorderStyle.none),
-                                borderRadius: const BorderRadius.all(Radius.circular(6.0))),
+                                  borderSide: const BorderSide(style: BorderStyle.none),
+                                  borderRadius: const BorderRadius.all(Radius.circular(6.0))),
                               hintText: 'password',
                               hintStyle: TextStyle(fontWeight: FontWeight.w300),
                               suffixIcon: TextButton(
                                 onPressed: _toggle,
                                 style: ButtonStyle(alignment: Alignment.centerRight),
-                                child: Icon(_hidePassword ? Icons.lock : Icons.lock_open, color: CupertinoColors.inactiveGray),
+                                child: Icon(_hidePassword ? Icons.lock : Icons.lock_open,
+                                    color: CupertinoColors.inactiveGray),
                               ),
                             ),
                             obscureText: _hidePassword,
@@ -141,9 +145,16 @@ class LoginPageState extends State<LoginPage> {
                             child: CupertinoButton(
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  var result = await authService.signIn(_email.text.trim(), _password.text.trim());
-                                  if (result.runtimeType == FirebaseAuthException) {
-                                    _showLoginFailure(context, result.message);
+                                  if (widget.online) {
+                                    var result = await authService.signInWithFirebase(_email.text.trim(), _password.text.trim());
+                                    if (result.runtimeType == FirebaseAuthException) {
+                                      _showLoginFailure(context, result.message);
+                                    }
+                                  } else {
+                                    var result = await authService.signInWithHive(_email.text.trim(), _password.text.trim());
+                                    if (result.message != null) {
+                                      _showLoginFailure(context, result.message);
+                                    }
                                   }
                                 }
                               },
@@ -163,7 +174,8 @@ class LoginPageState extends State<LoginPage> {
                                 return SignUpPage();
                               }));
                             }),
-                        Text('Version: Beta 0.1.4', style: TextStyle(color: Colors.white54, fontSize: 12), textAlign: TextAlign.center),
+                        Text('Version: Beta 0.1.4',
+                            style: TextStyle(color: Colors.white54, fontSize: 12), textAlign: TextAlign.center),
                       ],
                     ),
                   ),
@@ -191,9 +203,7 @@ class LoginPageState extends State<LoginPage> {
             title: Text(message),
             actions: <Widget>[
               CupertinoDialogAction(
-                  child: Text('Okay'),
-                  isDestructiveAction: true,
-                  onPressed: () => Navigator.pop(context, 'Discard')),
+                  child: Text('Okay'), isDestructiveAction: true, onPressed: () => Navigator.pop(context, 'Discard')),
             ],
           );
         });
