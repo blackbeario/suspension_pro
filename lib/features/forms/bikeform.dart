@@ -79,7 +79,7 @@ class _BikeFormState extends State<BikeForm> {
 
   Future<bool> _addUpdateBike() async {
     Navigator.pop(context);
-    final Box box = await Hive.openBox('bikes');
+    final Box box = await Hive.box('bikes');
     final Bike bike = Bike(id: _bikeController.text, yearModel: int.parse(_yearModelController.text), fork: fork, shock: shock);
     box.put(_bikeController.text, bike);
     print(box.get(_bikeController.text));
@@ -90,148 +90,147 @@ class _BikeFormState extends State<BikeForm> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
+    return Scaffold(
+      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
-      navigationBar: CupertinoNavigationBar(
-        padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 5),
-        middle: Text(widget.bike != null ? widget.bike!.id : 'Add Bike'),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        // padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 5),
+        title: Text(widget.bike != null ? widget.bike!.id : 'Add Bike'),
       ),
-      child: Material(
-        color: CupertinoColors.white,
-        child: ListView(
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical,
-          children: <Widget>[
-            Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-              Form(
-                key: _formKey,
-                child: Row(
-                  children: [
-                    SizedBox(
-                    width: 110,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                        child: TextFormField(
-                          key: yearKey,
-                          focusNode: yearNode,
-                          enabled: !_isVisibleShockForm,
-                          autofocus: false,
-                          maxLength: 4,
-                          decoration: InputDecoration(
-                            counterText: '',
-                            suffixIcon: _yearModelController.text.length != 4 ?  null : Icon(Icons.check),
-                            suffixIconColor: Colors.green,
-                            suffixIconConstraints: BoxConstraints(maxWidth: 40),
+      body: ListView(
+        shrinkWrap: true,
+        scrollDirection: Axis.vertical,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+            Form(
+              key: _formKey,
+              child: Row(
+                children: [
+                  SizedBox(
+                  width: 110,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                      child: TextFormField(
+                        key: yearKey,
+                        focusNode: yearNode,
+                        enabled: !_isVisibleShockForm,
+                        autofocus: false,
+                        maxLength: 4,
+                        decoration: InputDecoration(
+                          counterText: '',
+                          suffixIcon: _yearModelController.text.length != 4 ?  null : Icon(Icons.check),
+                          suffixIconColor: Colors.green,
+                          suffixIconConstraints: BoxConstraints(maxWidth: 40),
+                          isDense: true,
+                          filled: true,
+                          hoverColor: Colors.blue.shade100,
+                          helper: _yearModelController.text.length < 4 ? Text('4 digits') : SizedBox(height: 20),
+                          border: OutlineInputBorder(),
+                          hintText: 'Year',
+                          focusedErrorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                          errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                          // errorText: _yearModelController.text.length < 4 ? '4 digits' : '√',
+                          errorStyle: TextStyle(color: Colors.grey[700]),
+                        ),
+                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                        controller: _yearModelController,
+                        keyboardType: TextInputType.text,
+                        validator: (_yearModelController) {
+                          if (_yearModelController == null || _yearModelController.isEmpty)
+                            return 'Enter year';
+                          return null;
+                        },
+                        // maxLength: 4,
+                        onChanged: (value) {
+                          setState(() {
+                            _enteredText = value;
+                            _checkFieldLength(value, 4);
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                      child: TextFormField(
+                        key: modelKey,
+                        focusNode: modelNode,
+                        enabled: !_isVisibleShockForm,
+                        autofocus: false,
+                        decoration: InputDecoration(
+                            suffixIcon: _bikeController.text.length < 6 ?  Icon(Icons.pedal_bike_sharp,
+                                size: 24, color: CupertinoColors.activeBlue.withOpacity(0.5)) : Icon(Icons.check, color: Colors.green),
                             isDense: true,
                             filled: true,
                             hoverColor: Colors.blue.shade100,
-                            helper: _yearModelController.text.length < 4 ? Text('4 digits') : SizedBox(height: 20),
+                            helper: _bikeController.text.length < 6 ? Text('Minimum 6 characters') : SizedBox(height: 20),
+                            semanticCounterText: 'Must enter 3 chars',
+                            counterText: _bikeController.text.length < 6
+                                ? '${_enteredText.length.toString()} character(s)'
+                                : null,
                             border: OutlineInputBorder(),
-                            hintText: 'Year',
+                            hintText: 'Bike Model',
                             focusedErrorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
                             errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-                            // errorText: _yearModelController.text.length < 4 ? '4 digits' : '√',
-                            errorStyle: TextStyle(color: Colors.grey[700]),
-                          ),
-                          style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                          controller: _yearModelController,
-                          keyboardType: TextInputType.text,
-                          validator: (_yearModelController) {
-                            if (_yearModelController == null || _yearModelController.isEmpty)
-                              return 'Enter year';
-                            return null;
-                          },
-                          // maxLength: 4,
-                          onChanged: (value) {
-                            setState(() {
-                              _enteredText = value;
-                              _checkFieldLength(value, 4);
-                            });
-                          },
-                        ),
+                            // errorText: _bikeController.text.length < 6 ? 'Minimum 6 characters' : null,
+                            errorStyle: TextStyle(color: Colors.grey[700])),
+                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                        controller: _bikeController,
+                        keyboardType: TextInputType.text,
+                        validator: (_bikeController) {
+                          if (_bikeController == null || _bikeController.isEmpty)
+                            return 'Enter bike model';
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            _enteredText = value;
+                            _checkFieldLength(value, 6);
+                          });
+                        },
                       ),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                        child: TextFormField(
-                          key: modelKey,
-                          focusNode: modelNode,
-                          enabled: !_isVisibleShockForm,
-                          autofocus: false,
-                          decoration: InputDecoration(
-                              suffixIcon: _bikeController.text.length < 6 ?  Icon(Icons.pedal_bike_sharp,
-                                  size: 24, color: CupertinoColors.activeBlue.withOpacity(0.5)) : Icon(Icons.check, color: Colors.green),
-                              isDense: true,
-                              filled: true,
-                              hoverColor: Colors.blue.shade100,
-                              helper: _bikeController.text.length < 6 ? Text('Minimum 6 characters') : SizedBox(height: 20),
-                              semanticCounterText: 'Must enter 3 chars',
-                              counterText: _bikeController.text.length < 6
-                                  ? '${_enteredText.length.toString()} character(s)'
-                                  : null,
-                              border: OutlineInputBorder(),
-                              hintText: 'Bike Model',
-                              focusedErrorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-                              errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-                              // errorText: _bikeController.text.length < 6 ? 'Minimum 6 characters' : null,
-                              errorStyle: TextStyle(color: Colors.grey[700])),
-                          style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                          controller: _bikeController,
-                          keyboardType: TextInputType.text,
-                          validator: (_bikeController) {
-                            if (_bikeController == null || _bikeController.isEmpty)
-                              return 'Enter bike model';
-                            return null;
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              _enteredText = value;
-                              _checkFieldLength(value, 6);
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),),
-                Visibility(
-                  visible: _isVisibleForkForm,
-                  maintainState: true,
-                  child: ForkForm(bikeId: _getBikeName(), fork: _getFork(), forkCallback: (val) => showForkForm(val)),
-                ),
-                Visibility(
-                  child: TextButton(
-                    child: Text('< back to fork'),
-                    onPressed: () {
-                      setState(() {
-                        _isVisibleForkForm = !_isVisibleForkForm;
-                        _isVisibleShockForm = !_isVisibleShockForm;
-                      });
-                    },
                   ),
-                  visible: _isVisibleShockForm,
+                ],
+              ),),
+              Visibility(
+                visible: _isVisibleForkForm,
+                maintainState: true,
+                child: ForkForm(bikeId: _getBikeName(), fork: _getFork(), forkCallback: (val) => showForkForm(val)),
+              ),
+              Visibility(
+                child: TextButton(
+                  child: Text('< back to fork'),
+                  onPressed: () {
+                    setState(() {
+                      _isVisibleForkForm = !_isVisibleForkForm;
+                      _isVisibleShockForm = !_isVisibleShockForm;
+                    });
+                  },
                 ),
-                Visibility(
-                  maintainState: true,
-                  visible: _isVisibleShockForm,
-                  child:
-                      ShockForm(bikeId: _getBikeName(), shock: _getShock(), shockCallback: (val) => showShockForm(fork, val)),
-                ),
-                SizedBox(height: 20),
-                widget.bike != null
-                    ? CupertinoButton(
-                        color: CupertinoColors.quaternaryLabel,
-                        child: Text('Save'),
-                        onPressed: _bikeController.text.isNotEmpty ? () async => await _addUpdateBike() : null)
-                    : Container(),
-              ],
-            ),
-          ],
-        ),
+                visible: _isVisibleShockForm,
+              ),
+              Visibility(
+                maintainState: true,
+                visible: _isVisibleShockForm,
+                child:
+                    ShockForm(bikeId: _getBikeName(), shock: _getShock(), shockCallback: (val) => showShockForm(fork, val)),
+              ),
+              SizedBox(height: 20),
+              widget.bike != null
+                  ? CupertinoButton(
+                      color: CupertinoColors.quaternaryLabel,
+                      child: Text('Save'),
+                      onPressed: _bikeController.text.isNotEmpty ? () async => await _addUpdateBike() : null)
+                  : Container(),
+            ],
+          ),
+        ],
       ),
     );
   }

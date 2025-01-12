@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -7,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:suspension_pro/models/user.dart';
 import 'package:base32/base32.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
+import 'package:suspension_pro/services/hive_service.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -31,8 +31,8 @@ class AuthService {
           await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       final User? user = credential.user;
       if (user != null) {
-        await createFirebaseUserData(user.uid, user.email!);
-        await createHiveUser(user.uid, email, password);
+        await createFirebaseUserData(user.uid, user.email!); // remote
+        await createHiveUser(user.uid, email, password); // local
         return credential.user;
       }
     } on FirebaseException catch (e) {
@@ -56,15 +56,15 @@ class AuthService {
 
   Future signInWithHive(String email, String password) async {
     try {
-      final Box<AppUser> hiveUserBox = await Hive.openBox('hiveUserBox');
+      final Box<AppUser> hiveUserBox = await Hive.box('hiveUserBox');
       if (hiveUserBox.isNotEmpty) {
         final AppUser? user = hiveUserBox.getAt(0);
         if (user != null && user.email == email) {
           String decryptedPass = await getHiveUserPass();
           if (password == decryptedPass) {
             UserSingleton().uid = user.id;
-            UserSingleton().username = user.username ?? 'Guest';
-            UserSingleton().proAccount = user.proAccount ?? false;
+            UserSingleton().userName = user.userName ?? 'Guest';
+            UserSingleton().aiCredits = user.aiCredits ?? 0;
             UserSingleton().email = user.email;
             return user;
           } else {
@@ -87,18 +87,20 @@ class AuthService {
 
   Future createHiveUser(String uid, String email, String password) async {
     try {
-      final Box<AppUser> hiveUserBox = await Hive.openBox('hiveUserBox');
+      final Box<AppUser> hiveUserBox = await Hive.box('hiveUserBox');
       final AppUser user = AppUser(
         id: uid,
-        username: null,
+        userName: null,
+        firstName: null,
+        lastName: null,
         profilePic: null,
         email: email,
         created: DateTime.now(),
-        proAccount: false,
+        aiCredits: 0,
       );
       hiveUserBox.add(user);
 
-      final Box<String> passBox = await Hive.openBox('hiveUserPass');
+      final Box<String> passBox = await Hive.box('hiveUserPass');
       // Encode a hex string to base32
       String encrypted = base32.encodeHexString(password);
       passBox.add(encrypted);
@@ -107,9 +109,33 @@ class AuthService {
     }
   }
 
+  addUpdateHiveUser(String uid, AppUser user) async {
+    try {
+      final box = await Hive.box<AppUser>('hiveUserBox');
+      if (box.isNotEmpty) {
+        AppUser? hiveUser = await box.getAt(0);
+        // update user values
+        if (hiveUser != null) {
+          hiveUser.id = uid;
+          hiveUser.userName = user.userName ?? 'Guest';
+          hiveUser.firstName = user.firstName ?? '';
+          hiveUser.lastName = user.lastName ?? '';
+          hiveUser.aiCredits = user.aiCredits ?? 0;
+          hiveUser.save();
+        }
+      }
+      // If for some reason a user or this box got deleted, create a new user
+      else {
+        HiveService().addToBox('hiveUserBox', user);
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
   getHiveUserPass() async {
     try {
-      final Box<String> passBox = await Hive.openBox('hiveUserPass');
+      final Box<String> passBox = await Hive.box('hiveUserPass');
       final String? encrypted = passBox.getAt(0); // Should be only one entry
       if (encrypted != null) {
         // base32 decoding to original string.

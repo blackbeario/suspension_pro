@@ -10,41 +10,52 @@ part 'user.g.dart';
 @HiveType(typeId: HiveTypes.appUser, adapterName: HiveAdapters.appUser)
 class AppUser extends HiveObject{
 	@HiveField(AppUserFields.id)
-  final String id;
-	@HiveField(AppUserFields.username)
-  final String? username;
+  String id;
+	@HiveField(AppUserFields.userName)
+  String? userName;
+  @HiveField(AppUserFields.firstName)
+  String? firstName;
+  @HiveField(AppUserFields.lastName)
+  String? lastName;
 	@HiveField(AppUserFields.profilePic)
-  final String? profilePic;
+  String? profilePic;
 	@HiveField(AppUserFields.email)
   final String email;
 	@HiveField(AppUserFields.created)
   final DateTime? created;
-	@HiveField(AppUserFields.proAccount)
-  final bool? proAccount;
+	@HiveField(AppUserFields.aiCredits)
+  int? aiCredits;
+
 
   AppUser({
     required this.id,
-    this.username,
+    this.userName,
+    this.firstName,
+    this.lastName,
     this.profilePic,
     required this.email,
     this.created,
-    this.proAccount,
+    this.aiCredits,
   });
 
   factory AppUser.fromSnapshot(Map<String, dynamic> data) => AppUser(
         id: data['id'] ?? '',
-        username: data['username'] ?? 'Guest',
+        userName: data['username'] ?? 'Guest',
+        firstName: data['firstName'] ?? '',
+        lastName: data['lastName'] ?? '',
         profilePic: data['profilePic'] ?? '',
         email: data['email'] ?? '',
-        proAccount: data['proAccount'] ?? false,
+        aiCredits: data['aiCredits'] ?? 0,
         created: data['created'] != null ? DateTime.fromMillisecondsSinceEpoch(data['created']) : null,
       );
 
   Map<String, dynamic> toJson() => {
-        'username': username,
+        'username': userName,
+        'firstName': firstName,
+        'lastName': lastName,
         'profilePic': profilePic,
         'email': email,
-        'proAccount': proAccount,
+        'aiCredits': aiCredits,
         'created': created?.millisecondsSinceEpoch
       };
 }

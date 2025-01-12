@@ -15,33 +15,34 @@ class ImageActionSheet extends StatelessWidget {
   FirebaseStorage storage = FirebaseStorage.instanceFor(bucket: 'gs://suspension-pro.appspot.com/');
   late String downloadUrl = '';
   File? _imageFile;
-  var imagePicker;
 
   /// Get from gallery
   _getFromCamera() async {
-    XFile? pickedFile = await ImagePicker().pickImage(
+    final XFile? pickedFile = await ImagePicker().pickImage(
       source: ImageSource.camera,
       maxWidth: 300,
       maxHeight: 300,
     );
-    _cropImage(pickedFile!.path);
+    if (pickedFile != null) _cropImage(pickedFile.path);
   }
 
   /// Get from gallery
   _getFromGallery() async {
-    XFile? pickedFile = await ImagePicker().pickImage(
+    final XFile? pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
       maxWidth: 300,
       maxHeight: 300,
     );
-    _cropImage(pickedFile!.path);
+    if (pickedFile != null) _cropImage(pickedFile.path);
   }
 
   /// Crop Image
   _cropImage(filePath) async {
-    CroppedFile? croppedImage = await ImageCropper().cropImage(cropStyle: CropStyle.circle, sourcePath: filePath, compressQuality: 50);
+    final CroppedFile? croppedImage =
+        await ImageCropper().cropImage(cropStyle: CropStyle.circle, sourcePath: filePath, compressQuality: 50);
     if (croppedImage != null) {
-      _imageFile = croppedImage as File?;
+      // UserSingleton().profilePic = croppedImage.path;
+      _imageFile = File(croppedImage.path);
       _uploadToFirebase(uid, _imageFile!);
     }
   }
@@ -52,6 +53,7 @@ class ImageActionSheet extends StatelessWidget {
     UploadTask uploadTask = ref.putFile(imageFile);
     uploadTask.whenComplete(() async {
       downloadUrl = await ref.getDownloadURL();
+      UserSingleton().profilePic = downloadUrl;
       db.setProfilePic(downloadUrl);
     }).catchError((onError) {
       throw onError;
@@ -65,7 +67,7 @@ class ImageActionSheet extends StatelessWidget {
         child: Text('Cancel'),
         onPressed: () => Navigator.pop(context),
       ),
-      actions: <Widget>[
+      actions: [
         CupertinoActionSheetAction(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,

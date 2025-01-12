@@ -18,30 +18,36 @@ class AppUserAdapter extends TypeAdapter<AppUser> {
     };
     return AppUser(
       id: fields[0] as String,
-      username: fields[1] as String?,
-      profilePic: fields[2] as String?,
-      email: fields[3] as String,
-      created: fields[4] as DateTime?,
-      proAccount: fields[5] as bool?,
+      userName: fields[1] as String?,
+      firstName: fields[2] as String?,
+      lastName: fields[3] as String?,
+      profilePic: fields[4] as String?,
+      email: fields[5] as String,
+      created: fields[6] as DateTime?,
+      aiCredits: fields[7] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, AppUser obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.username)
+      ..write(obj.userName)
       ..writeByte(2)
-      ..write(obj.profilePic)
+      ..write(obj.firstName)
       ..writeByte(3)
-      ..write(obj.email)
+      ..write(obj.lastName)
       ..writeByte(4)
-      ..write(obj.created)
+      ..write(obj.profilePic)
       ..writeByte(5)
-      ..write(obj.proAccount);
+      ..write(obj.email)
+      ..writeByte(6)
+      ..write(obj.created)
+      ..writeByte(7)
+      ..write(obj.aiCredits);
   }
 
   @override

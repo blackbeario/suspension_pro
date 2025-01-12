@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:suspension_pro/models/user.dart';
 
 class UserSingleton extends ChangeNotifier {
   // Private constructor to prevent direct instantiation
@@ -9,31 +10,58 @@ class UserSingleton extends ChangeNotifier {
   factory UserSingleton() => _instance;
 
   // User information fields
-  String _username = '';
+  String _userName = '';
+  String _firstName = '';
+  String _lastName = '';
   String _uid = '';
-  late String _profilePic;
+  String _profilePic = '';
   String _email = '';
-  bool _proAccount = false;
+  int _aiCredits = 0;
 
   // Getter and setter methods for user information
-  String get username => _username;
-  void set username(String username) => _username = username;
+  String get userName => _userName;
+  void set userName(String userName) => _userName = userName;
+
+  String get firstName => _firstName;
+  void set firstName(String firstName) => _firstName = firstName;
+
+  String get lastName => _lastName;
+  void set lastName(String lastName) => _lastName = lastName;
 
   String get uid => _uid;
-  void set uid(String uid) {
-    _uid = uid;
-    notifyListeners();
-  }
+  void set uid(String uid) => _uid = uid;
 
   String get profilePic => _profilePic;
-  void set profilePic(String profilePic) => _profilePic = profilePic;
+  void set profilePic(String profilePic) {
+    _profilePic = profilePic;
+    notifyListeners();
+  }
 
   String get email => _email;
   void set email(String email) => _email = email;
 
-  bool get proAccount => _proAccount;
-  void set proAccount(bool proAccount) {
-    _proAccount = proAccount;
+  int get aiCredits => _aiCredits;
+  void set aiCredits(int aiCredits) {
+    _aiCredits = aiCredits;
+    notifyListeners();
+  }
+
+  // Does this get called by StreamBuilder<User?> or StreamBuilder<AppUser?> in main.dart???
+  setNewUser(String newUserId, AppUser newUser) {
+    uid = newUserId;
+    email = newUser.email;
+    userName = newUser.userName ?? 'Guest';
+    firstName = newUser.firstName ?? '';
+    lastName = newUser.lastName ?? '';
+    aiCredits = newUser.aiCredits ?? 0;
+    profilePic = newUser.profilePic ?? '';
+    notifyListeners();
+  }
+
+  updateNewUser(String username, firstname, lastname) {
+    userName = username;
+    firstName = firstname;
+    lastName = lastname;
     notifyListeners();
   }
 }

@@ -15,7 +15,7 @@ import 'package:suspension_pro/hive_helper/register_adapters.dart';
 import 'package:suspension_pro/models/user.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
 import 'package:suspension_pro/services/db_service.dart';
-import 'package:suspension_pro/services/hive_service.dart';
+import 'package:suspension_pro/themes/styles.dart';
 import './services/auth_service.dart';
 import 'features/auth/login.dart';
 import 'features/profile/profile.dart';
@@ -56,18 +56,15 @@ class MyApp extends StatelessWidget {
         Provider<AuthService>(create: (_) => AuthService()),
       ],
       child: ConnectivityAppWrapper(
-        app: CupertinoApp(
+        app: MaterialApp(
+          navigatorKey: MyApp.navigatorKey,
           localizationsDelegates: [
             DefaultMaterialLocalizations.delegate,
             DefaultCupertinoLocalizations.delegate,
             DefaultWidgetsLocalizations.delegate,
           ],
           debugShowCheckedModeBanner: false,
-          theme: CupertinoThemeData(
-            primaryColor: Color(0xFF007AFF), // iOS 10's default blue
-            primaryContrastingColor: Color(0xFFFFFFFF),
-            barBackgroundColor: Color(0xFFE5E5EA),
-          ),
+          theme: SusProTheme().themedata,
           home: showHome ? AuthenticationWrapper() : Onboarding(),
         ),
       ),
@@ -78,54 +75,47 @@ class MyApp extends StatelessWidget {
 class AuthenticationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final ConnectivityBloc _connectionBloc = ConnectivityBloc();
+    final authService = Provider.of<AuthService>(context);
     final DatabaseService _db = DatabaseService();
-    final HiveService _hive = HiveService();
-    return ListenableBuilder(
-      listenable: _connectionBloc,
-      builder: (context, widget) {
-        // App is ONLINE
-        if (_connectionBloc.isConnected) {
-          final authService = Provider.of<AuthService>(context);
-          return StreamBuilder<User?>(
-              stream: authService.user,
-              builder: (_, AsyncSnapshot<User?> snapshot) {
-                if (snapshot.connectionState == ConnectionState.active) {
-                  final User? user = snapshot.data;
-                  if (user != null) {
-                    // set UserSingleton properties
-                    UserSingleton().uid = user.uid;
-                    UserSingleton().email = user.email ?? '';
-
-                    // Get the Firebase user doc for username and pro_account status
-                    return StreamBuilder<AppUser?>(
-                        stream: _db.streamUser(),
-                        builder: (context, snapshot) {
-                          final AppUser? fbUser = snapshot.data;
-                          if (fbUser == null) {
-                            return Center(child: CupertinoActivityIndicator(animating: true));
-                          }
-                          UserSingleton().username = fbUser.username ?? 'Guest';
-                          UserSingleton().proAccount = fbUser.proAccount ?? false;
-                          return AppHomePage();
-                        });
-                  } else
-                    return LoginPage(online: true);
-                } else {
-                  return Scaffold(body: Center(child: CircularProgressIndicator()));
-                }
-              });
-        }
-        // App is OFFLINE
-        return UserSingleton().uid == ''
+    final UserSingleton _user = UserSingleton();
+    return ConnectivityWidgetWrapper(
+        offlineWidget: _user.uid.isEmpty
             ? ListenableBuilder(
-                listenable: UserSingleton(),
+                listenable: _user,
                 builder: (context, widget) {
-                  return UserSingleton().uid == '' ? LoginPage(online: false) : AppHomePage();
+                  return _user.uid.isEmpty ? LoginPage(online: false) : AppHomePage();
                 })
-            : AppHomePage();
-      },
-    );
+            : AppHomePage(),
+        child: StreamBuilder<User?>(
+            stream: authService.user,
+            builder: (_, AsyncSnapshot<User?> snapshot) {
+              if (snapshot.connectionState == ConnectionState.active) {
+                final User? user = snapshot.data;
+                if (user != null) {
+                  // Get the Firebase user doc
+                  return StreamBuilder<AppUser?>(
+                      stream: _db.streamUser(user.uid),
+                      builder: (context, snapshot) {
+                        final AppUser? fbUser = snapshot.data;
+                        if (fbUser == null) {
+                          return Center(child: CupertinoActivityIndicator(animating: true));
+                        }
+                        // set UserSingleton properties
+                        // for new users this will just be uid & email
+                        // for existing users this will include username, 
+                        // firstName and lastName (if they've completed the profile form)
+                        // && pro_account if they've purchased 
+                        UserSingleton().setNewUser(user.uid, fbUser);
+                        // Set all Hive user values if they exist
+                        AuthService().addUpdateHiveUser(user.uid, fbUser);
+                        return AppHomePage();
+                      });
+                } else
+                  return LoginPage(online: true);
+              } else {
+                return Scaffold(body: Center(child: CircularProgressIndicator()));
+              }
+            }));
   }
 }
 
@@ -145,12 +135,12 @@ class _AppHomePageState extends State<AppHomePage> {
             label: 'Bikes',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.settings, size: 24),
-            label: 'App',
+            icon: Icon(CupertinoIcons.profile_circled, size: 24),
+            label: 'Account',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.smart_toy_outlined, size: 24),
-            label: 'AI',
+            label: 'Ai',
           ),
         ],
       ),

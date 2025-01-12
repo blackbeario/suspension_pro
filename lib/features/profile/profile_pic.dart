@@ -1,37 +1,57 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:suspension_pro/models/user_singleton.dart';
 import 'package:suspension_pro/utilities/imageActionSheet.dart';
-import 'package:suspension_pro/models/user.dart';
 
-class ProfilePic extends StatelessWidget {
-  const ProfilePic({Key? key, required this.user}) : super(key: key);
-  final AppUser user;
+final UserSingleton userBloc = UserSingleton();
+
+class ProfilePicEditor extends StatelessWidget {
+  ProfilePicEditor({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      child: Padding(
-        padding: EdgeInsets.all(20),
-        child: CircleAvatar(
-          backgroundColor: CupertinoColors.activeBlue,
-          radius: 32,
-          child: ClipOval(
-            child: user.profilePic != '' && user.profilePic != null
-                ? CachedNetworkImage(
-                    imageUrl: user.profilePic!,
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => CupertinoActivityIndicator(animating: true),
-                    errorWidget: (context, url, error) => Image.asset('assets/genericUserPic.png'),
-                  )
-                : Icon(Icons.photo_camera),
-          ),
-        ),
+      child: ProfilePic(size: 100),
+      onTap: () => showAdaptiveDialog(
+        useRootNavigator: true,
+        context: context,
+        builder: (context) => ImageActionSheet(),
       ),
-      onTap: () =>
-          showCupertinoModalPopup(useRootNavigator: true, context: context, builder: (context) => ImageActionSheet()),
+    );
+  }
+}
+
+class ProfilePic extends StatelessWidget {
+  ProfilePic({Key? key, required this.size}) : super(key: key);
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+      child: ListenableBuilder(
+        listenable: userBloc,
+        builder: (context, widget) {
+          return CircleAvatar(
+            backgroundColor: CupertinoColors.activeBlue,
+            radius: size / 2,
+            child: ClipOval(
+              child: userBloc.profilePic != ''
+                  ? CachedNetworkImage(
+                      imageUrl: userBloc.profilePic,
+                      width: size,
+                      height: size,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => CupertinoActivityIndicator(animating: true),
+                      errorWidget: (context, url, error) => Image.asset('assets/genericUserPic.png'),
+                    )
+                  : Icon(Icons.person_add),
+            ),
+          );
+        },
+      ),
     );
   }
 }

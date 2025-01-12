@@ -1,6 +1,5 @@
 // import 'dart:io';
 import 'package:connectivity_checker/connectivity_checker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:suspension_pro/features/in_app_purchases/in_app_bloc.dart';
 import 'package:suspension_pro/features/in_app_purchases/presentation/connection_check_tile.dart';
@@ -73,21 +72,23 @@ class _BuyCreditsState extends State<BuyCredits> {
     }
 
     return Scaffold(
-        appBar: CupertinoNavigationBar(
-          leading: SizedBox(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        // padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 5),
+        title: Text('Buy AI Credits'),
+        actions: [SizedBox(
             width: 60,
             child: ConnectivityWidgetWrapper(
               alignment: Alignment.centerLeft,
               offlineWidget: Icon(Icons.wifi_off, size: 24, color: Colors.red),
             ),
-          ),
-          middle: const Text('Buy AI Credits'),
-        ),
+          ),],
+      ),
         body: ConnectivityWidgetWrapper(
           alignment: Alignment.center,
           stacked: false,
-          offlineWidget:
-              Center(child: Text('You cannot buy credits while offline')),
+          offlineWidget: Center(child: Text('You cannot buy credits while offline')),
           child: Stack(children: stack),
         )
         // return ListenableBuilder(

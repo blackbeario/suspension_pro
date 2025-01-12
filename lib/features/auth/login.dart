@@ -31,10 +31,10 @@ class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
-    return CupertinoPageScaffold(
+    return Scaffold(
       backgroundColor: Color.fromRGBO(50, 39, 116, 100),
       key: _key,
-      child: Container(
+      body: Container(
         padding: EdgeInsets.all(30),
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -148,7 +148,7 @@ class LoginPageState extends State<LoginPage> {
                                     var result =
                                         await authService.signInWithFirebase(_email.text.trim(), _password.text.trim());
                                     if (result.runtimeType == FirebaseAuthException) {
-                                      _showLoginFailure(context, result.message, result.details);
+                                      _showLoginFailure(context, result.message, null);
                                     }
                                   } else {
                                     var result =
@@ -199,7 +199,7 @@ class LoginPageState extends State<LoginPage> {
         builder: (BuildContext context) {
           return AlertDialog.adaptive(
             title: Text(message),
-            content: Text(details),
+            content: details != null ? Text(details) : null,
             actions: [
               TextButton(
                 style: TextButton.styleFrom(textStyle: Theme.of(context).textTheme.labelLarge),

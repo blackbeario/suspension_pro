@@ -7,11 +7,13 @@ import 'package:suspension_pro/models/shock.dart';
 import 'package:suspension_pro/models/user.dart';
 
 registerAdapters() async {
-	Hive.registerAdapter(BikeAdapter());
-	Hive.registerAdapter(ComponentSettingAdapter());
-	Hive.registerAdapter(SettingAdapter());
-	Hive.registerAdapter(ForkAdapter());
-	Hive.registerAdapter(ShockAdapter());
+  Hive.registerAdapter(BikeAdapter());
+  Hive.registerAdapter(ComponentSettingAdapter());
+  Hive.registerAdapter(SettingAdapter());
+  Hive.registerAdapter(ForkAdapter());
+  Hive.registerAdapter(ShockAdapter());
   Hive.registerAdapter(AppUserAdapter());
-  await Hive.openBox("bikes");
+  await Hive.openBox<Bike>('bikes');
+  await Hive.openBox<AppUser>('hiveUserBox');
+  await Hive.openBox<String>('hiveUserPass');
 }

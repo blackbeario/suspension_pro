@@ -1,16 +1,13 @@
-import 'dart:async';
-import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 import 'package:suspension_pro/features/roadmap/app_roadmap.dart';
 import 'package:suspension_pro/models/user_singleton.dart';
 import 'package:suspension_pro/utilities/helpers.dart';
 import 'package:suspension_pro/features/profile/profile_pic.dart';
-import 'package:suspension_pro/features/profile/profile_username_form.dart';
+import 'package:suspension_pro/features/profile/profile_form.dart';
 import '../../services/auth_service.dart';
 import '../../services/db_service.dart';
 import 'package:flutter/cupertino.dart';
-import '../../models/user.dart';
 
 class Profile extends StatefulWidget {
   Profile({Key? key}) : super(key: key);
@@ -21,97 +18,96 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   final db = DatabaseService();
+  final UserSingleton _user = UserSingleton();
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<AppUser?>(
-        stream: db.streamUser(),
-        builder: (context, snapshot) {
-          var myUser = snapshot.data;
-          if (myUser == null) {
-            return Center(child: CupertinoActivityIndicator(animating: true));
-          }
-
-          return CupertinoPageScaffold(
-            resizeToAvoidBottomInset: true,
-            navigationBar: CupertinoNavigationBar(
-              leading: SizedBox(
-                width: 60,
-                child: ConnectivityWidgetWrapper(
-                  alignment: Alignment.centerLeft,
-                  offlineWidget:
-                      Icon(Icons.wifi_off, size: 24, color: Colors.red),
-                ),
-              ),
-              middle: Text(myUser.username ?? UserSingleton().email),
-              trailing: CupertinoButton(
-                  padding: EdgeInsets.only(bottom: 0),
-                  child: Icon(Icons.power_settings_new),
-                  onPressed: () => _signOut(context)),
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        actions: [
+          TextButton(
+            onPressed: () =>
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfileForm())),
+            child: Text('Edit'),
+          ),
+        ],
+        title: Text(_user.userName),
+      ),
+      body: ListView(
+        padding: EdgeInsets.all(20),
+        children: [
+          Column(
+            children: [
+              ProfilePic(size: 100),
+              Text((_user.firstName) + ' ' + (_user.lastName), style: TextStyle(fontSize: 18)),
+              SizedBox(height: 10),
+              Text(_user.email)
+            ],
+          ),
+          SizedBox(height: 40),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: ListTile(
+              title: Text('App Settings'),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () => {}, // TODO create settings screen
             ),
-            child: Material(
-              color: Colors.white,
-              child: ListView(
-                children: [
-                  Row(
-                    children: [
-                      ProfilePic(user: myUser),
-                      ProfileNameForm(user: myUser),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                    child: Divider(),
-                  ),
-                  ListTile(
-                    title: Text('App Roadmap'),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => AppRoadmap())),
-                  ),
-                  ListTile(
-                    title: Text('Privacy Policy'),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () => loadURL(
-                        'https://vibesoftware.io/privacy/suspension_pro'),
-                  ),
-                  ListTile(
-                    title: Text('Terms & Conditions'),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () =>
-                        loadURL('https://vibesoftware.io/terms/suspension_pro'),
-                  ),
-                ],
-              ),
+          ),
+          ListTile(
+            title: Text('App Roadmap'),
+            trailing: Icon(Icons.arrow_forward_ios),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => AppRoadmap())),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: ListTile(
+              title: Text('Privacy Policy'),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () => loadURL('https://vibesoftware.io/privacy/suspension_pro'),
             ),
-          );
-        });
+          ),
+          ListTile(
+            title: Text('Terms & Conditions'),
+            trailing: Icon(Icons.arrow_forward_ios),
+            onTap: () => loadURL('https://vibesoftware.io/terms/suspension_pro'),
+          ),
+          SizedBox(height: 40),
+          ListTile(
+            leading: Icon(Icons.power_settings_new, color: Colors.red),
+            tileColor: Colors.grey.shade100,
+            title: Text('Sign Out', style: TextStyle(color: Colors.red)),
+            onTap: () => _signOut(context),
+          )
+        ],
+      ),
+    );
   }
 
-  Future<bool> _signOut(BuildContext context) {
+  _signOut(BuildContext context) {
     showCupertinoDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: Text('Signout'),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                  child: Text('Okay'),
-                  isDestructiveAction: true,
-                  onPressed: () {
-                    Navigator.pop(context, 'Discard');
-                    context.read<AuthService>().signOut();
-                  }),
-              CupertinoDialogAction(
-                child: Text('Cancel'),
-                isDefaultAction: true,
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text('Sign Out'),
+          actions: <Widget>[
+            CupertinoDialogAction(
+                child: Text('Okay'),
                 onPressed: () {
-                  Navigator.pop(context, 'Cancel');
-                },
-              ),
-            ],
-          );
-        });
-    return Future.value(false);
+                  Navigator.pop(context, 'Discard');
+                  context.read<AuthService>().signOut();
+                }),
+            CupertinoDialogAction(
+              child: Text('Cancel'),
+              isDefaultAction: true,
+              isDestructiveAction: true,
+              onPressed: () {
+                Navigator.pop(context, 'Cancel');
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

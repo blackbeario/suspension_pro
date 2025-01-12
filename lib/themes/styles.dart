@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 
-
-// For a non-Cupertino version of this app
-ThemeData appTheme() {
-  return ThemeData(
-    primaryColor: Colors.white,
+class SusProTheme {
+  ThemeData themedata = ThemeData(
+    useMaterial3: false,
+    primaryColor: Colors.grey,
     primarySwatch: Colors.blue,
+    scaffoldBackgroundColor: Colors.white,
+    appBarTheme: AppBarTheme(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      foregroundColor: Colors.black87,
+      titleTextStyle: TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.w600)
+    ),
+    listTileTheme: ListTileThemeData(
+      tileColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(color: Colors.black12)),
+    ),
   );
 }

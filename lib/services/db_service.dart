@@ -24,17 +24,19 @@ class DatabaseService {
     return ref.snapshots().map((list) => list.docs.map((doc) => Bike.fromFirestore(doc)).toList());
   }
 
-  Stream<AppUser> streamUser() {
+  Stream<AppUser> streamUser(String uid) {
     return _db.collection('users').doc(uid).snapshots().map((snap) => AppUser.fromSnapshot(snap.data()!));
-  }
+  } // '9OtdujMZdvPEyuu0iDTbFyToKNv1'
 
-  Future<void> updateUser(String username, String email) async {
+  Future<void> updateUser(String username, String firstName, String lastName, String email) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;
     return await _db.collection('users').doc(uid).set({
       'updated': $updated,
       'username': username,
       'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
     }, SetOptions(merge: true));
   }
 
