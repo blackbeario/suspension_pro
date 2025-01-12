@@ -22,66 +22,71 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        actions: [
-          TextButton(
-            onPressed: () =>
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfileForm())),
-            child: Text('Edit'),
-          ),
-        ],
-        title: Text(_user.userName),
-      ),
-      body: ListView(
-        padding: EdgeInsets.all(20),
-        children: [
-          Column(
-            children: [
-              ProfilePic(size: 100),
-              Text((_user.firstName) + ' ' + (_user.lastName), style: TextStyle(fontSize: 18)),
-              SizedBox(height: 10),
-              Text(_user.email)
-            ],
-          ),
-          SizedBox(height: 40),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: ListTile(
-              title: Text('App Settings'),
-              trailing: Icon(Icons.arrow_forward_ios),
-              onTap: () => {}, // TODO create settings screen
+    // Wrap in a ListenableBuilder to listen to state changes of the UserSingleton
+    // as the ProfileForm is submittted. Otherwise it won't update until it is reloaded.
+    return ListenableBuilder(
+        listenable: _user,
+        builder: (context, widget) {
+          return Scaffold(
+            resizeToAvoidBottomInset: true,
+            appBar: AppBar(
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfileForm())),
+                  child: Text('Edit'),
+                ),
+              ],
+              title: Text(_user.userName),
             ),
-          ),
-          ListTile(
-            title: Text('App Roadmap'),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => AppRoadmap())),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: ListTile(
-              title: Text('Privacy Policy'),
-              trailing: Icon(Icons.arrow_forward_ios),
-              onTap: () => loadURL('https://vibesoftware.io/privacy/suspension_pro'),
+            body: ListView(
+              padding: EdgeInsets.all(20),
+              children: [
+                Column(
+                  children: [
+                    ProfilePic(size: 100),
+                    Text((_user.firstName) + ' ' + (_user.lastName), style: TextStyle(fontSize: 18)),
+                    SizedBox(height: 10),
+                    Text(_user.email)
+                  ],
+                ),
+                SizedBox(height: 40),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    title: Text('App Settings'),
+                    trailing: Icon(Icons.arrow_forward_ios),
+                    onTap: () => {}, // TODO create settings screen
+                  ),
+                ),
+                ListTile(
+                  title: Text('App Roadmap'),
+                  trailing: Icon(Icons.arrow_forward_ios),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => AppRoadmap())),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    title: Text('Privacy Policy'),
+                    trailing: Icon(Icons.arrow_forward_ios),
+                    onTap: () => loadURL('https://vibesoftware.io/privacy/suspension_pro'),
+                  ),
+                ),
+                ListTile(
+                  title: Text('Terms & Conditions'),
+                  trailing: Icon(Icons.arrow_forward_ios),
+                  onTap: () => loadURL('https://vibesoftware.io/terms/suspension_pro'),
+                ),
+                SizedBox(height: 40),
+                ListTile(
+                  leading: Icon(Icons.power_settings_new, color: Colors.red),
+                  tileColor: Colors.grey.shade100,
+                  title: Text('Sign Out', style: TextStyle(color: Colors.red)),
+                  onTap: () => _signOut(context),
+                )
+              ],
             ),
-          ),
-          ListTile(
-            title: Text('Terms & Conditions'),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => loadURL('https://vibesoftware.io/terms/suspension_pro'),
-          ),
-          SizedBox(height: 40),
-          ListTile(
-            leading: Icon(Icons.power_settings_new, color: Colors.red),
-            tileColor: Colors.grey.shade100,
-            title: Text('Sign Out', style: TextStyle(color: Colors.red)),
-            onTap: () => _signOut(context),
-          )
-        ],
-      ),
-    );
+          );
+        });
   }
 
   _signOut(BuildContext context) {

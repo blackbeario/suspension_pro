@@ -109,14 +109,14 @@ class AuthService {
     }
   }
 
-  addUpdateHiveUser(String uid, AppUser user) async {
+  addUpdateHiveUser(AppUser user) async {
     try {
       final box = await Hive.box<AppUser>('hiveUserBox');
       if (box.isNotEmpty) {
         AppUser? hiveUser = await box.getAt(0);
         // update user values
         if (hiveUser != null) {
-          hiveUser.id = uid;
+          hiveUser.id = user.id;
           hiveUser.userName = user.userName ?? 'Guest';
           hiveUser.firstName = user.firstName ?? '';
           hiveUser.lastName = user.lastName ?? '';

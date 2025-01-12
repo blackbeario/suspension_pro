@@ -39,7 +39,7 @@ class AppUser extends HiveObject{
   });
 
   factory AppUser.fromSnapshot(Map<String, dynamic> data) => AppUser(
-        id: data['id'] ?? '',
+        id: data['uid'] ?? '',
         userName: data['username'] ?? 'Guest',
         firstName: data['firstName'] ?? '',
         lastName: data['lastName'] ?? '',

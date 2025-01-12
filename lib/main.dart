@@ -104,10 +104,10 @@ class AuthenticationWrapper extends StatelessWidget {
                         // for new users this will just be uid & email
                         // for existing users this will include username, 
                         // firstName and lastName (if they've completed the profile form)
-                        // && pro_account if they've purchased 
-                        UserSingleton().setNewUser(user.uid, fbUser);
+                        // && aiCredits if they've purchased any
+                        UserSingleton().setNewUser(fbUser);
                         // Set all Hive user values if they exist
-                        AuthService().addUpdateHiveUser(user.uid, fbUser);
+                        AuthService().addUpdateHiveUser(fbUser);
                         return AppHomePage();
                       });
                 } else

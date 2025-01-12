@@ -46,9 +46,8 @@ class UserSingleton extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Does this get called by StreamBuilder<User?> or StreamBuilder<AppUser?> in main.dart???
-  setNewUser(String newUserId, AppUser newUser) {
-    uid = newUserId;
+  setNewUser(AppUser newUser) {
+    uid = newUser.id;
     email = newUser.email;
     userName = newUser.userName ?? 'Guest';
     firstName = newUser.firstName ?? '';
