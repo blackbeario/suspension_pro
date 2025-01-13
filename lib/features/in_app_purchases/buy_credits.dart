@@ -1,4 +1,6 @@
 // import 'dart:io';
+import 'dart:io';
+
 import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:suspension_pro/features/in_app_purchases/in_app_bloc.dart';
@@ -6,6 +8,12 @@ import 'package:suspension_pro/features/in_app_purchases/presentation/connection
 import 'package:suspension_pro/features/in_app_purchases/presentation/consumable_box.dart';
 import 'package:suspension_pro/features/in_app_purchases/presentation/product_list.dart';
 import 'package:suspension_pro/services/in_app_service.dart';
+
+import 'package:in_app_purchase/in_app_purchase.dart';
+// import 'package:in_app_purchase_android/billing_client_wrappers.dart';
+// import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+// import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 class BuyCredits extends StatefulWidget {
   const BuyCredits();
@@ -17,6 +25,7 @@ class BuyCredits extends StatefulWidget {
 class _BuyCreditsState extends State<BuyCredits> {
   final InAppBloc _bloc = InAppBloc();
   final InAppPurchaseService _service = InAppPurchaseService();
+  final InAppPurchase _inAppPurchase = InAppPurchase.instance;
 
   @override
   void initState() {
@@ -24,17 +33,16 @@ class _BuyCreditsState extends State<BuyCredits> {
     super.initState();
   }
 
-// @override
-//   void dispose() {
-//     if (Platform.isIOS) {
-//       final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
-//           _inAppPurchase
-//               .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-//       iosPlatformAddition.setDelegate(null);
-//     }
-//     _subscription.cancel();
-//     super.dispose();
-//   }
+@override
+  void dispose() {
+    if (Platform.isIOS) {
+      final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
+          _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+      iosPlatformAddition.setDelegate(null);
+    }
+    _bloc.subscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +54,6 @@ class _BuyCreditsState extends State<BuyCredits> {
             ConnectionCheckTile(),
             InAppProductList(),
             PreviousConsumablePurchases(),
-            // _buildRestoreButton(),
           ],
         ),
       );
@@ -89,7 +96,10 @@ class _BuyCreditsState extends State<BuyCredits> {
           alignment: Alignment.center,
           stacked: false,
           offlineWidget: Center(child: Text('You cannot buy credits while offline')),
-          child: Stack(children: stack),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Stack(children: stack),
+          ),
         )
         // return ListenableBuilder(
         //     listenable: _bloc,

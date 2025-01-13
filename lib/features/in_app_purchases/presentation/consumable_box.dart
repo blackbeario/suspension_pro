@@ -35,7 +35,7 @@ class PreviousConsumablePurchases extends StatelessWidget {
             );
           }).toList();
           return Card(
-              child: Column(children: <Widget>[
+              child: Column(children: [
             consumableHeader,
             const Divider(),
             GridView.count(

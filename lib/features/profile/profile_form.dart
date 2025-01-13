@@ -94,7 +94,7 @@ class _ProfileFormState extends State<ProfileForm> {
                         },
                         decoration: InputDecoration(
                           isDense: true,
-                          helperText: 'Your first name',
+                          helperText: 'First name',
                           filled: true,
                           hoverColor: Colors.blue.shade100,
                           border: OutlineInputBorder(),
@@ -116,7 +116,7 @@ class _ProfileFormState extends State<ProfileForm> {
                         },
                         decoration: InputDecoration(
                           isDense: true,
-                          helperText: 'Your last name',
+                          helperText: 'Last name',
                           filled: true,
                           hoverColor: Colors.blue.shade100,
                           border: OutlineInputBorder(),

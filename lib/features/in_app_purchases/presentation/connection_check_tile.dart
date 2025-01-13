@@ -31,7 +31,7 @@ class ConnectionCheckTile extends StatelessWidget {
               ),
             ]);
           }
-          return Card(child: Column(children: children));
+          return Column(children: children);
         });
   }
 }

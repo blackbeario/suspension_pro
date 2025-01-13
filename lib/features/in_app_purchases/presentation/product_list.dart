@@ -21,7 +21,6 @@ class InAppProductList extends StatelessWidget {
           if (!_bloc.isAvailable) {
             return const Card(child: ListTile(title: Text('Store not available')));
           }
-          const ListTile productHeader = ListTile(title: Text('Products for Sale'));
           final List<ListTile> productList = <ListTile>[];
           if (_bloc.notFoundIds.isNotEmpty) {
             productList.add(ListTile(
@@ -66,7 +65,10 @@ class InAppProductList extends StatelessWidget {
             },
           ));
 
-          return Card(child: Column(children: <Widget>[productHeader, const Divider(indent: 10, endIndent: 10, color: Colors.grey, thickness: 0.25)] + productList));
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Column(children: productList),
+          );
         });
   }
 }

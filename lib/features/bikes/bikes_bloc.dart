@@ -54,4 +54,17 @@ class BikesBloc {
       return bike.id;
     }
   }
+
+  bool isProfileComplete(UserSingleton user) {
+    return user.uid.isNotEmpty &&
+        user.userName.isNotEmpty &&
+        user.profilePic.isNotEmpty &&
+        user.email.isNotEmpty &&
+        user.firstName.isNotEmpty &&
+        user.lastName.isNotEmpty;
+  }
+
+  String profileString(user) {
+    return isProfileComplete(user) ? 'Nice! Profile complete' : 'Complete your profile';
+  }
 }

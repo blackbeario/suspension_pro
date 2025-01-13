@@ -34,10 +34,13 @@ class _BikesListScreenState extends State<BikesListScreen> {
       ),
       body: Container(
         key: ValueKey('settings'),
-        padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+        padding: EdgeInsets.fromLTRB(4, 10, 4, 0),
         decoration: BoxDecoration(
+          color: Colors.blue.shade100,
           image: DecorationImage(
-              image: AssetImage("assets/cupcake.jpg"), fit: BoxFit.none, alignment: Alignment.topCenter),
+              image: AssetImage("assets/cupcake.png"), fit: BoxFit.none, alignment: Alignment.topCenter,
+              opacity: 0.25,
+            ),
         ),
         child: ValueListenableBuilder(
           valueListenable: Hive.box<Bike>('bikes').listenable(),

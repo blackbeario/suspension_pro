@@ -11,7 +11,7 @@ class InAppBloc extends ChangeNotifier {
   static final InAppBloc _instance = InAppBloc._internal();
   factory InAppBloc() => _instance;
 
-  late StreamSubscription<List<PurchaseDetails>> _subscription;
+  late StreamSubscription<List<PurchaseDetails>> subscription;
   List<String> _notFoundIds = <String>[];
   List<ProductDetails> _products = <ProductDetails>[];
   List<PurchaseDetails> _purchases = <PurchaseDetails>[];
