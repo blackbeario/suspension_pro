@@ -34,20 +34,31 @@ class ProfilePic extends StatelessWidget {
       child: ListenableBuilder(
         listenable: userBloc,
         builder: (context, widget) {
-          return CircleAvatar(
-            backgroundColor: CupertinoColors.activeBlue,
-            radius: size / 2,
-            child: ClipOval(
-              child: userBloc.profilePic != ''
-                  ? CachedNetworkImage(
-                      imageUrl: userBloc.profilePic,
-                      width: size,
-                      height: size,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => CupertinoActivityIndicator(animating: true),
-                      errorWidget: (context, url, error) => Image.asset('assets/genericUserPic.png'),
-                    )
-                  : Icon(Icons.person_add),
+          return Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.black38,
+                width: size * 0.025,
+              ),
+            ),
+            child: CircleAvatar(
+              backgroundColor: CupertinoColors.activeBlue,
+              radius: size / 2,
+              child: ClipOval(
+                child: userBloc.profilePic != ''
+                    ? CachedNetworkImage(
+                        imageUrl: userBloc.profilePic,
+                        width: size,
+                        height: size,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            CupertinoActivityIndicator(animating: true),
+                        errorWidget: (context, url, error) =>
+                            Image.asset('assets/genericUserPic.png'),
+                      )
+                    : Icon(Icons.person_add),
+              ),
             ),
           );
         },

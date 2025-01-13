@@ -19,7 +19,7 @@ class HiveBikesList extends StatefulWidget {
 }
 
 class _HiveBikesListState extends State<HiveBikesList> {
-  final double profilePicSize = 60;
+  final double profilePicSize = 50;
   final UserSingleton _user = UserSingleton();
   bool finished = false;
 

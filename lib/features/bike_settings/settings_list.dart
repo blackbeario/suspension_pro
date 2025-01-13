@@ -31,8 +31,9 @@ class _SettingsListState extends State<SettingsList> {
         String? notes = settings[index].notes ?? null;
         return Dismissible(
           background: ListTile(
-            tileColor: CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
+            // tileColor: CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
             trailing: Icon(Icons.delete, color: CupertinoColors.systemRed),
+            shape: null,
           ),
           direction: DismissDirection.horizontal,
           onDismissed: (direction) => setState(() {
@@ -40,29 +41,33 @@ class _SettingsListState extends State<SettingsList> {
             settings.removeAt(index);
           }),
           key: PageStorageKey(settings[index]),
-          child: GestureDetector(
-              key: PageStorageKey(settings[index]),
-              child: ListTile(
-                title: Text(settings[index].id),
-                subtitle: Text(widget.bike.id),
-                trailing: Icon(Icons.arrow_forward_ios),
-              ),
-              onTap: () {
-                Navigator.of(context).push(CupertinoPageRoute(
-                    fullscreenDialog: true,
-                    builder: (context) {
-                      // Return the settings detail form screen.
-                      return SettingDetails(
-                        bike: widget.bike,
-                        setting: settings[index].id,
-                        fork: fork,
-                        shock: shock,
-                        frontTire: frontTire,
-                        rearTire: rearTire,
-                        notes: notes,
-                      );
-                    }));
-              }),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+                key: PageStorageKey(settings[index]),
+                child: ListTile(
+                  title: Text(settings[index].id),
+                  subtitle: Text(widget.bike.id),
+                  trailing: Icon(Icons.arrow_forward_ios),
+                  // shape: null,
+                ),
+                onTap: () {
+                  Navigator.of(context).push(CupertinoPageRoute(
+                      fullscreenDialog: true,
+                      builder: (context) {
+                        // Return the settings detail form screen.
+                        return SettingDetails(
+                          bike: widget.bike,
+                          setting: settings[index].id,
+                          fork: fork,
+                          shock: shock,
+                          frontTire: frontTire,
+                          rearTire: rearTire,
+                          notes: notes,
+                        );
+                      }));
+                }),
+          ),
         );
       },
     );

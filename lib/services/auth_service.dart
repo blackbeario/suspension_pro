@@ -56,28 +56,40 @@ class AuthService {
 
   Future signInWithHive(String email, String password) async {
     try {
-      final Box<AppUser> hiveUserBox = await Hive.box('hiveUserBox');
+      final Box<AppUser> hiveUserBox = await Hive.box<AppUser>('hiveUserBox');
       if (hiveUserBox.isNotEmpty) {
         final AppUser? user = hiveUserBox.getAt(0);
         if (user != null && user.email == email) {
-          String decryptedPass = await getHiveUserPass();
-          if (password == decryptedPass) {
-            UserSingleton().uid = user.id;
-            UserSingleton().userName = user.userName ?? 'Guest';
-            UserSingleton().aiCredits = user.aiCredits ?? 0;
-            UserSingleton().email = user.email;
-            return user;
-          } else {
-            return Exception('Incorrect password');
+          // getHiveUserPass could return an exception too
+          dynamic decryptedPass = await getHiveUserPass();
+          if (decryptedPass.runtimeType == String) {
+            if (password == decryptedPass) {
+              UserSingleton().uid = user.id;
+              UserSingleton().userName = user.userName ?? 'Guest';
+              UserSingleton().aiCredits = user.aiCredits ?? 0;
+              UserSingleton().email = user.email;
+              return user;
+            } else {
+              throw PlatformException(
+                code: 'password-match',
+                message: 'Incorrect Password',
+                details: 'Password is incorrect.');
+            }
+          }
+          else if (decryptedPass.runtimeType == PlatformException){
+            return decryptedPass;
           }
         }
         if (user != null && user.email != email) {
-          return Exception('Email does not match. Please check for typos.');
+          throw PlatformException(
+            code: 'email-no-match',
+            message: 'User Not Found',
+            details: 'No user account found for $email');
         }
       }
       throw PlatformException(
         code: 'user-not-found',
-        message: 'User Not Found',
+        message: 'User Not Created',
         details: 'While offline you can sign in, but first you must create an account when connected to the internet.',
       );
     } on Exception catch (e) {
@@ -87,7 +99,7 @@ class AuthService {
 
   Future createHiveUser(String uid, String email, String password) async {
     try {
-      final Box<AppUser> hiveUserBox = await Hive.box('hiveUserBox');
+      final Box<AppUser> hiveUserBox = await Hive.box<AppUser>('hiveUserBox');
       final AppUser user = AppUser(
         id: uid,
         userName: null,
@@ -135,15 +147,23 @@ class AuthService {
 
   getHiveUserPass() async {
     try {
-      final Box<String> passBox = await Hive.box('hiveUserPass');
-      final String? encrypted = passBox.getAt(0); // Should be only one entry
-      if (encrypted != null) {
-        // base32 decoding to original string.
-        String decrypted = base32.decodeAsHexString(encrypted);
-        return decrypted;
+      final Box<String> passBox = await Hive.box<String>('hiveUserPass');
+      if (passBox.isNotEmpty) {
+        final String? encrypted = passBox.getAt(0);
+        if (encrypted != null) {
+          // base32 decoding to original string.
+          String decrypted = base32.decodeAsHexString(encrypted);
+          return decrypted;
+        }
       }
+      return PlatformException(
+        code: 'no-saved_password',
+        message: 'Offline: Password Not Found',
+        details: 'Email found but there is no saved password. This is a rare error that can only be fixed when online.',
+      );
+      
     } on Exception catch (e) {
-      return e;
+      return e as PlatformException;
     }
   }
 }

@@ -148,7 +148,7 @@ class LoginPageState extends State<LoginPage> {
                                     var result =
                                         await authService.signInWithFirebase(_email.text.trim(), _password.text.trim());
                                     if (result.runtimeType == FirebaseAuthException) {
-                                      _showLoginFailure(context, result.message, null);
+                                      _showLoginFailure(context, result.code, result.message);
                                     }
                                   } else {
                                     var result =

@@ -23,14 +23,16 @@ class _BikesListScreenState extends State<BikesListScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        actions: [SizedBox(
-          width: 60,
-          child: ConnectivityWidgetWrapper(
-            alignment: Alignment.centerLeft,
-            offlineWidget: Icon(Icons.wifi_off, size: 24, color: Colors.red),
-          ),
-        ),],
         title: Text('Bikes & Settings'),
+        actions: [
+          SizedBox(
+            width: 60,
+            child: ConnectivityWidgetWrapper(
+              alignment: Alignment.centerLeft,
+              offlineWidget: Icon(Icons.wifi_off, size: 24, color: Colors.red),
+            ),
+          ),
+        ],
       ),
       body: Container(
         key: ValueKey('settings'),
@@ -38,21 +40,24 @@ class _BikesListScreenState extends State<BikesListScreen> {
         decoration: BoxDecoration(
           color: Colors.blue.shade100,
           image: DecorationImage(
-              image: AssetImage("assets/cupcake.png"), fit: BoxFit.none, alignment: Alignment.topCenter,
-              opacity: 0.25,
-            ),
+            image: AssetImage("assets/cupcake.png"),
+            fit: BoxFit.none,
+            alignment: Alignment.topCenter,
+            opacity: 0.25,
+          ),
         ),
-        child: ValueListenableBuilder(
-          valueListenable: Hive.box<Bike>('bikes').listenable(),
-          builder: (context, Box<Bike> box, _) {
-            final bikesFromHive = box.values;
-            List<Bike> bikes = [];
-            for (Bike bike in bikesFromHive) bikes.add(bike);
-            return ConnectivityWidgetWrapper(
-                offlineWidget: HiveBikesList(bikes: bikes),
-                child: bikes.isEmpty ? HiveBikesList(bikes: bikes) : FirebaseBikesList(),
-                stacked: false);
-          },
+        child: ConnectivityWidgetWrapper(
+          offlineWidget: ValueListenableBuilder(
+            valueListenable: Hive.box<Bike>('bikes').listenable(),
+            builder: (context, Box<Bike> box, _) {
+              final bikesFromHive = box.values;
+              List<Bike> bikes = [];
+              for (Bike bike in bikesFromHive) bikes.add(bike);
+              return HiveBikesList(bikes: bikes);
+            },
+          ),
+          child: FirebaseBikesList(),
+          stacked: false,
         ),
       ),
     );

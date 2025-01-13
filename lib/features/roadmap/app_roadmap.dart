@@ -24,13 +24,14 @@ class AppRoadmap extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    AppRoadmapItem(value: 'Fix sign out when offline'),
                     AppRoadmapItem(value: 'Populate bikes and components from HIVE'),
                     AppRoadmapItem(value: 'Populate settings from HIVE'),
                     AppRoadmapItem(value: 'Implement workmanager plugin for backround sync'),
                     AppRoadmapItem(value: 'Set bool flag for synced data. If remote sync fails set flag to false and try workmanager method'),
                     AppRoadmapItem(value: 'Import suspension products dynamically'),
                     AppRoadmapItem(value: 'Support for less common suspension products'),
-                    AppRoadmapItem(value: 'Custom user app backgrounds / better themeing'),
+                    AppRoadmapItem(value: 'Custom theme options'),
                   ],
                 ),
               ),
