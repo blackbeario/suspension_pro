@@ -1,36 +1,36 @@
 import 'package:hive/hive.dart';
 
 class HiveService {
-  void addToBox(String boxName, dynamic object) async {
+  void addToBox<T>(String boxName, T object) async {
     try {
-      final box = await Hive.box(boxName);
+      final box = await Hive.box<T>(boxName);
       await box.add(object);
     } catch (e) {
       throw e;
     }
   }
 
-  void putIntoBox(String boxName, String key, dynamic object) async {
+  void putIntoBox<T>(String boxName, String key, T object) async {
     try {
-      final box = await Hive.box(boxName);
+      final box = await Hive.box<T>(boxName);
       await box.put(key, object);
     } catch (e) {
       throw e;
     }
   }
 
-  getAllFromBox(String boxName) async {
+  getAllFromBox<T>(String boxName) async {
     try {
-      final box = await Hive.box(boxName);
+      final box = await Hive.box<T>(boxName);
       return await box.get;
     } catch (e) {
       throw e;
     }
   }
 
-  getFromBox(String boxName, String? key) async {
+  getFromBox<T>(String boxName, String? key) async {
     try {
-      final box = await Hive.box(boxName);
+      final box = await Hive.box<T>(boxName);
       return await box.get(key);
     } catch (e) {
       throw e;
