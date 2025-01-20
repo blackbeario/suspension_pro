@@ -35,7 +35,6 @@ class _BikesListScreenState extends State<BikesListScreen> {
         ],
       ),
       body: Container(
-        key: ValueKey('settings'),
         padding: EdgeInsets.fromLTRB(4, 10, 4, 0),
         decoration: BoxDecoration(
           color: Colors.blue.shade100,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:suspension_pro/models/shock.dart';
 import '../../services/db_service.dart';
-import 'package:flutter/cupertino.dart';
 
 class ShockForm extends StatefulWidget {
   ShockForm({this.bikeId, this.shock, this.shockCallback});
@@ -85,7 +84,7 @@ class _ShockFormState extends State<ShockForm> {
                       width: 75,
                       height: 75,
                       decoration: BoxDecoration(
-                        color: CupertinoColors.inactiveGray.withOpacity(0.25),
+                        color: Colors.grey.withOpacity(0.25),
                         shape: BoxShape.circle,
                       ),
                       child: Image.asset('assets/shock.png')),
@@ -151,11 +150,8 @@ class _ShockFormState extends State<ShockForm> {
                 SizedBox(height: 30),
                 Container(
                   padding: EdgeInsets.only(left: 80, right: 80),
-                  child: CupertinoButton(
-                      disabledColor: CupertinoColors.quaternarySystemFill,
-                      color: CupertinoColors.activeBlue,
-                      child:
-                          Text('Save', style: TextStyle(color: Colors.white)),
+                  child: ElevatedButton(
+                      child: Text('Save', style: TextStyle(color: Colors.white)),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           widget.bikeId != ''

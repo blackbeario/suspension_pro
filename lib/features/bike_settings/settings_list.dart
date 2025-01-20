@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:suspension_pro/features/bike_settings/share_button.dart';
 import 'package:suspension_pro/models/bike.dart';
 import 'package:suspension_pro/models/component_setting.dart';
+import 'package:suspension_pro/models/fork.dart';
 import 'package:suspension_pro/models/setting.dart';
+import 'package:suspension_pro/models/shock.dart';
+import 'package:suspension_pro/utilities/helpers.dart';
 import 'setting_detail.dart';
-import 'package:suspension_pro/services/auth_service.dart';
 import 'package:suspension_pro/services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -29,6 +31,11 @@ class _SettingsListState extends State<SettingsList> {
         String? frontTire = settings[index].frontTire ?? null;
         String? rearTire = settings[index].rearTire ?? null;
         String? notes = settings[index].notes ?? null;
+        Fork? $fork = bike.fork ?? null;
+        Shock? $shock = bike.shock ?? null;
+        final String forkProduct = $fork != null ? '${$fork.year + ' ' + $fork.brand + ' ' + $fork.model}' : '';
+        final String shockProduct = $shock != null ? '${$shock.year + ' ' + $shock.brand + ' ' + $shock.model}' : '';
+
         return Dismissible(
           background: ListTile(
             // tileColor: CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
@@ -52,20 +59,22 @@ class _SettingsListState extends State<SettingsList> {
                   // shape: null,
                 ),
                 onTap: () {
-                  Navigator.of(context).push(CupertinoPageRoute(
-                      fullscreenDialog: true,
-                      builder: (context) {
-                        // Return the settings detail form screen.
-                        return SettingDetails(
-                          bike: widget.bike,
-                          setting: settings[index].id,
-                          fork: fork,
-                          shock: shock,
-                          frontTire: frontTire,
-                          rearTire: rearTire,
-                          notes: notes,
-                        );
-                      }));
+                  SettingDetails details = SettingDetails(
+                    bike: widget.bike,
+                    name: settings[index].id,
+                    fork: fork,
+                    shock: shock,
+                    frontTire: frontTire,
+                    rearTire: rearTire,
+                    notes: notes,
+                  );
+                  pushScreen(
+                    context,
+                    settings[index].id,
+                    [ShareButton(widget: details, forkProduct: forkProduct, shockProduct: shockProduct)],
+                    details,
+                    true,
+                  );
                 }),
           ),
         );
@@ -75,81 +84,30 @@ class _SettingsListState extends State<SettingsList> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-        resizeToAvoidBottomInset: true,
-        navigationBar: CupertinoNavigationBar(
-          leading: CupertinoButton(
-              child: BackButtonIcon(),
-              onPressed: () => Navigator.pop(context, widget.bike.id)),
-          middle: Text(widget.bike.id),
-          trailing: CupertinoButton(
-              child: Icon(Icons.power_settings_new),
-              onPressed: () => _requestPop(context)),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        StreamBuilder<List<Setting>>(
+            stream: db.streamSettings(widget.bike.id),
+            builder: (context, snapshot) {
+              var settings = snapshot.data;
+              if (settings == null) {
+                return Center(child: CircularProgressIndicator.adaptive());
+              }
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(snapshot.error.toString(), style: CupertinoTheme.of(context).textTheme.navTitleTextStyle),
+                );
+              }
+              return _getSettings(widget.bike, settings, context);
+            }),
+        ElevatedButton(
+          child: Text('Add Setting'),
+          onPressed: () => pushScreen(context, 'Add Setting', null, SettingDetails(bike: widget.bike), true),
         ),
-        child: Card(
-          color: Colors.white,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              StreamBuilder<List<Setting>>(
-                  stream: db.streamSettings(widget.bike.id),
-                  builder: (context, snapshot) {
-                    var settings = snapshot.data;
-                    if (settings == null) {
-                      return Center(
-                          child: CircularProgressIndicator.adaptive());
-                    }
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error...',
-                            style: CupertinoTheme.of(context)
-                                .textTheme
-                                .navTitleTextStyle),
-                      );
-                    }
-                    return _getSettings(widget.bike, settings, context);
-                  }),
-              CupertinoButton(
-                color: CupertinoColors.activeBlue,
-                child: Text('Add Setting'),
-                onPressed: () => Navigator.of(context).push(CupertinoPageRoute(
-                    fullscreenDialog: true,
-                    builder: (context) {
-                      // We need to return the shock detail screen here.
-                      return SettingDetails(bike: widget.bike);
-                    })),
-              ),
-              Expanded(child: Container())
-            ],
-          ),
-        ));
-  }
-
-  Future<bool> _requestPop(BuildContext context) {
-    showCupertinoDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: Text('Signout'),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                  child: Text('Okay'),
-                  isDestructiveAction: true,
-                  onPressed: () {
-                    Navigator.pop(context, 'Discard');
-                    context.read<AuthService>().signOut();
-                  }),
-              CupertinoDialogAction(
-                child: Text('Cancel'),
-                isDefaultAction: true,
-                onPressed: () {
-                  Navigator.pop(context, 'Cancel');
-                },
-              ),
-            ],
-          );
-        });
-    return new Future.value(false);
+        Expanded(child: Container())
+      ],
+    );
   }
 }

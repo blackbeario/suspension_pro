@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:suspension_pro/features/bike_settings/settings_form_field.dart';
-import 'package:suspension_pro/features/bike_settings/share_button.dart';
 import 'package:suspension_pro/models/bike.dart';
 import 'package:suspension_pro/models/component_setting.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:suspension_pro/models/fork.dart';
+import 'package:suspension_pro/models/shock.dart';
 import 'package:suspension_pro/services/db_service.dart';
 
 class SettingDetails extends StatefulWidget {
-  SettingDetails(
-      {this.setting,
-      this.bike,
-      this.fork,
-      this.shock,
-      this.frontTire,
-      this.rearTire,
-      this.notes});
+  SettingDetails({this.name, this.bike, this.fork, this.shock, this.frontTire, this.rearTire, this.notes});
 
-  final String? setting, frontTire, rearTire, notes;
+  final String? name, frontTire, rearTire, notes;
   final Bike? bike;
   final ComponentSetting? fork, shock;
 
@@ -45,7 +39,7 @@ class _SettingDetailsState extends State<SettingDetails> {
   @override
   void initState() {
     super.initState();
-    String? $setting = widget.setting;
+    String? $setting = widget.name;
     ComponentSetting? $fork = widget.fork;
     ComponentSetting? $shock = widget.shock;
     _settingNameController.text = $setting != null ? $setting : '';
@@ -66,58 +60,35 @@ class _SettingDetailsState extends State<SettingDetails> {
 
   Future<bool> _updateSetting(bikeId, BuildContext context) {
     Navigator.pop(context);
-    db.updateSetting(
-        bikeId,
-        _settingNameController.text,
-        _hscFork,
-        _lscFork,
-        _hsrFork,
-        _lsrFork,
-        _springRateFork,
-        _hscShock,
-        _lscShock,
-        _hsrShock,
-        _lsrShock,
-        _springRateShock,
-        _frontTire,
-        _rearTire,
-        _notesController.text);
+    db.updateSetting(bikeId, _settingNameController.text, _hscFork, _lscFork, _hsrFork, _lsrFork, _springRateFork,
+        _hscShock, _lscShock, _hsrShock, _lsrShock, _springRateShock, _frontTire, _rearTire, _notesController.text);
     return Future.value(false);
   }
 
   @override
   Widget build(BuildContext context) {
-    var $fork = widget.bike != null ? widget.bike!.fork : null;
-    var $shock = widget.bike != null ? widget.bike!.shock : null;
+    Fork? $fork = widget.bike != null ? widget.bike!.fork : null;
+    Shock? $shock = widget.bike != null ? widget.bike!.shock : null;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: Text(widget.setting ?? 'New Setting'),
-        actions: [ShareButton(widget: widget, $fork: $fork, $shock: $shock)],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: ListView(
           scrollDirection: Axis.vertical,
           children: <Widget>[
             Form(
               key: _formKey,
               child: Column(
-                children: <Widget>[
+                children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     child: TextFormField(
                       validator: (_settingNameController) {
-                        if (_settingNameController == null ||
-                            _settingNameController.isEmpty)
+                        if (_settingNameController == null || _settingNameController.isEmpty)
                           return 'Please add a setting title';
                         return null;
                       },
                       decoration: InputDecoration(
-                        suffixIcon: Icon(Icons.settings,
-                            size: 24,
-                            color: CupertinoColors.activeBlue.withOpacity(0.5)),
+                        suffixIcon: Icon(Icons.settings, size: 24, color: CupertinoColors.activeBlue.withOpacity(0.5)),
                         isDense: true,
                         filled: true,
                         hoverColor: Colors.blue.shade100,
@@ -127,9 +98,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                       style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                       controller: _settingNameController,
                       keyboardType: TextInputType.text,
-                      onChanged: (value) {
-                        setState(() {});
-                      },
+                      onChanged: (value) => setState(() {}),
                     ),
                   ),
                   Row(
@@ -139,9 +108,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                       Expanded(
                         child: Column(children: <Widget>[
                           SizedBox(
-                            child: Text($fork != null
-                                ? $fork.brand + ' ' + $fork.model
-                                : 'No fork saved'),
+                            child: Text($fork != null ? $fork.brand + ' ' + $fork.model : 'No fork saved'),
                             height: 25,
                           ),
                           Container(
@@ -157,42 +124,34 @@ class _SettingDetailsState extends State<SettingDetails> {
                           SettingsFormField(
                               label: 'HSC',
                               value: widget.fork?.hsc,
-                              onValueChange: (val) =>
-                                  setState(() => _hscFork = val)),
+                              onValueChange: (val) => setState(() => _hscFork = val)),
                           SettingsFormField(
                               label: 'LSC',
                               value: widget.fork?.lsc,
-                              onValueChange: (val) =>
-                                  setState(() => _lscFork = val)),
+                              onValueChange: (val) => setState(() => _lscFork = val)),
                           SettingsFormField(
                               label: 'HSR',
                               value: widget.fork?.hsr,
-                              onValueChange: (val) =>
-                                  setState(() => _hsrFork = val)),
+                              onValueChange: (val) => setState(() => _hsrFork = val)),
                           SettingsFormField(
                               label: 'LSR',
                               value: widget.fork?.lsr,
-                              onValueChange: (val) =>
-                                  setState(() => _lsrFork = val)),
+                              onValueChange: (val) => setState(() => _lsrFork = val)),
                           SettingsFormField(
                               label: 'SPRING / PSI',
                               value: widget.fork?.springRate,
-                              onValueChange: (val) =>
-                                  setState(() => _springRateFork = val)),
+                              onValueChange: (val) => setState(() => _springRateFork = val)),
                           SettingsFormField(
                               label: 'FRONT TIRE PSI',
                               value: widget.frontTire,
-                              onValueChange: (val) =>
-                                  setState(() => _frontTire = val)),
+                              onValueChange: (val) => setState(() => _frontTire = val)),
                         ]),
                       ),
                       Expanded(
                         child: Column(
                           children: <Widget>[
                             SizedBox(
-                              child: Text($shock != null
-                                  ? $shock.brand + ' ' + $shock.model
-                                  : 'No shock saved'),
+                              child: Text($shock != null ? $shock.brand + ' ' + $shock.model : 'No shock saved'),
                               height: 25,
                             ),
                             Container(
@@ -208,33 +167,27 @@ class _SettingDetailsState extends State<SettingDetails> {
                             SettingsFormField(
                                 label: 'HSC',
                                 value: widget.shock?.hsc,
-                                onValueChange: (val) =>
-                                    setState(() => _hscShock = val)),
+                                onValueChange: (val) => setState(() => _hscShock = val)),
                             SettingsFormField(
                                 label: 'LSC',
                                 value: widget.shock?.lsc,
-                                onValueChange: (val) =>
-                                    setState(() => _lscShock = val)),
+                                onValueChange: (val) => setState(() => _lscShock = val)),
                             SettingsFormField(
                                 label: 'HSR',
                                 value: widget.shock?.hsr,
-                                onValueChange: (val) =>
-                                    setState(() => _hsrShock = val)),
+                                onValueChange: (val) => setState(() => _hsrShock = val)),
                             SettingsFormField(
                                 label: 'LSR',
                                 value: widget.shock?.lsr,
-                                onValueChange: (val) =>
-                                    setState(() => _lsrShock = val)),
+                                onValueChange: (val) => setState(() => _lsrShock = val)),
                             SettingsFormField(
                                 label: 'SPRING / PSI',
                                 value: widget.shock?.springRate,
-                                onValueChange: (val) =>
-                                    setState(() => _springRateShock = val)),
+                                onValueChange: (val) => setState(() => _springRateShock = val)),
                             SettingsFormField(
                                 label: 'REAR TIRE PSI',
                                 value: widget.rearTire,
-                                onValueChange: (val) =>
-                                    setState(() => _rearTire = val)),
+                                onValueChange: (val) => setState(() => _rearTire = val)),
                           ],
                         ),
                       ),
@@ -261,8 +214,7 @@ class _SettingDetailsState extends State<SettingDetails> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  CupertinoButton(
-                    color: CupertinoColors.activeBlue,
+                  ElevatedButton(
                     child: Text('Save'),
                     onPressed: _settingNameController.text.isNotEmpty
                         ? () async {
@@ -277,7 +229,7 @@ class _SettingDetailsState extends State<SettingDetails> {
             ),
           ],
         ),
-      ),
+      
     );
   }
 }

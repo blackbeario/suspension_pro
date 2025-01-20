@@ -79,13 +79,12 @@ class AuthenticationWrapper extends StatelessWidget {
     final DatabaseService _db = DatabaseService();
     final UserSingleton _user = UserSingleton();
     return ConnectivityWidgetWrapper(
-        offlineWidget: _user.uid.isEmpty
-            ? ListenableBuilder(
-                listenable: _user,
-                builder: (context, widget) {
-                  return _user.uid.isEmpty ? LoginPage(online: false) : AppHomePage();
-                })
-            : AppHomePage(),
+        // If offline, listen for changes to singleton changeNotifier,
+        // ex: user is offline then signs in (signInWithHive)
+        offlineWidget: ListenableBuilder(
+            listenable: _user,
+            builder: (context, widget) => _user.uid.isEmpty ? LoginPage() : AppHomePage()),
+        // If online, listen for changes to Firebase user stream
         child: StreamBuilder<User?>(
             stream: authService.user,
             builder: (_, AsyncSnapshot<User?> snapshot) {
@@ -102,7 +101,7 @@ class AuthenticationWrapper extends StatelessWidget {
                         }
                         // set UserSingleton properties
                         // for new users this will just be uid & email
-                        // for existing users this will include username, 
+                        // for existing users this will include username,
                         // firstName and lastName (if they've completed the profile form)
                         // && aiCredits if they've purchased any
                         UserSingleton().setNewUser(fbUser);
@@ -111,7 +110,7 @@ class AuthenticationWrapper extends StatelessWidget {
                         return AppHomePage();
                       });
                 } else
-                  return LoginPage(online: true);
+                  return LoginPage();
               } else {
                 return Scaffold(body: Center(child: CircularProgressIndicator()));
               }

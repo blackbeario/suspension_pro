@@ -90,15 +90,7 @@ class _BikeFormState extends State<BikeForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        // padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 5),
-        title: Text(widget.bike != null ? widget.bike!.id : 'Add Bike'),
-      ),
-      body: ListView(
+    return ListView(
         shrinkWrap: true,
         scrollDirection: Axis.vertical,
         children: [
@@ -231,7 +223,6 @@ class _BikeFormState extends State<BikeForm> {
             ],
           ),
         ],
-      ),
     );
   }
 

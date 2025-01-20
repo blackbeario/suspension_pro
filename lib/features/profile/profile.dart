@@ -98,17 +98,14 @@ class _ProfileState extends State<Profile> {
           actions: <Widget>[
             CupertinoDialogAction(
                 child: Text('Okay'),
+                isDestructiveAction: true,
                 onPressed: () {
                   Navigator.pop(context, 'Discard');
                   context.read<AuthService>().signOut();
                 }),
             CupertinoDialogAction(
               child: Text('Cancel'),
-              isDefaultAction: true,
-              isDestructiveAction: true,
-              onPressed: () {
-                Navigator.pop(context, 'Cancel');
-              },
+              onPressed: () => Navigator.pop(context, 'Cancel'),
             ),
           ],
         );

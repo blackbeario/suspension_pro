@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:suspension_pro/services/db_service.dart';
@@ -13,33 +14,38 @@ loadURL(String url) async {
 }
 
 dynamic getEnv(String key, {dynamic defaultValue}) {
-  if (!dotenv.env.containsKey(key) && defaultValue != null) {
-    return defaultValue;
-  }
+  if (!dotenv.env.containsKey(key) && defaultValue != null) () => defaultValue;
   String? value = dotenv.env[key];
   if (value == 'null' || value == null) {
     return null;
   }
-  if (value.toLowerCase() == 'true') {
-    return true;
-  }
-  if (value.toLowerCase() == 'false') {
-    return false;
-  }
+  if (value.toLowerCase() == 'true') () => true;
+  if (value.toLowerCase() == 'false') () => false;
   return value.toString();
 }
 
-Future share(context, String username, String setting, fork, forkSettings, shock, shockSettings, frontTire,
-    rearTire) async {
-  late String text;
+Future share(BuildContext context, String bikeName, String username, String settingName, String? forkProduct, forkSettings,
+    String? shockProduct, shockSettings, frontTire, rearTire) async {
+  final String? forkString = forkProduct != null ? '\n\n$forkProduct, Fork Settings: \n$forkSettings,' : null;
+  final String? shockString = shockProduct != null ? '\n\n$shockProduct Shock Settings: \n$shockSettings,' : null;
+  final String appStoreString = '\n\nGet the Suspension Pro App for iOS soon on the Apple AppStore!';
+  final String body =
+      "Suspension Pro '$settingName' shared by ${username} $forkString $shockString \n\nFront Tire: \n$frontTire, /n/nRear Tire: \n$rearTire $appStoreString";
 
-  if (shock != null) {
-    text =
-        "Suspension Pro '$setting' shared by ${username} \n\n${fork['year'] + ' ' + fork['brand'] + ' ' + fork['model']} Fork Settings: \n$forkSettings, \n\n${shock['year'] + ' ' + shock['brand'] + ' ' + shock['model']} Shock Settings: \n$shockSettings, \n\nFront Tire: \n$frontTire, /n/nRear Tire: \n$rearTire \n\nGet the Suspension Pro App for iOS soon on the Apple AppStore!";
-  } else {
-    text =
-        "Suspension Pro '$setting' shared by ${username} \n\n${fork['year'] + ' ' + fork['brand'] + ' ' + fork['model']} Fork Settings: \n$forkSettings, \n\nFront Tire: \n$frontTire, /n/nRear Tire: \n$rearTire \n\nGet the Suspension Pro App for iOS soon on the Apple AppStore!";
-  }
-  await Share.share(text, subject: setting);
+  await Share.share(body, subject: '$bikeName $settingName Setting');
   // await db.addSharePoints(role);
+}
+
+void pushScreen(BuildContext context, String title, List<Widget>? actions, Widget form, bool isFullscreen) async {
+  await Navigator.of(context).push(
+    MaterialPageRoute(
+        fullscreenDialog: isFullscreen,
+        builder: (context) {
+          return Scaffold(
+            resizeToAvoidBottomInset: true,
+            appBar: AppBar(title: Text(title), actions: actions),
+            body: form,
+          );
+        }),
+  );
 }

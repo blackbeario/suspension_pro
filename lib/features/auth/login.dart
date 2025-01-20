@@ -1,3 +1,4 @@
+import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:suspension_pro/features/auth/signup.dart';
@@ -6,9 +7,8 @@ import 'package:provider/src/provider.dart';
 import 'package:suspension_pro/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({required this.online});
+  const LoginPage();
 
-  final bool online;
   createState() => LoginPageState();
 }
 
@@ -144,7 +144,7 @@ class LoginPageState extends State<LoginPage> {
                             child: CupertinoButton(
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  if (widget.online) {
+                                  if (await ConnectivityWrapper.instance.isConnected) {
                                     var result =
                                         await authService.signInWithFirebase(_email.text.trim(), _password.text.trim());
                                     if (result.runtimeType == FirebaseAuthException) {

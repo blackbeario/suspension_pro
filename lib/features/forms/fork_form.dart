@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 import 'package:suspension_pro/models/fork.dart';
 import 'package:suspension_pro/services/db_service.dart';
@@ -101,7 +100,7 @@ class _ForkFormState extends State<ForkForm> {
                         width: 75,
                         height: 75,
                         decoration: BoxDecoration(
-                          color: CupertinoColors.inactiveGray.withOpacity(0.25),
+                          color: Colors.grey.withOpacity(0.25),
                           shape: BoxShape.circle,
                         ),
                         child: Image.asset('assets/fork.png'))),
@@ -186,11 +185,8 @@ class _ForkFormState extends State<ForkForm> {
                 SizedBox(height: 20),
                 Container(
                   padding: EdgeInsets.only(left: 20, right: 20),
-                  child: CupertinoButton(
-                    disabledColor: CupertinoColors.quaternarySystemFill,
-                    color: CupertinoColors.activeBlue,
-                    child:
-                        widget.bikeId != '' ? Text('Save') : Text('Continue'),
+                  child: ElevatedButton(
+                    child: widget.bikeId != '' ? Text('Save') : Text('Continue'),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         widget.bikeId != ''
