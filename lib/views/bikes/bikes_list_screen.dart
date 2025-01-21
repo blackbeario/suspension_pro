@@ -2,7 +2,7 @@ import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:suspension_pro/views/bikes/firebase_bikes_list.dart';
-import 'package:suspension_pro/views/bikes/hive_bikes_list.dart';
+import 'package:suspension_pro/views/bikes/offline_todo_list.dart';
 import 'package:suspension_pro/core/models/bike.dart';
 import 'package:suspension_pro/core/services/db_service.dart';
 
@@ -52,7 +52,7 @@ class _BikesListScreenState extends State<BikesListScreen> {
               final bikesFromHive = box.values;
               List<Bike> bikes = [];
               for (Bike bike in bikesFromHive) bikes.add(bike);
-              return HiveBikesList(bikes: bikes);
+              return OfflineToDoList(bikes: bikes);
             },
           ),
           child: FirebaseBikesList(),

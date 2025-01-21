@@ -43,11 +43,11 @@ class ImageActionSheet extends StatelessWidget {
     if (croppedImage != null) {
       // UserSingleton().profilePic = croppedImage.path;
       _imageFile = File(croppedImage.path);
-      _uploadToFirebase(uid, _imageFile!);
+      _uploadProfileImageToFirebase(uid, _imageFile!);
     }
   }
 
-  _uploadToFirebase(uid, File imageFile) async {
+  _uploadProfileImageToFirebase(uid, File imageFile) async {
     FirebaseStorage storage = FirebaseStorage.instance;
     Reference ref = storage.ref().child('userImages/$uid/profile.jpg');
     UploadTask uploadTask = ref.putFile(imageFile);

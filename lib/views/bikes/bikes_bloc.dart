@@ -30,11 +30,11 @@ class BikesBloc {
       compressQuality: 50,
     );
     if (croppedImage != null) {
-      _uploadToFirebase(bikeid, File(croppedImage.path));
+      _uploadBikeImageToFirebase(bikeid, File(croppedImage.path));
     }
   }
 
-  _uploadToFirebase(bikeid, File imageFile) async {
+  _uploadBikeImageToFirebase(bikeid, File imageFile) async {
     FirebaseStorage storage = FirebaseStorage.instance;
     Reference ref = storage.ref().child('userImages/$uid/bikes/$bikeid/bike.jpg');
     UploadTask uploadTask = ref.putFile(imageFile);

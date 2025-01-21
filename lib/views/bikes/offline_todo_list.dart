@@ -1,6 +1,5 @@
 import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:flutter/material.dart';
-import 'package:suspension_pro/views/bikes/bikes_bloc.dart';
 import 'package:suspension_pro/views/bikes/bikes_list.dart';
 import 'package:suspension_pro/views/bikes/new_user_action.dart';
 import 'package:suspension_pro/views/forms/bikeform.dart';
@@ -10,16 +9,16 @@ import 'package:suspension_pro/views/profile/profile_pic.dart';
 import 'package:suspension_pro/core/models/bike.dart';
 import 'package:suspension_pro/core/models/user_singleton.dart';
 
-class HiveBikesList extends StatefulWidget {
-  HiveBikesList({Key? key, required this.bikes}) : super(key: key);
+class OfflineToDoList extends StatefulWidget {
+  OfflineToDoList({Key? key, required this.bikes}) : super(key: key);
 
   final List<Bike> bikes;
 
   @override
-  State<HiveBikesList> createState() => _HiveBikesListState();
+  State<OfflineToDoList> createState() => _OfflineToDoListState();
 }
 
-class _HiveBikesListState extends State<HiveBikesList> {
+class _OfflineToDoListState extends State<OfflineToDoList> {
   final double profilePicSize = 50;
   final UserSingleton _user = UserSingleton();
   bool finished = false;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:suspension_pro/core/services/hive_service.dart';
 import 'package:suspension_pro/views/bikes/bikes_list.dart';
-import 'package:suspension_pro/views/bikes/hive_bikes_list.dart';
+import 'package:suspension_pro/views/bikes/offline_todo_list.dart';
 import 'package:suspension_pro/core/models/bike.dart';
 import 'package:suspension_pro/core/services/db_service.dart';
 
@@ -20,9 +21,11 @@ class FirebaseBikesList extends StatelessWidget {
           if (snapshot.hasData) {
             for (Bike bike in snapshot.data!) {
               bikes.add(bike);
+              // Sync bikes from FB into local Hive db
+              HiveService().putIntoBox('bikes', bike.id, bike);
             }
           }
-          return bikes.isNotEmpty ? BikesList(bikes: bikes) : HiveBikesList(bikes: bikes);
+          return bikes.isNotEmpty ? BikesList(bikes: bikes) : OfflineToDoList(bikes: bikes);
         });
   }
 }

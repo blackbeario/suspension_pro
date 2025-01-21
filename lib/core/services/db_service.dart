@@ -26,7 +26,7 @@ class DatabaseService {
 
   Stream<AppUser> streamUser(String uid) {
     return _db.collection('users').doc(uid).snapshots().map((snap) => AppUser.fromSnapshot(snap.data()!));
-  } // '9OtdujMZdvPEyuu0iDTbFyToKNv1'
+  }
 
   Future<void> updateUser(String username, String firstName, String lastName, String email) async {
     var $now = DateTime.now();

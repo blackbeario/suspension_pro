@@ -60,6 +60,7 @@ class _SettingDetailsState extends State<SettingDetails> {
 
   Future<bool> _updateSetting(bikeId, BuildContext context) {
     Navigator.pop(context);
+    // TODO: Update in HIVE first - prob have to create a 'settings' box
     db.updateSetting(bikeId, _settingNameController.text, _hscFork, _lscFork, _hsrFork, _lsrFork, _springRateFork,
         _hscShock, _lscShock, _hsrShock, _lsrShock, _springRateShock, _frontTire, _rearTire, _notesController.text);
     return Future.value(false);

@@ -91,7 +91,7 @@ class _SettingsListState extends State<SettingsList> {
         StreamBuilder<List<Setting>>(
             stream: db.streamSettings(widget.bike.id),
             builder: (context, snapshot) {
-              var settings = snapshot.data;
+              List<Setting>? settings = snapshot.data;
               if (settings == null) {
                 return Center(child: CircularProgressIndicator.adaptive());
               }
