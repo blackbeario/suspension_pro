@@ -91,16 +91,17 @@ class _SettingsListState extends State<SettingsList> {
         StreamBuilder<List<Setting>>(
             stream: db.streamSettings(widget.bike.id),
             builder: (context, snapshot) {
-              List<Setting>? settings = snapshot.data;
-              if (settings == null) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator.adaptive());
               }
               if (snapshot.hasError) {
+                print('settings list: ${snapshot.error}');
                 return Center(
                   child: Text(snapshot.error.toString(), style: CupertinoTheme.of(context).textTheme.navTitleTextStyle),
                 );
               }
-              return _getSettings(widget.bike, settings, context);
+              List<Setting>? settings = snapshot.data;
+              return _getSettings(widget.bike, settings!, context);
             }),
         ElevatedButton(
           child: Text('Add Setting'),

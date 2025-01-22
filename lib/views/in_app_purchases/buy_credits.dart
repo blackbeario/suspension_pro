@@ -40,7 +40,7 @@ class _BuyCreditsState extends State<BuyCredits> {
           _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
       iosPlatformAddition.setDelegate(null);
     }
-    _bloc.subscription.cancel();
+    // _bloc.subscription.cancel();
     super.dispose();
   }
 

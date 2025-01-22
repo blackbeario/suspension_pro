@@ -24,7 +24,6 @@ class AppRoadmap extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppRoadmapItem(value: 'Populate bikes and components from HIVE'),
                     AppRoadmapItem(value: 'Populate settings from HIVE'),
                     AppRoadmapItem(value: 'Implement workmanager plugin for backround sync'),
                     AppRoadmapItem(value: 'Set bool flag for synced data. If remote sync fails set flag to false and try workmanager method'),

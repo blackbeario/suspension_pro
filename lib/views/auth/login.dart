@@ -14,7 +14,6 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
   bool _hidePassword = true;
-  String animationName = 'flash';
 
   // Toggles the password show status
   void _toggle() {

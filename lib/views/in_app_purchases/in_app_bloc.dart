@@ -1,4 +1,4 @@
-import 'dart:async';
+// import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -11,7 +11,7 @@ class InAppBloc extends ChangeNotifier {
   static final InAppBloc _instance = InAppBloc._internal();
   factory InAppBloc() => _instance;
 
-  late StreamSubscription<List<PurchaseDetails>> subscription;
+  // late StreamSubscription<List<PurchaseDetails>> subscription;
   List<String> _notFoundIds = <String>[];
   List<ProductDetails> _products = <ProductDetails>[];
   List<PurchaseDetails> _purchases = <PurchaseDetails>[];

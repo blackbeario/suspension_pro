@@ -73,48 +73,68 @@ class MyApp extends StatelessWidget {
 }
 
 class AuthenticationWrapper extends StatelessWidget {
+  void _tryUserFirebaseLogin(AuthService authService, String email) async {
+    try {
+      final String pass = await authService.getHiveUserPass(email);
+      await authService.signInWithFirebase(email, pass);
+    } catch (e) {
+      throw e;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     final DatabaseService _db = DatabaseService();
     final UserSingleton _user = UserSingleton();
     return ConnectivityWidgetWrapper(
-        // If offline, listen for changes to singleton changeNotifier,
-        // ex: user is offline then signs in (signInWithHive)
-        offlineWidget: ListenableBuilder(
-            listenable: _user,
-            builder: (context, widget) => _user.uid.isEmpty ? LoginPage() : AppHomePage()),
-        // If online, listen for changes to Firebase user stream
-        child: StreamBuilder<User?>(
-            stream: authService.user,
-            builder: (_, AsyncSnapshot<User?> snapshot) {
-              if (snapshot.connectionState == ConnectionState.active) {
-                final User? user = snapshot.data;
-                if (user != null) {
-                  // Get the Firebase user doc
-                  return StreamBuilder<AppUser?>(
-                      stream: _db.streamUser(user.uid),
-                      builder: (context, snapshot) {
-                        final AppUser? fbUser = snapshot.data;
-                        if (fbUser == null) {
-                          return Center(child: CupertinoActivityIndicator(animating: true));
-                        }
-                        // set UserSingleton properties
-                        // for new users this will just be uid & email
-                        // for existing users this will include username,
-                        // firstName and lastName (if they've completed the profile form)
-                        // && aiCredits if they've purchased any
-                        UserSingleton().setNewUser(fbUser);
-                        // Set all Hive user values if they exist
-                        AuthService().addUpdateHiveUser(fbUser);
-                        return AppHomePage();
-                      });
-                } else
-                  return LoginPage();
-              } else {
-                return Scaffold(body: Center(child: CircularProgressIndicator()));
-              }
-            }));
+      // If offline, listen for changes to singleton changeNotifier,
+      // ex: user is offline then signs in (signInWithHive)
+      offlineWidget: ListenableBuilder(
+          listenable: _user,
+          builder: (context, widget) {
+            return _user.uid.isEmpty ? LoginPage() : AppHomePage();
+          }),
+      // If online, listen for changes to Firebase user stream
+      child: StreamBuilder<User?>(
+        stream: authService.user,
+        builder: (_, AsyncSnapshot<User?> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(body: Center(child: CircularProgressIndicator()));
+          }
+          final User? user = snapshot.data;
+          if (user != null) {
+            // Get the Firebase user doc
+            return StreamBuilder<AppUser?>(
+              stream: _db.streamUser(user.uid),
+              builder: (context, snapshot) {
+                final AppUser? fbUser = snapshot.data;
+                if (fbUser == null) {
+                  return Center(child: CupertinoActivityIndicator(animating: true));
+                }
+                // set UserSingleton properties
+                // for new users this will just be uid & email
+                // for existing users this will include username,
+                // firstName and lastName (if they've completed the profile form)
+                // && aiCredits if they've purchased any
+                UserSingleton().setNewUser(fbUser);
+                // Set all Hive user values if they exist
+                AuthService().addUpdateHiveUser(fbUser);
+                return AppHomePage();
+              },
+            );
+          }
+          // If Firebase user is null (unauthenticated)
+          else {
+            // Try to authenticate the user if there is a uid in user singleton??
+            if (_user.uid.isNotEmpty) {
+              _tryUserFirebaseLogin(authService, _user.email);
+            }
+            return _user.uid.isEmpty ? LoginPage() : AppHomePage();
+          }
+        },
+      ),
+    );
   }
 }
 

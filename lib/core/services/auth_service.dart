@@ -48,7 +48,9 @@ class AuthService {
 
   Future signOut() async {
     UserSingleton().resetUidForLogout();
-    await _firebaseAuth.signOut();
+    if (!await user.isEmpty) {
+      await _firebaseAuth.signOut();
+    }
   }
 
   Future<void> createFirebaseUserData(String uid, String email) async {
