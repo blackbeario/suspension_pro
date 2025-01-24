@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:suspension_pro/core/services/hive_service.dart';
 import 'package:suspension_pro/views/bike_settings/share_button.dart';
 import 'package:suspension_pro/core/models/bike.dart';
 import 'package:suspension_pro/core/models/component_setting.dart';
@@ -6,6 +8,7 @@ import 'package:suspension_pro/core/models/fork.dart';
 import 'package:suspension_pro/core/models/setting.dart';
 import 'package:suspension_pro/core/models/shock.dart';
 import 'package:suspension_pro/core/utilities/helpers.dart';
+import 'package:suspension_pro/views/bikes/bikes_bloc.dart';
 import 'setting_detail.dart';
 import 'package:suspension_pro/core/services/db_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,8 +23,20 @@ class SettingsList extends StatefulWidget {
 
 class _SettingsListState extends State<SettingsList> {
   final db = DatabaseService();
+  List<Setting> settings = [];
 
-  Widget _getSettings(Bike bike, List<Setting> settings, context) {
+  @override
+  void initState() {
+    super.initState();
+    getSettings();
+  }
+
+  getSettings() async {
+    settings = await BikesBloc().getBikeSettingsFromHive(widget.bike.id);
+    setState(() {});
+  }
+
+  Widget _getSettings(BuildContext context, Bike bike) {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: settings.length,
@@ -88,21 +103,7 @@ class _SettingsListState extends State<SettingsList> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        StreamBuilder<List<Setting>>(
-            stream: db.streamSettings(widget.bike.id),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator.adaptive());
-              }
-              if (snapshot.hasError) {
-                print('settings list: ${snapshot.error}');
-                return Center(
-                  child: Text(snapshot.error.toString(), style: CupertinoTheme.of(context).textTheme.navTitleTextStyle),
-                );
-              }
-              List<Setting>? settings = snapshot.data;
-              return _getSettings(widget.bike, settings!, context);
-            }),
+        _getSettings(context, widget.bike),
         ElevatedButton(
           child: Text('Add Setting'),
           onPressed: () => pushScreen(context, 'Add Setting', null, SettingDetails(bike: widget.bike), true),

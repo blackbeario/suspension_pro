@@ -14,6 +14,7 @@ registerAdapters() async {
   Hive.registerAdapter(ShockAdapter());
   Hive.registerAdapter(AppUserAdapter());
   await Hive.openBox<Bike>('bikes');
+  await Hive.openBox<Setting>('settings');
   await Hive.openBox<AppUser>('hiveUserBox');
   await Hive.openBox<String>('hiveUserPass');
 }

@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:suspension_pro/views/in_app_purchases/consumable_store.dart';
+import 'package:suspension_pro/views/in_app_purchases/presentation/consumable_store.dart';
 import 'package:suspension_pro/views/in_app_purchases/in_app_bloc.dart';
 // import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 // import 'package:in_app_purchase_android/in_app_purchase_android.dart';

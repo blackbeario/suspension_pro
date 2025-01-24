@@ -1,11 +1,14 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:suspension_pro/core/models/bike.dart';
+import 'package:suspension_pro/core/models/setting.dart';
 import 'package:suspension_pro/core/models/user_singleton.dart';
 import 'package:suspension_pro/core/services/db_service.dart';
+import 'package:suspension_pro/core/services/hive_service.dart';
 
 class BikesBloc {
   final db = DatabaseService();
@@ -52,6 +55,31 @@ class BikesBloc {
       return bike.yearModel.toString() + ' ' + bike.id;
     } else {
       return bike.id;
+    }
+  }
+
+  getBikeSettingsFromHive(String bikeId) async {
+    List<String> keysList = [];
+    List<Setting> settingsList = [];
+    var box = Hive.box<Setting>('settings');
+    var boxKeys = box.keys;
+    // var results = await box.get;
+    for (var key in boxKeys) keysList.add(key);
+    var bikeSettings = keysList.where((String key) => key.contains(bikeId));
+    for (String key in bikeSettings) {
+      Setting setting = box.get(key)!;
+      settingsList.add(setting);
+    }
+    return settingsList;
+  }
+
+  putBikeSettingsIntoHive(String bikeId) async {
+    Stream<List<Setting>> settingsStream = await db.streamSettings(bikeId);
+    await for (List<Setting> settingsList in settingsStream) {
+      for (Setting setting in settingsList) {
+        final String settingId = bikeId + '-' + setting.id;
+        HiveService().putIntoBox('settings', settingId, setting);
+      }
     }
   }
 }

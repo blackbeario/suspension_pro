@@ -40,29 +40,6 @@ class DatabaseService {
     }, SetOptions(merge: true));
   }
 
-  // Future<void> addSharePoints(int previousPoints, String role) async {
-  //   var $now = DateTime.now();
-  //   var $updated = $now.millisecondsSinceEpoch;
-  //   String status = '';
-  //   int newPoints = previousPoints + 1;
-  //   if (role == 'admin')
-  //     status = 'admin';
-  //   else if (newPoints < 5)
-  //     status = 'newbie';
-  //   else if (newPoints >= 5)
-  //     status = 'Cat 3';
-  //   else if (newPoints >= 10)
-  //     status = 'Cat 2';
-  //   else if (newPoints >= 25)
-  //     status = 'Cat 1';
-  //   else if (newPoints >= 50) status = 'Pro';
-  //   return await _db.collection('users').doc(uid).set({
-  //     'updated': $updated,
-  //     'points': newPoints,
-  //     'role': status,
-  //   }, SetOptions(merge: true));
-  // }
-
   Future<void> setProfilePic(String filePath) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;

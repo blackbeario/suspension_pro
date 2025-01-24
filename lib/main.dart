@@ -6,9 +6,11 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:suspension_pro/views/in_app_purchases/buy_credits.dart';
+import 'package:suspension_pro/core/services/analytics_service.dart';
+import 'package:suspension_pro/views/in_app_purchases/presentation/buy_credits.dart';
 import 'package:suspension_pro/views/in_app_purchases/in_app_bloc.dart';
 import 'package:suspension_pro/views/connectivity/connectivity_bloc.dart';
+import 'package:suspension_pro/views/in_app_purchases/presentation/credits_indicator.dart';
 import 'package:suspension_pro/views/onboarding/onboarding.dart';
 import 'package:suspension_pro/views/forms/openai_form.dart';
 import 'package:suspension_pro/core/hive_helper/register_adapters.dart';
@@ -102,23 +104,25 @@ class AuthenticationWrapper extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Scaffold(body: Center(child: CircularProgressIndicator()));
           }
+          if (snapshot.hasError) {
+            debugPrint(snapshot.error.toString());
+            Analytics().logError("authService.user", snapshot.error!);
+          }
           final User? user = snapshot.data;
           if (user != null) {
             // Get the Firebase user doc
             return StreamBuilder<AppUser?>(
               stream: _db.streamUser(user.uid),
               builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  debugPrint(snapshot.error.toString());
+                  Analytics().logError("_db.streamUser", snapshot.error!);
+                }
                 final AppUser? fbUser = snapshot.data;
                 if (fbUser == null) {
                   return Center(child: CupertinoActivityIndicator(animating: true));
                 }
-                // set UserSingleton properties
-                // for new users this will just be uid & email
-                // for existing users this will include username,
-                // firstName and lastName (if they've completed the profile form)
-                // && aiCredits if they've purchased any
                 UserSingleton().setNewUser(fbUser);
-                // Set all Hive user values if they exist
                 AuthService().addUpdateHiveUser(fbUser);
                 return AppHomePage();
               },
@@ -148,7 +152,7 @@ class _AppHomePageState extends State<AppHomePage> {
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
-        items: const <BottomNavigationBarItem>[
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.format_list_bulleted_rounded, size: 24),
             label: 'Bikes',
@@ -158,8 +162,13 @@ class _AppHomePageState extends State<AppHomePage> {
             label: 'Account',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.smart_toy_outlined, size: 24),
             label: 'Ai',
+            icon: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  SizedBox(width: 50, child: Icon(Icons.smart_toy_outlined, size: 24)), 
+                  CreditsIndicator(),
+                ]),
           ),
         ],
       ),

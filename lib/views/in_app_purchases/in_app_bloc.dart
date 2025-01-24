@@ -57,7 +57,10 @@ class InAppBloc extends ChangeNotifier {
   void set queryProductError(String? queryProductError) => _queryProductError = queryProductError;
 
   int get credits => _credits;
-  void set credits(int credits) => _credits = credits;
+  void set credits(int credits) {
+    _credits = credits;
+    notifyListeners();
+  }
 
   bool get purchasePending => _purchasePending;
   void set purchasePending(bool purchasePending) => _purchasePending = purchasePending;
