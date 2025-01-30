@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:suspension_pro/core/services/hive_service.dart';
 import 'package:suspension_pro/views/bike_settings/share_button.dart';
 import 'package:suspension_pro/core/models/bike.dart';
 import 'package:suspension_pro/core/models/component_setting.dart';
@@ -53,12 +51,12 @@ class _SettingsListState extends State<SettingsList> {
 
         return Dismissible(
           background: ListTile(
-            // tileColor: CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
             trailing: Icon(Icons.delete, color: CupertinoColors.systemRed),
             shape: null,
           ),
           direction: DismissDirection.horizontal,
           onDismissed: (direction) => setState(() {
+            // TODO: delete from Hive
             db.deleteSetting(bike.id, settings[index].id);
             settings.removeAt(index);
           }),
@@ -71,7 +69,6 @@ class _SettingsListState extends State<SettingsList> {
                   title: Text(settings[index].id),
                   subtitle: Text(widget.bike.id),
                   trailing: Icon(Icons.arrow_forward_ios),
-                  // shape: null,
                 ),
                 onTap: () {
                   SettingDetails details = SettingDetails(

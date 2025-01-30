@@ -69,6 +69,7 @@ class Setting extends HiveObject{
     'rearTire': rearTire,
     'updated': updated?.millisecondsSinceEpoch,
     'notes': notes,
+    'riderWeight': riderWeight,
   };
 }
 

@@ -55,7 +55,7 @@ class _ProfileState extends State<Profile> {
                   child: ListTile(
                     title: Text('App Settings'),
                     trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () => {}, // TODO create settings screen
+                    onTap: () => {}, // TODO create app user settings screen
                   ),
                 ),
                 ListTile(

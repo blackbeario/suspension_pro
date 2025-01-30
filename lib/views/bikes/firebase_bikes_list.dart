@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:suspension_pro/core/services/analytics_service.dart';
 import 'package:suspension_pro/core/services/hive_service.dart';
 import 'package:suspension_pro/views/bikes/bikes_bloc.dart';
@@ -28,8 +27,8 @@ class FirebaseBikesList extends StatelessWidget {
         if (snapshot.hasData) {
           for (Bike bike in snapshot.data!) {
             bikes.add(bike);
-            HiveService().putIntoBox('bikes', bike.id, bike);
-            BikesBloc().putBikeSettingsIntoHive(bike.id);
+            HiveService().putIntoBox('bikes', bike.id, bike, false);
+            BikesBloc().putAllFirebaseSettingsIntoHive(bike.id);
           }
         }
         return bikes.isNotEmpty ? BikesList(bikes: bikes) : OfflineToDoList(bikes: bikes);

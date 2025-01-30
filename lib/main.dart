@@ -90,6 +90,7 @@ class AuthenticationWrapper extends StatelessWidget {
     final DatabaseService _db = DatabaseService();
     final UserSingleton _user = UserSingleton();
     return ConnectivityWidgetWrapper(
+      stacked: false,
       // If offline, listen for changes to singleton changeNotifier,
       // ex: user is offline then signs in (signInWithHive)
       offlineWidget: ListenableBuilder(

@@ -14,17 +14,16 @@ class HiveService {
     }
   }
 
-  void putIntoBox<T>(String boxName, String key, T object) async {
+  void putIntoBox<T>(String boxName, String key, T object, bool overwrite) async {
     try {
       final box = await Hive.box<T>(boxName);
-      // If setting changes are made in the woods offline, the next time the app connects and
+      // If setting changes are made while offline, the next time the app connects and
       // the firebase_bikes_list is called, the app will check to see if the setting exists and if
       // not, then it will write to Hive. If the setting does exist, nothing will be written.
-      // That's good since we don't want new settings overwritten, and if we are reading from Hive
-      // only on settings details. But we need to make sure the changes are synced to Firebase
-      // on reconnect. So I think this works, just need to write workmanager methods to update FB
-      // in the background, or present the user a widget to manually sync updates, etc.
-      if (!box.containsKey(key)) {
+      // That's good since we don't want new settings overwritten. But we need to make sure the 
+      // changes are synced to Firebase on reconnect. So I think this works, just need to write 
+      // workmanager methods to update FB in the background, or manually sync.
+      if (!box.containsKey(key) || overwrite) {
         await box.put(key, object);
       }
     } catch (e) {

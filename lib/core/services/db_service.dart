@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_checker/connectivity_checker.dart';
+import 'package:flutter/material.dart';
 import 'package:suspension_pro/core/models/bike.dart';
 import 'package:suspension_pro/core/models/fork.dart';
 import 'package:suspension_pro/core/models/shock.dart';
@@ -149,17 +151,25 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateSetting(bikeid, settingId, hscFork, lscFork, hsrFork, lsrFork, springFork, hscShock, lscShock, hsrShock,
-      lsrShock, springShock, frontTire, rearTire, notes) async {
+  Future<void> updateSetting(Setting setting) async {
     var $now = DateTime.now();
     var updated = $now.millisecondsSinceEpoch;
-    return await _db.collection('users').doc(uid).collection('bikes').doc(bikeid).collection('settings').doc(settingId).set({
-      'updated': updated,
-      'fork': {'HSC': hscFork, 'LSC': lscFork, 'HSR': hsrFork, 'LSR': lsrFork, 'springRate': springFork},
-      'shock': {'HSC': hscShock, 'LSC': lscShock, 'HSR': hsrShock, 'LSR': lsrShock, 'springRate': springShock},
-      'frontTire': frontTire,
-      'rearTire': rearTire,
-      'notes': notes
-    }, SetOptions(merge: true));
+    if (await ConnectivityWrapper.instance.isConnected) {
+      try {
+        return await _db.collection('users').doc(uid).collection('bikes').doc(setting.bike).collection('settings').doc(setting.id).set({
+        'updated': updated,
+        'fork': {'HSC': setting.fork?.hsc, 'LSC': setting.fork?.lsc, 'HSR': setting.fork?.hsr, 'LSR': setting.fork?.lsr, 'springRate': setting.fork?.springRate},
+        'shock': {'HSC': setting.shock?.hsc, 'LSC': setting.shock?.lsc, 'HSR': setting.shock?.hsr, 'LSR': setting.shock?.lsr, 'springRate': setting.shock?.springRate},
+        'frontTire': setting.frontTire,
+        'rearTire': setting.rearTire,
+        'notes': setting.notes
+      }, SetOptions(merge: true));
+      } catch (e) {
+        throw e;
+      }
+    } else {
+      // TODO: Add to workmanager background tasks
+      debugPrint('offline - try later');
+    }
   }
 }

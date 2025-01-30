@@ -73,12 +73,12 @@ class BikesBloc {
     return settingsList;
   }
 
-  putBikeSettingsIntoHive(String bikeId) async {
+  putAllFirebaseSettingsIntoHive(String bikeId) async {
     Stream<List<Setting>> settingsStream = await db.streamSettings(bikeId);
     await for (List<Setting> settingsList in settingsStream) {
       for (Setting setting in settingsList) {
         final String settingId = bikeId + '-' + setting.id;
-        HiveService().putIntoBox('settings', settingId, setting);
+        HiveService().putIntoBox('settings', settingId, setting, false);
       }
     }
   }

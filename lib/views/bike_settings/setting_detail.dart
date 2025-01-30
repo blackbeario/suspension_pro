@@ -1,4 +1,7 @@
+import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:flutter/material.dart';
+import 'package:suspension_pro/core/models/setting.dart';
+import 'package:suspension_pro/core/services/hive_service.dart';
 import 'package:suspension_pro/views/bike_settings/settings_form_field.dart';
 import 'package:suspension_pro/core/models/bike.dart';
 import 'package:suspension_pro/core/models/component_setting.dart';
@@ -58,12 +61,21 @@ class _SettingDetailsState extends State<SettingDetails> {
     _rearTire = widget.rearTire ?? '';
   }
 
-  Future<bool> _updateSetting(bikeId, BuildContext context) {
+  Future _updateSetting(bikeId, BuildContext context) async {
     Navigator.pop(context);
-    // TODO: Update in HIVE first - prob have to create a 'settings' box
-    db.updateSetting(bikeId, _settingNameController.text, _hscFork, _lscFork, _hsrFork, _lsrFork, _springRateFork,
-        _hscShock, _lscShock, _hsrShock, _lsrShock, _springRateShock, _frontTire, _rearTire, _notesController.text);
-    return Future.value(false);
+    final String settingId = bikeId + '-' + _settingNameController.text;
+    final Setting setting = Setting(
+      id: _settingNameController.text,
+      bike: bikeId,
+      fork: ComponentSetting(hsc: _hscFork, lsc: _lscFork, hsr: _hsrFork, lsr: _lsrFork, springRate: _springRateFork),
+      shock: ComponentSetting(hsc: _hscShock, lsc: _lscShock, hsr: _hsrShock, lsr: _lsrShock, springRate: _springRateShock),
+      frontTire: _frontTire,
+      rearTire: _rearTire,
+      notes: _notesController.text,
+    );
+
+    HiveService().putIntoBox('settings', settingId, setting, true);
+    await db.updateSetting(setting);
   }
 
   @override
@@ -72,44 +84,87 @@ class _SettingDetailsState extends State<SettingDetails> {
     Shock? $shock = widget.bike != null ? widget.bike!.shock : null;
 
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: ListView(
-          scrollDirection: Axis.vertical,
-          children: <Widget>[
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: TextFormField(
-                      validator: (_settingNameController) {
-                        if (_settingNameController == null || _settingNameController.isEmpty)
-                          return 'Please add a setting title';
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        suffixIcon: Icon(Icons.settings, size: 24, color: CupertinoColors.activeBlue.withOpacity(0.5)),
-                        isDense: true,
-                        filled: true,
-                        hoverColor: Colors.blue.shade100,
-                        border: OutlineInputBorder(),
-                        hintText: 'Setting Name',
-                      ),
-                      style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                      controller: _settingNameController,
-                      keyboardType: TextInputType.text,
-                      onChanged: (value) => setState(() {}),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        children: <Widget>[
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: TextFormField(
+                    validator: (_settingNameController) {
+                      if (_settingNameController == null || _settingNameController.isEmpty)
+                        return 'Please add a setting title';
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      suffixIcon: Icon(Icons.settings, size: 24, color: CupertinoColors.activeBlue.withOpacity(0.5)),
+                      isDense: true,
+                      filled: true,
+                      hoverColor: Colors.blue.shade100,
+                      border: OutlineInputBorder(),
+                      hintText: 'Setting Name',
                     ),
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    controller: _settingNameController,
+                    keyboardType: TextInputType.text,
+                    onChanged: (value) => setState(() {}),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: Column(children: <Widget>[
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: Column(children: <Widget>[
+                        SizedBox(
+                          child: Text($fork != null ? $fork.brand + ' ' + $fork.model : 'No fork saved'),
+                          height: 25,
+                        ),
+                        Container(
+                            padding: EdgeInsets.all(2),
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.black12,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Image.asset('assets/fork.png')),
+                        SizedBox(height: 10),
+                        SettingsFormField(
+                            label: 'HSC',
+                            value: widget.fork?.hsc,
+                            onValueChange: (val) => setState(() => _hscFork = val)),
+                        SettingsFormField(
+                            label: 'LSC',
+                            value: widget.fork?.lsc,
+                            onValueChange: (val) => setState(() => _lscFork = val)),
+                        SettingsFormField(
+                            label: 'HSR',
+                            value: widget.fork?.hsr,
+                            onValueChange: (val) => setState(() => _hsrFork = val)),
+                        SettingsFormField(
+                            label: 'LSR',
+                            value: widget.fork?.lsr,
+                            onValueChange: (val) => setState(() => _lsrFork = val)),
+                        SettingsFormField(
+                            label: 'SPRING / PSI',
+                            value: widget.fork?.springRate,
+                            onValueChange: (val) => setState(() => _springRateFork = val)),
+                        SettingsFormField(
+                            label: 'FRONT TIRE PSI',
+                            value: widget.frontTire,
+                            onValueChange: (val) => setState(() => _frontTire = val)),
+                      ]),
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: <Widget>[
                           SizedBox(
-                            child: Text($fork != null ? $fork.brand + ' ' + $fork.model : 'No fork saved'),
+                            child: Text($shock != null ? $shock.brand + ' ' + $shock.model : 'No shock saved'),
                             height: 25,
                           ),
                           Container(
@@ -120,117 +175,73 @@ class _SettingDetailsState extends State<SettingDetails> {
                                 color: Colors.black12,
                                 shape: BoxShape.circle,
                               ),
-                              child: Image.asset('assets/fork.png')),
+                              child: Image.asset('assets/shock.png')),
                           SizedBox(height: 10),
                           SettingsFormField(
                               label: 'HSC',
-                              value: widget.fork?.hsc,
-                              onValueChange: (val) => setState(() => _hscFork = val)),
+                              value: widget.shock?.hsc,
+                              onValueChange: (val) => setState(() => _hscShock = val)),
                           SettingsFormField(
                               label: 'LSC',
-                              value: widget.fork?.lsc,
-                              onValueChange: (val) => setState(() => _lscFork = val)),
+                              value: widget.shock?.lsc,
+                              onValueChange: (val) => setState(() => _lscShock = val)),
                           SettingsFormField(
                               label: 'HSR',
-                              value: widget.fork?.hsr,
-                              onValueChange: (val) => setState(() => _hsrFork = val)),
+                              value: widget.shock?.hsr,
+                              onValueChange: (val) => setState(() => _hsrShock = val)),
                           SettingsFormField(
                               label: 'LSR',
-                              value: widget.fork?.lsr,
-                              onValueChange: (val) => setState(() => _lsrFork = val)),
+                              value: widget.shock?.lsr,
+                              onValueChange: (val) => setState(() => _lsrShock = val)),
                           SettingsFormField(
                               label: 'SPRING / PSI',
-                              value: widget.fork?.springRate,
-                              onValueChange: (val) => setState(() => _springRateFork = val)),
+                              value: widget.shock?.springRate,
+                              onValueChange: (val) => setState(() => _springRateShock = val)),
                           SettingsFormField(
-                              label: 'FRONT TIRE PSI',
-                              value: widget.frontTire,
-                              onValueChange: (val) => setState(() => _frontTire = val)),
-                        ]),
+                              label: 'REAR TIRE PSI',
+                              value: widget.rearTire,
+                              onValueChange: (val) => setState(() => _rearTire = val)),
+                        ],
                       ),
-                      Expanded(
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              child: Text($shock != null ? $shock.brand + ' ' + $shock.model : 'No shock saved'),
-                              height: 25,
-                            ),
-                            Container(
-                                padding: EdgeInsets.all(2),
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.black12,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Image.asset('assets/shock.png')),
-                            SizedBox(height: 10),
-                            SettingsFormField(
-                                label: 'HSC',
-                                value: widget.shock?.hsc,
-                                onValueChange: (val) => setState(() => _hscShock = val)),
-                            SettingsFormField(
-                                label: 'LSC',
-                                value: widget.shock?.lsc,
-                                onValueChange: (val) => setState(() => _lscShock = val)),
-                            SettingsFormField(
-                                label: 'HSR',
-                                value: widget.shock?.hsr,
-                                onValueChange: (val) => setState(() => _hsrShock = val)),
-                            SettingsFormField(
-                                label: 'LSR',
-                                value: widget.shock?.lsr,
-                                onValueChange: (val) => setState(() => _lsrShock = val)),
-                            SettingsFormField(
-                                label: 'SPRING / PSI',
-                                value: widget.shock?.springRate,
-                                onValueChange: (val) => setState(() => _springRateShock = val)),
-                            SettingsFormField(
-                                label: 'REAR TIRE PSI',
-                                value: widget.rearTire,
-                                onValueChange: (val) => setState(() => _rearTire = val)),
-                          ],
+                    ),
+                  ],
+                ),
+                // SizedBox(height: 10),
+                Theme(
+                  data: ThemeData().copyWith(dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    shape: Border.all(color: Colors.transparent),
+                    title: Text('Notes'),
+                    children: [
+                      TextField(
+                        minLines: 1,
+                        maxLines: 4,
+                        controller: _notesController,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(6),
+                          hintText: 'Add custom notes for this setting',
                         ),
                       ),
                     ],
                   ),
-                  // SizedBox(height: 10),
-                  Theme(
-                    data: ThemeData().copyWith(dividerColor: Colors.transparent),
-                    child: ExpansionTile(
-                      shape: Border.all(color: Colors.transparent),
-                      title: Text('Notes'),
-                      children: [
-                        TextField(
-                          minLines: 1,
-                          maxLines: 4,
-                          controller: _notesController,
-                          keyboardType: TextInputType.text,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(6),
-                            hintText: 'Add custom notes for this setting',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    child: Text('Save'),
-                    onPressed: _settingNameController.text.isNotEmpty
-                        ? () async {
-                            if (_formKey.currentState!.validate()) {
-                              await _updateSetting(widget.bike!.id, context);
-                            }
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  child: Text('Save'),
+                  onPressed: _settingNameController.text.isNotEmpty
+                      ? () async {
+                          if (_formKey.currentState!.validate()) {
+                            await _updateSetting(widget.bike!.id, context);
                           }
-                        : null,
-                  ),
-                ],
-              ),
+                        }
+                      : null,
+                ),
+              ],
             ),
-          ],
-        ),
-      
+          ),
+        ],
+      ),
     );
   }
 }

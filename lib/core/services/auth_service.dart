@@ -146,7 +146,7 @@ class AuthService {
       }
       // If for some reason a user or this box got deleted, create a new user
       else {
-        HiveService().putIntoBox('hiveUserBox', user.email, user);
+        HiveService().putIntoBox('hiveUserBox', user.email, user, true);
       }
     } catch (e) {
       throw e;
