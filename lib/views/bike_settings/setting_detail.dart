@@ -1,4 +1,3 @@
-import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:suspension_pro/core/models/setting.dart';
 import 'package:suspension_pro/core/services/hive_service.dart';

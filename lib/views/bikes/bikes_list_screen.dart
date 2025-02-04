@@ -1,6 +1,6 @@
 import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:suspension_pro/views/bikes/firebase_bikes_list.dart';
 import 'package:suspension_pro/views/bikes/offline_todo_list.dart';
 import 'package:suspension_pro/core/models/bike.dart';

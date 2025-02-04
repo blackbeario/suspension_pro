@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 
 class HiveService {
   void closeBox<T>(String boxName) async {
@@ -43,8 +43,7 @@ class HiveService {
   getAllKeysFromBox<T>(String boxName) async {
     List<String> keysList = [];
     try {
-      var boxKeys = Hive.box('settings').keys;
-      // Iterable<dynamic> keys = box.keys;
+      var boxKeys = await Hive.box<T>(boxName).keys;
       for (var key in boxKeys) {
         keysList.add(key);
       }

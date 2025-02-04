@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:suspension_pro/core/models/fork.dart';
 import 'package:suspension_pro/core/services/db_service.dart';
 
@@ -100,7 +100,7 @@ class _ForkFormState extends State<ForkForm> {
                         width: 75,
                         height: 75,
                         decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.25),
+                          color: Colors.grey.withValues(alpha: 0.25),
                           shape: BoxShape.circle,
                         ),
                         child: Image.asset('assets/fork.png'))),

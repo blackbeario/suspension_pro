@@ -126,7 +126,7 @@ class _BikesListState extends State<BikesList> {
                                   fork != null
                                       ? Container(
                                           decoration: BoxDecoration(
-                                            color: CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
+                                            color: CupertinoColors.extraLightBackgroundGray.withValues(alpha: 0.5),
                                           ),
                                           child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -173,7 +173,7 @@ class _BikesListState extends State<BikesList> {
                                       : Container(
                                           width: double.infinity,
                                           decoration: BoxDecoration(
-                                            color: CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
+                                            color: CupertinoColors.extraLightBackgroundGray.withValues(alpha: 0.5),
                                           ),
                                           child: OutlinedButton(
                                             style: ElevatedButton.styleFrom(
@@ -198,7 +198,7 @@ class _BikesListState extends State<BikesList> {
                                   shock != null
                                       ? Container(
                                           decoration: BoxDecoration(
-                                            color: CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
+                                            color: CupertinoColors.extraLightBackgroundGray.withValues(alpha: 0.5),
                                           ),
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -238,7 +238,7 @@ class _BikesListState extends State<BikesList> {
                                           width: double.maxFinite,
                                           padding: EdgeInsets.symmetric(horizontal: 40),
                                           decoration: BoxDecoration(
-                                            color: CupertinoColors.extraLightBackgroundGray.withOpacity(0.5),
+                                            color: CupertinoColors.extraLightBackgroundGray.withValues(alpha: 0.5),
                                           ),
                                           child: OutlinedButton(
                                             style: ElevatedButton.styleFrom(

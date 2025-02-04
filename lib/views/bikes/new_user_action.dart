@@ -19,7 +19,7 @@ class NewUserAction extends StatelessWidget {
         tileColor: complete != null && complete! ? Colors.green.shade50 : Colors.amber.shade50,
         title: Text(title),
         trailing: Icon(Icons.check_circle,
-            size: 30, color: complete != null && complete! ? Colors.green : Colors.grey.withOpacity(0.10)),
+            size: 30, color: complete != null && complete! ? Colors.green : Colors.grey.withValues(alpha: 0.10)),
         onTap: () => Navigator.of(context).push(MaterialPageRoute(
             fullscreenDialog: true,
             builder: (context) {

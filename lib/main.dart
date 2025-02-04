@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:suspension_pro/core/services/analytics_service.dart';
 import 'package:suspension_pro/views/in_app_purchases/presentation/buy_credits.dart';
 import 'package:suspension_pro/views/in_app_purchases/in_app_bloc.dart';

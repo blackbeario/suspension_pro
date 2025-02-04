@@ -16,7 +16,7 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   firebase_crashlytics: ^4.3.1
   flare_flutter: ^3.0.2
-  image_cropper: ^5.0.1
+  image_cropper: ^9.0.0
   image_picker: ^1.0.7
   cached_network_image: ^3.3.1
   cupertino_icons: ^1.0.3
@@ -27,20 +27,20 @@ dependencies:
   # path_provider: ^1.0.0
   date_format: ^2.0.4
   share_plus: ^10.1.4
-  chat_gpt_sdk: 3.0.7
+  chat_gpt_sdk: ^3.1.4
   shared_preferences:
   smooth_page_indicator:
   in_app_purchase: ^3.2.0
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
+  hive_ce: ^2.9.0
+  hive_ce_flutter: ^2.2.0
   connectivity_checker: ^1.1.0
   encrypt: ^5.0.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.13.1
-  hive_generator: ^2.0.1
+  flutter_launcher_icons: ^0.14.3
+  hive_ce_generator: ^1.8.2
   build_runner: ^2.3.3
 
 flutter_icons:

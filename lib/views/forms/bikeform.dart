@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:suspension_pro/core/models/bike.dart';
 import 'package:suspension_pro/core/models/fork.dart';
 import 'package:suspension_pro/core/models/shock.dart';

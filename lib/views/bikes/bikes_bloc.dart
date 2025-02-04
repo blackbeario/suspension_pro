@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:suspension_pro/core/models/bike.dart';
@@ -28,7 +28,6 @@ class BikesBloc {
   /// Crop Image
   _cropImage(bikeid, filePath) async {
     CroppedFile? croppedImage = await ImageCropper().cropImage(
-      cropStyle: CropStyle.circle,
       sourcePath: filePath,
       compressQuality: 50,
     );

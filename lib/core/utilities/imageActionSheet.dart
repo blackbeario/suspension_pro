@@ -39,7 +39,7 @@ class ImageActionSheet extends StatelessWidget {
   /// Crop Image
   _cropImage(filePath) async {
     final CroppedFile? croppedImage =
-        await ImageCropper().cropImage(cropStyle: CropStyle.circle, sourcePath: filePath, compressQuality: 50);
+        await ImageCropper().cropImage(sourcePath: filePath, compressQuality: 50);
     if (croppedImage != null) {
       // UserSingleton().profilePic = croppedImage.path;
       _imageFile = File(croppedImage.path);

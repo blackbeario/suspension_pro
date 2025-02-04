@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:suspension_pro/core/models/shock.dart';
 import '../../core/services/db_service.dart';
 
@@ -84,7 +84,7 @@ class _ShockFormState extends State<ShockForm> {
                       width: 75,
                       height: 75,
                       decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.25),
+                        color: Colors.grey.withValues(alpha: 0.25),
                         shape: BoxShape.circle,
                       ),
                       child: Image.asset('assets/shock.png')),
