@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:suspension_pro/views/in_app_purchases/presentation/buy_credits.dart';
 import 'package:suspension_pro/views/profile/profile.dart';
 
 class NewUserAction extends StatelessWidget {
@@ -23,7 +24,7 @@ class NewUserAction extends StatelessWidget {
         onTap: () => Navigator.of(context).push(MaterialPageRoute(
             fullscreenDialog: true,
             builder: (context) {
-              return screen.runtimeType == Profile ? screen :
+              return screen.runtimeType == Profile || screen.runtimeType == BuyCredits ? screen :
                Scaffold(
                 resizeToAvoidBottomInset: true,
                 appBar: AppBar(title: Text(title), actions: null),
