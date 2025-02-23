@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:suspension_pro/views/bike_settings/share_button.dart';
 import 'package:suspension_pro/core/models/bike.dart';
 import 'package:suspension_pro/core/models/component_setting.dart';
@@ -56,7 +57,8 @@ class _SettingsListState extends State<SettingsList> {
           ),
           direction: DismissDirection.horizontal,
           onDismissed: (direction) => setState(() {
-            // TODO: delete from Hive
+            final key = bike.id + '-' + settings[index].id;
+            Hive.box<Setting>('settings').delete(key);
             db.deleteSetting(bike.id, settings[index].id);
             settings.removeAt(index);
           }),

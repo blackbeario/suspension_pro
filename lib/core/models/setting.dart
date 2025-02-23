@@ -12,7 +12,7 @@ part 'setting.g.dart';
 @HiveType(typeId: HiveTypes.setting, adapterName: HiveAdapters.setting)
 class Setting extends HiveObject{
 	@HiveField(SettingFields.id)
-  final String id;
+  String id;
 	@HiveField(SettingFields.bike)
   final String? bike;
 	@HiveField(SettingFields.fork)

@@ -192,9 +192,9 @@ class _AppHomePageState extends State<AppHomePage> {
                 return ListenableBuilder(
                     listenable: _bloc,
                     builder: (context, widget) {
-                      if (_bloc.credits == 0) {
-                        return BuyCredits();
-                      }
+                      // if (_bloc.credits == 0) {
+                      //   return BuyCredits();
+                      // }
                       return OpenAiRequest();
                     });
               },

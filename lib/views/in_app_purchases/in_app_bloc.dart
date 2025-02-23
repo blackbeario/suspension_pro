@@ -21,6 +21,7 @@ class InAppBloc extends ChangeNotifier {
   bool _loading = true;
   String? _queryProductError;
   int _credits = 0;
+  int _freeCredits = 3;
 
   List<ProductDetails> get products => _products;
   void set products(List<ProductDetails> products) {
@@ -60,6 +61,15 @@ class InAppBloc extends ChangeNotifier {
   void set credits(int credits) {
     _credits = credits;
     notifyListeners();
+  }
+
+  int get freeCredits => _freeCredits;
+  void removeFreeCredit() {
+    if (freeCredits > 1) {
+      _freeCredits = freeCredits - 1;
+      // TODO: Save to shared prefs or Hive
+      notifyListeners();
+    }
   }
 
   bool get purchasePending => _purchasePending;
