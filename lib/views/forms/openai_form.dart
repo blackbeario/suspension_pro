@@ -9,7 +9,9 @@ import 'package:suspension_pro/views/in_app_purchases/in_app_bloc.dart';
 import 'package:suspension_pro/views/in_app_purchases/presentation/credits_banner.dart';
 
 class OpenAiRequest extends StatefulWidget {
-  OpenAiRequest({Key? key}) : super(key: key);
+  OpenAiRequest({Key? key, this.selectedBike}) : super(key: key);
+
+  final Bike? selectedBike;
 
   @override
   _OpenAiRequestState createState() => _OpenAiRequestState();
@@ -23,6 +25,18 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
   Bike? _selectedBike;
   late String _selectedForkName;
   late String _selectedShockName;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedBike = widget.selectedBike;
+    _selectedForkName = _selectedBike?.fork != null
+                      ? (_selectedBike!.fork!.brand + ' ' + _selectedBike!.fork!.model)
+                      : '';
+    _selectedShockName = _selectedBike?.shock != null
+                      ? (_selectedBike!.shock!.brand + ' ' + _selectedBike!.shock!.model)
+                      : '';
+  }
 
   @override
   void dispose() {
@@ -111,16 +125,17 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                     ),
 
                     // Select Bike button
-                    StreamBuilder<List<Bike>>(
-                      stream: db.streamBikes(),
-                      builder: (context, snapshot) {
-                        List<Bike>? bikes = snapshot.data;
-                        if (!snapshot.hasData || snapshot.hasError) {
-                          return Text('Cannot fetch list of user bikes');
-                        }
-                        return _getBikes(bikes!, context);
-                      },
-                    ),
+                    if (_selectedBike == null)
+                      StreamBuilder<List<Bike>>(
+                        stream: db.streamBikes(),
+                        builder: (context, snapshot) {
+                          List<Bike>? bikes = snapshot.data;
+                          if (!snapshot.hasData || snapshot.hasError) {
+                            return Text('Cannot fetch list of user bikes');
+                          }
+                          return _getBikes(bikes!, context);
+                        },
+                      ),
 
                     if (_selectedBike != null)
                       Padding(
@@ -197,7 +212,7 @@ class _OpenAiRequestState extends State<OpenAiRequest> {
                           child: Text('Get Suggestions', style: TextStyle(color: Colors.white)),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              InAppBloc().removeFreeCredit();
+                              InAppBloc().removeCredit();
                               showCupertinoModalPopup(
                                 barrierDismissible: false,
                                 context: context,

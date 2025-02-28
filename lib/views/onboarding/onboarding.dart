@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:suspension_pro/views/in_app_purchases/in_app_bloc.dart';
 import 'package:suspension_pro/views/onboarding/onboarding_page.dart';
 import 'package:suspension_pro/main.dart';
 
@@ -12,6 +13,12 @@ class Onboarding extends StatefulWidget {
 class _OnboardingState extends State<Onboarding> {
   final pageController = PageController();
   bool isLastPage = false;
+
+  @override
+  void initState() {
+    super.initState();
+    InAppBloc().setCredits(3); // Give new user 3 free credits
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +43,6 @@ class _OnboardingState extends State<Onboarding> {
                 subtitle:
                     'Add as many bikes as you want, whether you have just one or a fleet. Keep ride settings for your trail bike, e-bike, DH rig, kids bikes, and more. Great for bike/suspension shops who need to keep up with many customers. Also keep track of those important serial numbers and personal notes like tire choices.',
                 imagePath: 'assets/manybikes.jpg',
-      
               ),
               OnboardingPage(
                 color: Colors.grey.shade900,
@@ -59,7 +65,8 @@ class _OnboardingState extends State<Onboarding> {
               OnboardingPage(
                 color: Colors.grey.shade900,
                 title: 'Generate Settings',
-                subtitle: 'Get suspension suggestions from AI based on bike, suspension components, rider weight and trail conditions. If you like the response, save it directly to your settings for that bike.',
+                subtitle:
+                    'Get suspension suggestions from AI based on bike, suspension components, rider weight and trail conditions. If you like the response, save it directly to your settings for that bike.',
                 imagePath: 'assets/openai.jpg',
                 titleColor: Colors.teal,
                 subtitleColor: Colors.white,
@@ -120,7 +127,8 @@ class _OnboardingState extends State<Onboarding> {
                     Padding(
                       padding: EdgeInsets.only(right: 32),
                       child: TextButton(
-                        onPressed: () => pageController.nextPage(curve: Curves.easeInOut, duration: Duration(milliseconds: 500)),
+                        onPressed: () =>
+                            pageController.nextPage(curve: Curves.easeInOut, duration: Duration(milliseconds: 500)),
                         child: Text('NEXT', style: TextStyle(color: Colors.white)),
                       ),
                     ),

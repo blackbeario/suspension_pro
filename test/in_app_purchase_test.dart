@@ -3,17 +3,16 @@ import 'package:suspension_pro/views/in_app_purchases/in_app_bloc.dart';
 
 void main() {
   late InAppBloc bloc;
-  late int newCredits;
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUp(() {
+  setUp(() async {
     bloc = InAppBloc();
-    newCredits = 3;
   });
 
   group('Test InAppBloc methods', () {
-    test('Ensure credits are returned properly when added', () {
+    test('Ensure credits are returned properly when added', () async {
       //Act (setter)
-      bloc.credits = newCredits;
+      bloc.setCredits(3);
 
       //Assert (getter) credits equal 3
       expect(bloc.credits == 3, true);
@@ -21,11 +20,10 @@ void main() {
 
     test('Ensure freeCredits are removed when removeFreeCredit method is called', () {
       //Act (setter)
-      bloc.removeFreeCredit();
+      bloc.removeCredit();
 
       //Assert (getter) credits equal 2
-      expect(bloc.freeCredits == 2, true);
-      
+      expect(bloc.credits == 2, true);
     });
   });
 }

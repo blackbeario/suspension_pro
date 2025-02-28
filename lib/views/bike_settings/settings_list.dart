@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:suspension_pro/views/bike_settings/get_ai_button.dart';
 import 'package:suspension_pro/views/bike_settings/share_button.dart';
 import 'package:suspension_pro/core/models/bike.dart';
 import 'package:suspension_pro/core/models/component_setting.dart';
@@ -104,9 +105,12 @@ class _SettingsListState extends State<SettingsList> {
       children: [
         _getSettings(context, widget.bike),
         ElevatedButton(
-          child: Text('Add Setting'),
+          child: Text('Add Manual Setting'),
           onPressed: () => pushScreen(context, 'Add Setting', null, SettingDetails(bike: widget.bike), true),
+          style: ElevatedButton.styleFrom(fixedSize: Size(240, 50)),
         ),
+        SizedBox(height: 30),
+        GetAiButton(bike: widget.bike),
         Expanded(child: Container())
       ],
     );

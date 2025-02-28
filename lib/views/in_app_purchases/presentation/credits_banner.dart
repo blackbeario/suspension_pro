@@ -16,7 +16,7 @@ class _CreditsBannerState extends State<CreditsBanner> {
     return ListenableBuilder(
       listenable: _inAppBloc,
       builder: (context, _) {
-        String count = _inAppBloc.freeCredits.toString();
+        String count = _inAppBloc.credits.toString();
         return Padding(
           padding: const EdgeInsets.all(20.0),
           child: ListTile(

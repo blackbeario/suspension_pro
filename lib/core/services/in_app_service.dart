@@ -74,7 +74,7 @@ class InAppPurchaseService {
     if (purchaseDetails != null && purchaseDetails.status == PurchaseStatus.purchased ||
         purchaseDetails != null && purchaseDetails.status == PurchaseStatus.restored) {
       _bloc.addToPurchases(purchaseDetails);
-      _bloc.credits = 30;
+      _bloc.setCredits(30);
       _bloc.purchasePending = false;
     }
   }

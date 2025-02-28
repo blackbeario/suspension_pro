@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InAppBloc extends ChangeNotifier {
   // Private constructor to prevent direct instantiation
@@ -21,7 +22,6 @@ class InAppBloc extends ChangeNotifier {
   bool _loading = true;
   String? _queryProductError;
   int _credits = 0;
-  int _freeCredits = 3;
 
   List<ProductDetails> get products => _products;
   void set products(List<ProductDetails> products) {
@@ -58,18 +58,24 @@ class InAppBloc extends ChangeNotifier {
   void set queryProductError(String? queryProductError) => _queryProductError = queryProductError;
 
   int get credits => _credits;
-  void set credits(int credits) {
+
+  void setCredits(int credits) async {
     _credits = credits;
+    setCreditsPrefs('credits', credits);
     notifyListeners();
   }
 
-  int get freeCredits => _freeCredits;
-  void removeFreeCredit() {
-    if (freeCredits > 1) {
-      _freeCredits = freeCredits - 1;
-      // TODO: Save to shared prefs or Hive
+  void removeCredit() async {
+    if (_credits > 1) {
+      _credits = _credits - 1;
+      setCreditsPrefs('credits', _credits - 1);
       notifyListeners();
     }
+  }
+
+  setCreditsPrefs(String key, value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(key, value);
   }
 
   bool get purchasePending => _purchasePending;

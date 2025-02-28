@@ -49,6 +49,7 @@ DeviceType getDeviceType() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key, required this.showHome}) : super(key: key);
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<_AppHomePageState> myTabbedPageKey = GlobalKey<_AppHomePageState>();
   final bool showHome;
 
   @override
@@ -135,7 +136,7 @@ class AuthenticationWrapper extends StatelessWidget {
             if (_user.uid.isNotEmpty) {
               _tryUserFirebaseLogin(authService, _user.email);
             }
-            return _user.uid.isEmpty ? LoginPage() : AppHomePage();
+            return _user.uid.isEmpty ? LoginPage() : AppHomePage(key: MyApp.myTabbedPageKey);
           }
         },
       ),
@@ -144,14 +145,31 @@ class AuthenticationWrapper extends StatelessWidget {
 }
 
 class AppHomePage extends StatefulWidget {
+  const AppHomePage({Key? key}) : super(key: key);
+
   @override
   State<AppHomePage> createState() => _AppHomePageState();
 }
 
-class _AppHomePageState extends State<AppHomePage> {
+class _AppHomePageState extends State<AppHomePage> with SingleTickerProviderStateMixin {
+  late CupertinoTabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = CupertinoTabController(initialIndex: 0);
+  }
+
+  @override 
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
+      controller: tabController,
       tabBar: CupertinoTabBar(
         items: [
           BottomNavigationBarItem(
@@ -164,12 +182,10 @@ class _AppHomePageState extends State<AppHomePage> {
           ),
           BottomNavigationBarItem(
             label: 'Ai',
-            icon: Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  SizedBox(width: 50, child: Icon(Icons.smart_toy_outlined, size: 24)), 
-                  CreditsIndicator(),
-                ]),
+            icon: Stack(alignment: Alignment.topRight, children: [
+              SizedBox(width: 50, child: Icon(Icons.smart_toy_outlined, size: 24)),
+              CreditsIndicator(),
+            ]),
           ),
         ],
       ),
@@ -192,6 +208,7 @@ class _AppHomePageState extends State<AppHomePage> {
                 return ListenableBuilder(
                     listenable: _bloc,
                     builder: (context, widget) {
+                      // TODO: Once consumables are working we can come back to this
                       // if (_bloc.credits == 0) {
                       //   return BuyCredits();
                       // }
