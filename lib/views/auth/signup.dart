@@ -47,6 +47,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: CupertinoTextField(
+                    key: const ValueKey('signUpEmailField'),
                     controller: emailController,
                     padding: EdgeInsets.all(10.0),
                     placeholder: "email",
@@ -56,6 +57,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: CupertinoTextField(
+                    key: const ValueKey('signUpPasswordField'),
                     padding: EdgeInsets.all(10.0),
                     controller: passwordController,
                     placeholder: "password",
@@ -74,6 +76,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     borderRadius: BorderRadius.circular(8.0),
                     color: CupertinoColors.activeBlue,
                     child: CupertinoButton(
+                      key: const ValueKey('signUpButton'),
                       onPressed: () async {
                         dynamic result = await authService.createFirebaseUser(
                             emailController.text.trim(), passwordController.text.trim());

@@ -87,6 +87,7 @@ class LoginPageState extends State<LoginPage> {
                         Padding(
                           padding: EdgeInsets.all(8.0),
                           child: TextFormField(
+                            key: const ValueKey('emailField'),
                             controller: _email,
                             decoration: InputDecoration(
                                 filled: true,
@@ -108,6 +109,7 @@ class LoginPageState extends State<LoginPage> {
                         Padding(
                           padding: EdgeInsets.all(8.0),
                           child: TextFormField(
+                            key: const ValueKey('passwordField'),
                             controller: _password,
                             decoration: InputDecoration(
                               filled: true,
@@ -137,6 +139,7 @@ class LoginPageState extends State<LoginPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 8.0),
                           child: ElevatedButton(
+                            key: const ValueKey('signInButton'),
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.orange[400]),
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
@@ -162,6 +165,7 @@ class LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         TextButton(
+                          key: const ValueKey('createAccountButton'),
                             child: Text('Create New Account', style: style.copyWith(color: Colors.white, fontSize: 14)),
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignUpPage()));

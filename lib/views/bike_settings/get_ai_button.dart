@@ -20,9 +20,9 @@ class GetAiButton extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
-            child: Text('Get AI Suggestion'),
+            child: Text('AI Suggestions'),
             onPressed: () {
-              print(MyApp.myTabbedPageKey.currentState!.tabController.index);
+              print(MyApp.myTabbedPageKey.currentState?.tabController.index);
               // Navigator.of(context).push(MaterialPageRoute(builder: (context) => OpenAiRequest(selectedBike: bike)));
             },
             // onPressed: () => pushScreen(context, 'Add Setting', null, OpenAiRequest(selectedBike: bike), true),
