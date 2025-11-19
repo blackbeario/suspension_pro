@@ -1,30 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:suspension_pro/core/models/bike.dart';
-import 'package:suspension_pro/core/models/fork.dart';
-import 'package:suspension_pro/core/models/shock.dart';
-import 'package:suspension_pro/core/services/db_service.dart';
+import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
+import 'package:suspension_pro/features/bikes/domain/models/fork.dart';
+import 'package:suspension_pro/features/bikes/domain/models/shock.dart';
+import 'package:suspension_pro/core/providers/service_providers.dart';
 import 'fork_form.dart';
 import 'shock_form.dart';
 import 'package:flutter/cupertino.dart';
 
 // ignore: must_be_immutable
-class BikeForm extends StatefulWidget {
+class BikeForm extends ConsumerStatefulWidget {
   BikeForm({Key? key, this.bike}) : super(key: key);
   final Bike? bike;
 
   @override
-  _BikeFormState createState() => _BikeFormState();
+  ConsumerState<BikeForm> createState() => _BikeFormState();
 }
 
-class _BikeFormState extends State<BikeForm> {
+class _BikeFormState extends ConsumerState<BikeForm> {
   final _formKey = GlobalKey<FormState>();
   final yearNode = FocusNode();
   final modelNode = FocusNode();
   final yearKey = GlobalKey<FormFieldState>();
   final modelKey = GlobalKey<FormFieldState>();
-  
-  final db = DatabaseService();
   final _yearModelController = TextEditingController();
   final _bikeController = TextEditingController();
   bool _isVisibleForkForm = false;
@@ -84,6 +83,7 @@ class _BikeFormState extends State<BikeForm> {
     box.put(_bikeController.text, bike);
     print(box.get(_bikeController.text));
 
+    final db = ref.read(databaseServiceProvider);
     db.addUpdateBike(bike);
     return Future.value(false);
   }

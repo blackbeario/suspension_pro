@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:suspension_pro/core/models/shock.dart';
-import '../../core/services/db_service.dart';
+import 'package:suspension_pro/features/bikes/domain/models/shock.dart';
+import 'package:suspension_pro/core/providers/service_providers.dart';
 
-class ShockForm extends StatefulWidget {
+class ShockForm extends ConsumerStatefulWidget {
   ShockForm({this.bikeId, this.shock, this.shockCallback});
 
   final String? bikeId;
@@ -11,12 +12,11 @@ class ShockForm extends StatefulWidget {
   final Function(Map val)? shockCallback;
 
   @override
-  _ShockFormState createState() => _ShockFormState();
+  ConsumerState<ShockForm> createState() => _ShockFormState();
 }
 
-class _ShockFormState extends State<ShockForm> {
+class _ShockFormState extends ConsumerState<ShockForm> {
   final _formKey = GlobalKey<FormState>();
-  final db = DatabaseService();
   final _yearController = TextEditingController();
   final _brandController = TextEditingController();
   final _modelController = TextEditingController();
@@ -59,6 +59,7 @@ class _ShockFormState extends State<ShockForm> {
         stroke: _strokeController.text,
         serialNumber: _serialNumberController.text);
     box.put(bikeId, shock);
+    final db = ref.read(databaseServiceProvider);
     db.updateShock(bikeId, shock);
     return Future.value(false);
   }

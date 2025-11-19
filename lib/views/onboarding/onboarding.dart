@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:suspension_pro/views/in_app_purchases/in_app_bloc.dart';
+import 'package:suspension_pro/features/purchases/domain/purchase_notifier.dart';
 import 'package:suspension_pro/views/onboarding/onboarding_page.dart';
-import 'package:suspension_pro/main.dart';
 
-class Onboarding extends StatefulWidget {
+class Onboarding extends ConsumerStatefulWidget {
+  const Onboarding({Key? key}) : super(key: key);
+
   @override
-  State<Onboarding> createState() => _OnboardingState();
+  ConsumerState<Onboarding> createState() => _OnboardingState();
 }
 
-class _OnboardingState extends State<Onboarding> {
+class _OnboardingState extends ConsumerState<Onboarding> {
   final pageController = PageController();
   bool isLastPage = false;
 
   @override
   void initState() {
     super.initState();
-    InAppBloc().setCredits(3); // Give new user 3 free credits
+    // Give new user 3 free credits
+    Future.microtask(() {
+      ref.read(purchaseNotifierProvider.notifier).setCredits(3);
+    });
   }
 
   @override
@@ -86,7 +92,7 @@ class _OnboardingState extends State<Onboarding> {
                       onPressed: () async {
                         final prefs = await SharedPreferences.getInstance();
                         prefs.setBool('showHome', true);
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AuthenticationWrapper()));
+                        context.go('/login');
                       },
                       child: Text('Get Started!', style: TextStyle(fontSize: 24, color: Colors.white))),
                 ),

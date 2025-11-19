@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:suspension_pro/views/bike_settings/setting_detail.dart';
-import 'package:suspension_pro/core/models/user_singleton.dart';
+import 'package:suspension_pro/features/auth/domain/user_notifier.dart';
 import 'package:suspension_pro/core/utilities/helpers.dart';
 
-class ShareButton extends StatelessWidget {
+class ShareButton extends ConsumerWidget {
   ShareButton({
     Key? key,
     required this.widget,
@@ -12,19 +13,19 @@ class ShareButton extends StatelessWidget {
   }) : super(key: key);
 
   final SettingDetails widget;
-  final UserSingleton _user = UserSingleton();
   final String? forkProduct;
   final String? shockProduct;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userState = ref.watch(userNotifierProvider);
     return TextButton.icon(
       label: Text('Share'),
       icon: Icon(Icons.share, size: 20),
       onPressed: () => share(
         context,
         widget.bike!.id,
-        _user.userName,
+        userState.userName,
         widget.name!,
         forkProduct ?? null,
         widget.fork,

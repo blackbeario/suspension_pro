@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:suspension_pro/core/services/db_service.dart';
-import 'package:suspension_pro/core/models/bike.dart';
+import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
 import 'package:suspension_pro/views/ai_results.dart';
 import 'package:suspension_pro/views/in_app_purchases/in_app_bloc.dart';
-import 'package:suspension_pro/views/in_app_purchases/presentation/credits_banner.dart';
+import 'package:suspension_pro/features/purchases/presentation/widgets/credits_banner.dart';
 
 class OpenAiRequest extends StatefulWidget {
   OpenAiRequest({Key? key, this.selectedBike}) : super(key: key);

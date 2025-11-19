@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:suspension_pro/views/in_app_purchases/presentation/buy_credits.dart';
+import 'package:suspension_pro/features/purchases/presentation/screens/buy_credits.dart';
 import 'package:suspension_pro/views/profile/profile.dart';
 
 class NewUserAction extends StatelessWidget {

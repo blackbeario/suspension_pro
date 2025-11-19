@@ -1,19 +1,22 @@
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:suspension_pro/core/models/user_singleton.dart';
-import 'package:suspension_pro/core/services/db_service.dart';
+import 'package:suspension_pro/core/providers/service_providers.dart';
+import 'package:suspension_pro/features/auth/domain/user_notifier.dart';
 
-// ignore: must_be_immutable
-class ImageActionSheet extends StatelessWidget {
-  final db = DatabaseService();
+class ImageActionSheet extends ConsumerStatefulWidget {
+  const ImageActionSheet({Key? key}) : super(key: key);
 
-  ImageActionSheet();
-  final String uid = UserSingleton().uid;
+  @override
+  ConsumerState<ImageActionSheet> createState() => _ImageActionSheetState();
+}
+
+class _ImageActionSheetState extends ConsumerState<ImageActionSheet> {
   FirebaseStorage storage = FirebaseStorage.instanceFor(bucket: 'gs://suspension-pro.appspot.com/');
-  late String downloadUrl = '';
+  String downloadUrl = '';
   File? _imageFile;
 
   /// Get from gallery
@@ -38,23 +41,23 @@ class ImageActionSheet extends StatelessWidget {
 
   /// Crop Image
   _cropImage(filePath) async {
+    final uid = ref.read(userNotifierProvider).uid;
     final CroppedFile? croppedImage =
         await ImageCropper().cropImage(sourcePath: filePath, compressQuality: 50);
     if (croppedImage != null) {
-      // UserSingleton().profilePic = croppedImage.path;
       _imageFile = File(croppedImage.path);
       _uploadProfileImageToFirebase(uid, _imageFile!);
     }
   }
 
-  _uploadProfileImageToFirebase(uid, File imageFile) async {
+  _uploadProfileImageToFirebase(String uid, File imageFile) async {
+    final db = ref.read(databaseServiceProvider);
     FirebaseStorage storage = FirebaseStorage.instance;
-    Reference ref = storage.ref().child('userImages/$uid/profile.jpg');
-    UploadTask uploadTask = ref.putFile(imageFile);
+    Reference storageRef = storage.ref().child('userImages/$uid/profile.jpg');
+    UploadTask uploadTask = storageRef.putFile(imageFile);
     uploadTask.whenComplete(() async {
-      downloadUrl = await ref.getDownloadURL();
-      UserSingleton().profilePic = downloadUrl;
-      db.setProfilePic(downloadUrl);
+      downloadUrl = await storageRef.getDownloadURL();
+      await db.setProfilePic(downloadUrl);
     }).catchError((onError) {
       throw onError;
     });

@@ -3,8 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:suspension_pro/core/models/user.dart';
-import 'package:suspension_pro/core/models/user_singleton.dart';
+import 'package:suspension_pro/features/auth/domain/models/user.dart';
 import 'package:suspension_pro/core/services/encryption_service.dart';
 import 'package:suspension_pro/core/services/hive_service.dart';
 
@@ -47,7 +46,7 @@ class AuthService {
   }
 
   Future signOut() async {
-    UserSingleton().resetUidForLogout();
+    // UserNotifier handles state reset through Riverpod
     if (!await user.isEmpty) {
       await _firebaseAuth.signOut();
     }
@@ -73,7 +72,7 @@ class AuthService {
           dynamic decryptedPass = await getHiveUserPass(email);
           if (decryptedPass.runtimeType == String) {
             if (password == decryptedPass) {
-              UserSingleton().setNewUser(user);
+              // UserNotifier handles user state through Riverpod
               return user;
             } else {
               throw PlatformException(

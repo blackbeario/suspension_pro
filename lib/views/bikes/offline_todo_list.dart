@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:suspension_pro/views/bikes/bikes_list.dart';
 import 'package:suspension_pro/views/bikes/new_user_action.dart';
 import 'package:suspension_pro/views/forms/bikeform.dart';
-import 'package:suspension_pro/views/in_app_purchases/presentation/buy_credits.dart';
+import 'package:suspension_pro/features/purchases/presentation/screens/buy_credits.dart';
 import 'package:suspension_pro/views/profile/profile.dart';
 import 'package:suspension_pro/views/profile/profile_pic.dart';
-import 'package:suspension_pro/core/models/bike.dart';
+import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
 import 'package:suspension_pro/core/models/user_singleton.dart';
 
 class OfflineToDoList extends StatefulWidget {

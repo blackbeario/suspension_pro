@@ -1,17 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:flutter/material.dart';
-import 'package:suspension_pro/core/models/bike.dart';
-import 'package:suspension_pro/core/models/fork.dart';
-import 'package:suspension_pro/core/models/shock.dart';
-import 'package:suspension_pro/core/models/user_singleton.dart';
+import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
+import 'package:suspension_pro/features/bikes/domain/models/fork.dart';
+import 'package:suspension_pro/features/bikes/domain/models/shock.dart';
+import 'package:suspension_pro/features/bikes/domain/models/setting.dart';
 import 'dart:async';
-import '../models/user.dart';
-import '../models/setting.dart';
+import 'package:suspension_pro/features/auth/domain/models/user.dart';
 
 class DatabaseService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final String uid = UserSingleton().uid;
+  final String uid;
+
+  DatabaseService({required this.uid});
 
   /// Settings collection stream.
   Stream<List<Setting>> streamSettings(String bikeid) {

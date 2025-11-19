@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:suspension_pro/core/models/fork.dart';
-import 'package:suspension_pro/core/services/db_service.dart';
+import 'package:suspension_pro/features/bikes/domain/models/fork.dart';
+import 'package:suspension_pro/core/providers/service_providers.dart';
 
-class ForkForm extends StatefulWidget {
+class ForkForm extends ConsumerStatefulWidget {
   ForkForm({this.bikeId, this.fork, this.forkCallback});
 
   final String? bikeId;
@@ -11,12 +12,11 @@ class ForkForm extends StatefulWidget {
   final Function(Map val)? forkCallback;
 
   @override
-  _ForkFormState createState() => _ForkFormState();
+  ConsumerState<ForkForm> createState() => _ForkFormState();
 }
 
-class _ForkFormState extends State<ForkForm> {
+class _ForkFormState extends ConsumerState<ForkForm> {
   final _formKey = GlobalKey<FormState>();
-  final db = DatabaseService();
   final _yearController = TextEditingController();
   final _brandController = TextEditingController();
   final _modelController = TextEditingController();
@@ -76,6 +76,7 @@ class _ForkFormState extends State<ForkForm> {
         spacing: _spacingController.text,
         serialNumber: _serialNumberController.text);
     box.put(bikeId, fork);
+    final db = ref.read(databaseServiceProvider);
     db.updateFork(bikeId, fork);
   }
 

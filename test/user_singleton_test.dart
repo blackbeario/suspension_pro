@@ -1,40 +1,43 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:suspension_pro/core/models/user.dart';
-import 'package:suspension_pro/core/models/user_singleton.dart';
+import 'package:suspension_pro/features/auth/domain/models/user.dart';
+import 'package:suspension_pro/features/auth/domain/user_state.dart';
 
 void main() {
   late AppUser user;
-  late UserSingleton service;
+  late UserState userState;
 
   setUp(() {
-    service = UserSingleton();
     user = AppUser(id: '123456', email: 'testUser@gmail.com');
+    userState = UserState.fromAppUser(user);
   });
-  group('Test UserSingleton functions', () {
-    
-   test('Create new user when setNewUser method is called and expect userName is Guest', () {
-      //Act
-      service.setNewUser(user);
 
+  group('Test UserState functions', () {
+    test('Create new UserState from AppUser and expect default userName is Guest', () {
       //Assert username is 'Guest' since no userName was provided
-      expect(service.uid == '123456', true);
-      expect(service.email == 'testUser@gmail.com', true);
-      expect(service.userName == 'Guest', true);
+      expect(userState.uid == '123456', true);
+      expect(userState.email == 'testUser@gmail.com', true);
+      expect(userState.userName == 'Guest', true);
+      expect(userState.isAuthenticated, true);
     });
 
-    test('Update userName, firstName, and lastname get updated by updateNewUser', () {
+    test('Update userName, firstName, and lastname using copyWith', () {
       //Act
-      service.updateNewUser('testUser', 'Test', 'User');
+      final updatedState = userState.copyWith(
+        userName: 'testUser',
+        firstName: 'Test',
+        lastName: 'User',
+      );
 
       //Assert
-      expect(service.userName == 'testUser', true);
-      expect(service.firstName == 'Test', true);
-      expect(service.lastName == 'User', true);
+      expect(updatedState.userName == 'testUser', true);
+      expect(updatedState.firstName == 'Test', true);
+      expect(updatedState.lastName == 'User', true);
     });
 
-    test('Remove uid when resetUidForLogout is called by AuthService signout', () {
-      service.resetUidForLogout();
-      expect(service.uid == '', true);
+    test('UserState.empty() creates unauthenticated state', () {
+      final emptyState = UserState.empty();
+      expect(emptyState.isAuthenticated, false);
+      expect(emptyState.uid == '', true);
     });
   });
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:suspension_pro/core/models/bike.dart';
-import 'package:suspension_pro/main.dart';
-import 'package:suspension_pro/views/forms/openai_form.dart';
+import 'package:go_router/go_router.dart';
+import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
 
 class GetAiButton extends StatelessWidget {
   const GetAiButton({
@@ -22,10 +21,10 @@ class GetAiButton extends StatelessWidget {
           child: ElevatedButton(
             child: Text('AI Suggestions'),
             onPressed: () {
-              print(MyApp.myTabbedPageKey.currentState?.tabController.index);
-              // Navigator.of(context).push(MaterialPageRoute(builder: (context) => OpenAiRequest(selectedBike: bike)));
+              // Navigate to AI tab using go_router
+              context.go('/ai');
+              // TODO: Need to pass bike data to AI page - will implement with state management
             },
-            // onPressed: () => pushScreen(context, 'Add Setting', null, OpenAiRequest(selectedBike: bike), true),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orangeAccent,
               foregroundColor: Colors.black87,

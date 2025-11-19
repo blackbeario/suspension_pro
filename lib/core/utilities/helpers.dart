@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:suspension_pro/core/services/db_service.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-final db = DatabaseService();
 
 loadURL(String url) async {
   final Uri uri = Uri.parse(url);

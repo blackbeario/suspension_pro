@@ -4,7 +4,7 @@ import 'package:suspension_pro/core/services/hive_service.dart';
 import 'package:suspension_pro/views/bikes/bikes_bloc.dart';
 import 'package:suspension_pro/views/bikes/bikes_list.dart';
 import 'package:suspension_pro/views/bikes/offline_todo_list.dart';
-import 'package:suspension_pro/core/models/bike.dart';
+import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
 import 'package:suspension_pro/core/services/db_service.dart';
 
 class FirebaseBikesList extends StatelessWidget {

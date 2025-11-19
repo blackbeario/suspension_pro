@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:suspension_pro/views/bikes/firebase_bikes_list.dart';
 import 'package:suspension_pro/views/bikes/offline_todo_list.dart';
-import 'package:suspension_pro/core/models/bike.dart';
+import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
 import 'package:suspension_pro/core/services/db_service.dart';
 
 class BikesListScreen extends StatefulWidget {

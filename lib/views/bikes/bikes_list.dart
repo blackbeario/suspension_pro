@@ -6,7 +6,7 @@ import 'package:suspension_pro/views/forms/fork_form.dart';
 import 'package:suspension_pro/views/forms/shock_form.dart';
 import 'package:suspension_pro/views/bikes/bikes_bloc.dart';
 import 'package:suspension_pro/views/bike_settings/settings_list.dart';
-import 'package:suspension_pro/core/models/bike.dart';
+import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
 import 'package:suspension_pro/core/services/db_service.dart';
 import 'package:suspension_pro/core/utilities/helpers.dart';
 

@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:suspension_pro/views/bike_settings/get_ai_button.dart';
 import 'package:suspension_pro/views/bike_settings/share_button.dart';
-import 'package:suspension_pro/core/models/bike.dart';
-import 'package:suspension_pro/core/models/component_setting.dart';
-import 'package:suspension_pro/core/models/fork.dart';
-import 'package:suspension_pro/core/models/setting.dart';
-import 'package:suspension_pro/core/models/shock.dart';
+import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
+import 'package:suspension_pro/features/bikes/domain/models/component_setting.dart';
+import 'package:suspension_pro/features/bikes/domain/models/fork.dart';
+import 'package:suspension_pro/features/bikes/domain/models/setting.dart';
+import 'package:suspension_pro/features/bikes/domain/models/shock.dart';
 import 'package:suspension_pro/core/utilities/helpers.dart';
+import 'package:suspension_pro/core/providers/service_providers.dart';
 import 'package:suspension_pro/views/bikes/bikes_bloc.dart';
 import 'setting_detail.dart';
-import 'package:suspension_pro/core/services/db_service.dart';
 import 'package:flutter/cupertino.dart';
 
-class SettingsList extends StatefulWidget {
+class SettingsList extends ConsumerStatefulWidget {
   SettingsList({required this.bike});
   final Bike bike;
 
   @override
-  _SettingsListState createState() => _SettingsListState();
+  ConsumerState<SettingsList> createState() => _SettingsListState();
 }
 
-class _SettingsListState extends State<SettingsList> {
-  final db = DatabaseService();
+class _SettingsListState extends ConsumerState<SettingsList> {
   List<Setting> settings = [];
 
   @override
@@ -60,6 +60,7 @@ class _SettingsListState extends State<SettingsList> {
           onDismissed: (direction) => setState(() {
             final key = bike.id + '-' + settings[index].id;
             Hive.box<Setting>('settings').delete(key);
+            final db = ref.read(databaseServiceProvider);
             db.deleteSetting(bike.id, settings[index].id);
             settings.removeAt(index);
           }),

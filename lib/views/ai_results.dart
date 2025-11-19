@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:suspension_pro/core/models/ai_response.dart';
-import 'package:suspension_pro/core/models/setting.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:suspension_pro/features/ai/domain/models/ai_response.dart';
+import 'package:suspension_pro/features/bikes/domain/models/setting.dart';
+import 'package:suspension_pro/core/providers/service_providers.dart';
 import 'package:suspension_pro/core/prompts/prompts.dart';
 import 'package:suspension_pro/core/utilities/helpers.dart';
 
-class AiResultsDialog extends StatefulWidget {
+class AiResultsDialog extends ConsumerStatefulWidget {
   const AiResultsDialog({
     Key? key,
     required this.weight,
@@ -22,10 +24,10 @@ class AiResultsDialog extends StatefulWidget {
   final String? shockName;
 
   @override
-  State<AiResultsDialog> createState() => _AiResultsDialogState();
+  ConsumerState<AiResultsDialog> createState() => _AiResultsDialogState();
 }
 
-class _AiResultsDialogState extends State<AiResultsDialog> {
+class _AiResultsDialogState extends ConsumerState<AiResultsDialog> {
   late String responseChoices;
   final openAI = OpenAI.instance.build(
     token: getEnv('OPEN_API'),
@@ -154,16 +156,16 @@ class _AiResultsDialogState extends State<AiResultsDialog> {
   }
 }
 
-class SaveSettingButton extends StatefulWidget {
+class SaveSettingButton extends ConsumerStatefulWidget {
   const SaveSettingButton({Key? key, required this.response});
 
   final Setting response;
 
   @override
-  State<SaveSettingButton> createState() => _SaveSettingButtonState();
+  ConsumerState<SaveSettingButton> createState() => _SaveSettingButtonState();
 }
 
-class _SaveSettingButtonState extends State<SaveSettingButton> {
+class _SaveSettingButtonState extends ConsumerState<SaveSettingButton> {
   final _settingNameController = TextEditingController();
   late Setting response;
 
@@ -204,6 +206,7 @@ class _SaveSettingButtonState extends State<SaveSettingButton> {
                       onPressed: () async {
                         // HiveService().putIntoBox('settings', response!.id, response, true);
                         setState(() => response.id = _settingNameController.text);
+                        final db = ref.read(databaseServiceProvider);
                         await db.updateSetting(response);
                         Navigator.of(context).pop();
                       },

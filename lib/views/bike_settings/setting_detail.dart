@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:suspension_pro/core/models/setting.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:suspension_pro/features/bikes/domain/models/setting.dart';
 import 'package:suspension_pro/core/services/hive_service.dart';
+import 'package:suspension_pro/core/providers/service_providers.dart';
 import 'package:suspension_pro/views/bike_settings/settings_form_field.dart';
-import 'package:suspension_pro/core/models/bike.dart';
-import 'package:suspension_pro/core/models/component_setting.dart';
+import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
+import 'package:suspension_pro/features/bikes/domain/models/component_setting.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:suspension_pro/core/models/fork.dart';
-import 'package:suspension_pro/core/models/shock.dart';
-import 'package:suspension_pro/core/services/db_service.dart';
+import 'package:suspension_pro/features/bikes/domain/models/fork.dart';
+import 'package:suspension_pro/features/bikes/domain/models/shock.dart';
 
-class SettingDetails extends StatefulWidget {
+class SettingDetails extends ConsumerStatefulWidget {
   SettingDetails({this.name, this.bike, this.fork, this.shock, this.frontTire, this.rearTire, this.notes});
 
   final String? name, frontTire, rearTire, notes;
@@ -17,12 +18,11 @@ class SettingDetails extends StatefulWidget {
   final ComponentSetting? fork, shock;
 
   @override
-  _SettingDetailsState createState() => _SettingDetailsState();
+  ConsumerState<SettingDetails> createState() => _SettingDetailsState();
 }
 
-class _SettingDetailsState extends State<SettingDetails> {
+class _SettingDetailsState extends ConsumerState<SettingDetails> {
   final _formKey = GlobalKey<FormState>();
-  final db = DatabaseService();
   final _settingNameController = TextEditingController();
   late String _hscFork,
       _lscFork,
@@ -74,6 +74,7 @@ class _SettingDetailsState extends State<SettingDetails> {
     );
 
     HiveService().putIntoBox('settings', settingId, setting, true);
+    final db = ref.read(databaseServiceProvider);
     await db.updateSetting(setting);
   }
 
