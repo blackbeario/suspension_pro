@@ -6,7 +6,7 @@ part of 'auth_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$firebaseAuthStateHash() => r'25e25d46582c0fdbe0890123ea638575f4b9d9ff';
+String _$firebaseAuthStateHash() => r'7c592ec3968104b53384a4b3c41b960db61c42e4';
 
 /// Provider to listen to Firebase auth state changes
 ///

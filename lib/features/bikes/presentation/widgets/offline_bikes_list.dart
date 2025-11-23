@@ -1,14 +1,14 @@
-import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:suspension_pro/features/bikes/presentation/screens/bikeform.dart';
 import 'package:suspension_pro/features/bikes/presentation/widgets/bikes_list.dart';
-import 'package:suspension_pro/views/bikes/new_user_action.dart';
-import 'package:suspension_pro/views/forms/bikeform.dart';
+import 'package:suspension_pro/features/bikes/presentation/widgets/new_user_action.dart';
+import 'package:suspension_pro/features/profile/presentation/widgets/profile_pic.dart';
 import 'package:suspension_pro/features/purchases/presentation/screens/buy_credits.dart';
 import 'package:suspension_pro/features/profile/presentation/screens/profile_screen.dart';
-import 'package:suspension_pro/views/profile/profile_pic.dart';
 import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
 import 'package:suspension_pro/features/auth/domain/user_notifier.dart';
+import 'package:suspension_pro/features/connectivity/presentation/widgets/connectivity_widget_wrapper.dart';
 
 class OfflineBikesList extends ConsumerStatefulWidget {
   const OfflineBikesList({Key? key, required this.bikes}) : super(key: key);

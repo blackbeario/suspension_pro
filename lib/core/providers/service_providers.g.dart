@@ -6,7 +6,7 @@ part of 'service_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$databaseServiceHash() => r'dfc85031ab5065f7ed82c39dd1089a7f8087b5e8';
+String _$databaseServiceHash() => r'8865fedf2ff3cfb3699eea6029d65f22c8eb148c';
 
 /// Database Service Provider
 /// Provides access to Firestore operations
@@ -27,7 +27,7 @@ final databaseServiceProvider = AutoDisposeProvider<DatabaseService>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DatabaseServiceRef = AutoDisposeProviderRef<DatabaseService>;
-String _$authServiceHash() => r'e771c719cfb4bd87b7f15fc6722ef9f56a9844e4';
+String _$authServiceHash() => r'82398d9f38c720e4ddf6b218248f15089fd4f178';
 
 /// Auth Service Provider
 /// Handles Firebase and Hive authentication
@@ -46,7 +46,7 @@ final authServiceProvider = AutoDisposeProvider<AuthService>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AuthServiceRef = AutoDisposeProviderRef<AuthService>;
-String _$hiveServiceHash() => r'8df37bcf610476ae55cb241c6cb79a2081550312';
+String _$hiveServiceHash() => r'9a3c04f5e3ba12b75b6539b2a85c574ab706653b';
 
 /// Hive Service Provider
 /// Manages local Hive database operations
@@ -66,7 +66,7 @@ final hiveServiceProvider = AutoDisposeProvider<HiveService>.internal(
 // ignore: unused_element
 typedef HiveServiceRef = AutoDisposeProviderRef<HiveService>;
 String _$inAppPurchaseServiceHash() =>
-    r'0c644eac404f27bd3fb939ab442dfefb7ef57a65';
+    r'408bd896a09d5932a34126bb824d37e246af8621';
 
 /// In-App Purchase Service Provider
 /// Handles purchase flow and verification
@@ -87,7 +87,7 @@ final inAppPurchaseServiceProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef InAppPurchaseServiceRef = AutoDisposeProviderRef<InAppPurchaseService>;
-String _$analyticsServiceHash() => r'58d82b4cf5c065cbeb7ea1ecaaaf3d5e9df7cc09';
+String _$analyticsServiceHash() => r'bc02c9f2dac78875378bad38e1cd8f8b22d97a7d';
 
 /// Analytics Service Provider
 /// Provides Firebase Analytics logging
@@ -107,7 +107,7 @@ final analyticsServiceProvider = AutoDisposeProvider<Analytics>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AnalyticsServiceRef = AutoDisposeProviderRef<Analytics>;
-String _$encryptionServiceHash() => r'35a23d4e9239075898a43f54cbe8d62e02f503d5';
+String _$encryptionServiceHash() => r'0b1d3703b1e130056377c0ac40ab6c5cb707d82a';
 
 /// Encryption Service Provider
 /// Handles password encryption/decryption

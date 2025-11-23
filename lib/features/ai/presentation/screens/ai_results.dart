@@ -103,7 +103,7 @@ class _AiResultsDialogState extends ConsumerState<AiResultsDialog> {
           }
 
           if (snapshot.connectionState == ConnectionState.done) {
-            final ChatCTResponse? data = snapshot.data as ChatCTResponse?;
+            final ChatCTResponse? data = snapshot.data;
             for (var element in data!.choices) {
               responseChoices = element.message!.content;
               // print(responseChoices);

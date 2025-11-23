@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:suspension_pro/features/purchases/domain/purchase_notifier.dart';
@@ -8,6 +7,7 @@ import 'package:suspension_pro/core/providers/service_providers.dart';
 import 'package:suspension_pro/features/purchases/presentation/widgets/connection_check_tile.dart';
 import 'package:suspension_pro/features/purchases/presentation/widgets/consumable_box.dart';
 import 'package:suspension_pro/features/purchases/presentation/widgets/product_list.dart';
+import 'package:suspension_pro/features/connectivity/presentation/widgets/connectivity_widget_wrapper.dart';
 
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
@@ -90,6 +90,7 @@ class _BuyCreditsState extends ConsumerState<BuyCredits> {
             child: ConnectivityWidgetWrapper(
               alignment: Alignment.centerLeft,
               offlineWidget: Icon(Icons.wifi_off, size: 24, color: Colors.red),
+              child: SizedBox.shrink(),
             ),
           ),
         ],

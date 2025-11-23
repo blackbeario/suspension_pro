@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:suspension_pro/views/roadmap/app_roadmap.dart';
+import 'package:suspension_pro/features/profile/presentation/widgets/profile_pic.dart';
 import 'package:suspension_pro/features/auth/domain/user_notifier.dart';
 import 'package:suspension_pro/features/auth/presentation/auth_view_model.dart';
 import 'package:suspension_pro/core/utilities/helpers.dart';
-import 'package:suspension_pro/views/profile/profile_pic.dart';
 import 'package:suspension_pro/features/profile/presentation/screens/profile_form_screen.dart';
+import 'package:suspension_pro/features/profile/presentation/widgets/roadmap/app_roadmap.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);

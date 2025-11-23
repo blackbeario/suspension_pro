@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:suspension_pro/views/in_app_purchases/in_app_bloc.dart';
+import 'package:suspension_pro/features/purchases/presentation/in_app_bloc.dart';
 
 void main() {
   late InAppBloc bloc;

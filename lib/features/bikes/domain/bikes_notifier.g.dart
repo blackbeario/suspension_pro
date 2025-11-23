@@ -6,7 +6,7 @@ part of 'bikes_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$bikesStreamHash() => r'f3fba82a5e358ad692453c09834498f83443ec1b';
+String _$bikesStreamHash() => r'3628ca40a670a92b89153756ea2a9902deead48f';
 
 /// Stream provider for bikes from Firestore
 ///

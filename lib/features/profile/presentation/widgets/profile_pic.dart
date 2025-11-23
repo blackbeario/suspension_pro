@@ -43,7 +43,7 @@ class ProfilePic extends ConsumerWidget {
           backgroundColor: CupertinoColors.activeBlue,
           radius: size / 2,
           child: ClipOval(
-            child: userState.profilePic != null && userState.profilePic.isNotEmpty
+            child: userState.profilePic.isNotEmpty
                 ? CachedNetworkImage(
                     imageUrl: userState.profilePic,
                         width: size,

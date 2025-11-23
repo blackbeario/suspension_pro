@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:suspension_pro/views/bike_settings/get_ai_button.dart';
-import 'package:suspension_pro/views/bike_settings/share_button.dart';
+import 'package:suspension_pro/features/bikes/presentation/widgets/get_ai_button.dart';
+import 'package:suspension_pro/features/bikes/presentation/widgets/share_button.dart';
 import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
 import 'package:suspension_pro/features/bikes/domain/models/component_setting.dart';
 import 'package:suspension_pro/features/bikes/domain/models/fork.dart';
@@ -10,7 +10,6 @@ import 'package:suspension_pro/features/bikes/domain/models/setting.dart';
 import 'package:suspension_pro/features/bikes/domain/models/shock.dart';
 import 'package:suspension_pro/core/utilities/helpers.dart';
 import 'package:suspension_pro/core/providers/service_providers.dart';
-import 'package:suspension_pro/views/bikes/bikes_bloc.dart';
 import 'setting_detail.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -32,8 +31,22 @@ class _SettingsListState extends ConsumerState<SettingsList> {
   }
 
   getSettings() async {
-    settings = await BikesBloc().getBikeSettingsFromHive(widget.bike.id);
+    settings = await _getBikeSettingsFromHive(widget.bike.id);
     setState(() {});
+  }
+
+  Future<List<Setting>> _getBikeSettingsFromHive(String bikeId) async {
+    List<String> keysList = [];
+    List<Setting> settingsList = [];
+    var box = Hive.box<Setting>('settings');
+    var boxKeys = box.keys;
+    for (var key in boxKeys) keysList.add(key);
+    var bikeSettings = keysList.where((String key) => key.contains(bikeId));
+    for (String key in bikeSettings) {
+      Setting setting = box.get(key)!;
+      settingsList.add(setting);
+    }
+    return settingsList;
   }
 
   Widget _getSettings(BuildContext context, Bike bike) {

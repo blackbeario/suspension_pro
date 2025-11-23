@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:suspension_pro/features/purchases/domain/purchase_notifier.dart';
-import 'package:suspension_pro/views/onboarding/onboarding_page.dart';
+import 'package:suspension_pro/features/onboarding/presentation/screens/onboarding_page.dart';
 
 class Onboarding extends ConsumerStatefulWidget {
   const Onboarding({Key? key}) : super(key: key);

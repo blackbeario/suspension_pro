@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:suspension_pro/core/services/analytics_service.dart';
 import 'package:suspension_pro/core/services/auth_service.dart';
@@ -13,7 +14,7 @@ part 'service_providers.g.dart';
 /// Provides access to Firestore operations
 /// Injects current user's uid from userNotifierProvider
 @riverpod
-DatabaseService databaseService(DatabaseServiceRef ref) {
+DatabaseService databaseService(Ref ref) {
   final userState = ref.watch(userNotifierProvider);
   return DatabaseService(uid: userState.uid);
 }
@@ -21,34 +22,34 @@ DatabaseService databaseService(DatabaseServiceRef ref) {
 /// Auth Service Provider
 /// Handles Firebase and Hive authentication
 @riverpod
-AuthService authService(AuthServiceRef ref) {
+AuthService authService(Ref ref) {
   return AuthService();
 }
 
 /// Hive Service Provider
 /// Manages local Hive database operations
 @riverpod
-HiveService hiveService(HiveServiceRef ref) {
+HiveService hiveService(Ref ref) {
   return HiveService();
 }
 
 /// In-App Purchase Service Provider
 /// Handles purchase flow and verification
 @riverpod
-InAppPurchaseService inAppPurchaseService(InAppPurchaseServiceRef ref) {
+InAppPurchaseService inAppPurchaseService(Ref ref) {
   return InAppPurchaseService();
 }
 
 /// Analytics Service Provider
 /// Provides Firebase Analytics logging
 @riverpod
-Analytics analyticsService(AnalyticsServiceRef ref) {
+Analytics analyticsService(Ref ref) {
   return Analytics();
 }
 
 /// Encryption Service Provider
 /// Handles password encryption/decryption
 @riverpod
-EncryptionService encryptionService(EncryptionServiceRef ref) {
+EncryptionService encryptionService(Ref ref) {
   return EncryptionService();
 }

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:suspension_pro/core/providers/service_providers.dart';
 import 'package:suspension_pro/features/auth/domain/user_notifier.dart';
@@ -158,7 +159,7 @@ class AuthViewModel extends _$AuthViewModel {
 
 /// Provider to listen to Firebase auth state changes
 @riverpod
-Stream<User?> firebaseAuthState(FirebaseAuthStateRef ref) {
+Stream<User?> firebaseAuthState(Ref ref) {
   final authService = ref.watch(authServiceProvider);
   return authService.user;
 }
