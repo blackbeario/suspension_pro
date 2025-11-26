@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:suspension_pro/core/hive_helper/hive_types.dart';
-import 'package:suspension_pro/core/hive_helper/hive_adapters.dart';
-import 'package:suspension_pro/core/hive_helper/fields/bike_fields.dart';
-import 'package:suspension_pro/features/bikes/domain/models/fork.dart';
-import 'package:suspension_pro/features/bikes/domain/models/shock.dart';
+import 'package:ridemetrx/core/hive_helper/hive_types.dart';
+import 'package:ridemetrx/core/hive_helper/hive_adapters.dart';
+import 'package:ridemetrx/core/hive_helper/fields/bike_fields.dart';
+import 'package:ridemetrx/features/bikes/domain/models/fork.dart';
+import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
 
 part 'bike.g.dart';
 

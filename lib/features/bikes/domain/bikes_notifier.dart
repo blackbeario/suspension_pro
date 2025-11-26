@@ -4,12 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
-import 'package:suspension_pro/features/bikes/domain/models/setting.dart';
-import 'package:suspension_pro/core/providers/service_providers.dart';
-import 'package:suspension_pro/core/services/hive_service.dart';
-import 'package:suspension_pro/features/auth/domain/user_notifier.dart';
-import 'package:suspension_pro/features/bikes/domain/bikes_state.dart';
+import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
+import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
+import 'package:ridemetrx/core/providers/service_providers.dart';
+import 'package:ridemetrx/core/services/hive_service.dart';
+import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
+import 'package:ridemetrx/features/bikes/domain/bikes_state.dart';
 import 'package:hive_ce/hive.dart';
 
 part 'bikes_notifier.g.dart';

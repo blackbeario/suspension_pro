@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:suspension_pro/features/bikes/presentation/widgets/get_ai_button.dart';
-import 'package:suspension_pro/features/bikes/presentation/widgets/share_button.dart';
-import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
-import 'package:suspension_pro/features/bikes/domain/models/component_setting.dart';
-import 'package:suspension_pro/features/bikes/domain/models/fork.dart';
-import 'package:suspension_pro/features/bikes/domain/models/setting.dart';
-import 'package:suspension_pro/features/bikes/domain/models/shock.dart';
-import 'package:suspension_pro/core/utilities/helpers.dart';
-import 'package:suspension_pro/core/providers/service_providers.dart';
+import 'package:ridemetrx/features/bikes/presentation/widgets/get_ai_button.dart';
+import 'package:ridemetrx/features/bikes/presentation/widgets/share_button.dart';
+import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
+import 'package:ridemetrx/features/bikes/domain/models/component_setting.dart';
+import 'package:ridemetrx/features/bikes/domain/models/fork.dart';
+import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
+import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
+import 'package:ridemetrx/core/utilities/helpers.dart';
+import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'setting_detail.dart';
 import 'package:flutter/cupertino.dart';
 

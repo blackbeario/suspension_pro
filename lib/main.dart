@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:suspension_pro/core/hive_helper/register_adapters.dart';
-import 'package:suspension_pro/core/routing/app_router.dart';
-import 'package:suspension_pro/core/themes/styles.dart';
-import 'package:suspension_pro/features/auth/presentation/auth_state_listener.dart';
-import 'package:suspension_pro/features/connectivity/domain/connectivity_notifier.dart';
+import 'package:ridemetrx/core/hive_helper/register_adapters.dart';
+import 'package:ridemetrx/core/routing/app_router.dart';
+import 'package:ridemetrx/core/themes/styles.dart';
+import 'package:ridemetrx/features/auth/presentation/auth_state_listener.dart';
+import 'package:ridemetrx/features/connectivity/domain/connectivity_notifier.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 

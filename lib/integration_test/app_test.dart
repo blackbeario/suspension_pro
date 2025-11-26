@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_driver/flutter_driver.dart' as flutterDriver;
 import 'package:integration_test/integration_test.dart';
-import 'package:suspension_pro/main.dart';
+import 'package:ridemetrx/main.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

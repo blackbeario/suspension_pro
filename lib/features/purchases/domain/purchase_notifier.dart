@@ -1,7 +1,7 @@
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:suspension_pro/features/purchases/domain/purchase_state.dart';
+import 'package:ridemetrx/features/purchases/domain/purchase_state.dart';
 
 part 'purchase_notifier.g.dart';
 

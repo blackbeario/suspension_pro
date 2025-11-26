@@ -1,5 +1,5 @@
 import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:suspension_pro/core/utilities/random_key_generator.dart';
+import 'package:ridemetrx/core/utilities/random_key_generator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class EncryptionService {

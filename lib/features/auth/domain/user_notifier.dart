@@ -1,6 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:suspension_pro/features/auth/domain/models/user.dart';
-import 'package:suspension_pro/features/auth/domain/user_state.dart';
+import 'package:ridemetrx/features/auth/domain/models/user.dart';
+import 'package:ridemetrx/features/auth/domain/user_state.dart';
 
 part 'user_notifier.g.dart';
 

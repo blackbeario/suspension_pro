@@ -3,9 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:suspension_pro/features/auth/domain/models/user.dart';
-import 'package:suspension_pro/core/services/encryption_service.dart';
-import 'package:suspension_pro/core/services/hive_service.dart';
+import 'package:ridemetrx/features/auth/domain/models/user.dart';
+import 'package:ridemetrx/core/services/encryption_service.dart';
+import 'package:ridemetrx/core/services/hive_service.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;

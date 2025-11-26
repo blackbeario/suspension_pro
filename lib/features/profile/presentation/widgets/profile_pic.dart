@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:suspension_pro/features/auth/domain/user_notifier.dart';
-import 'package:suspension_pro/core/utilities/imageActionSheet.dart';
+import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
+import 'package:ridemetrx/core/utilities/imageActionSheet.dart';
 
 class ProfilePicEditor extends StatelessWidget {
   ProfilePicEditor({Key? key}) : super(key: key);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:suspension_pro/features/purchases/domain/purchase_notifier.dart';
-import 'package:suspension_pro/core/providers/service_providers.dart';
+import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
+import 'package:ridemetrx/core/providers/service_providers.dart';
 
 class PreviousConsumablePurchases extends ConsumerWidget {
   const PreviousConsumablePurchases({Key? key}) : super(key: key);

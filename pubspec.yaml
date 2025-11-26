@@ -1,6 +1,6 @@
-name: suspension_pro
-description: Flutter bike suspension project.
-version: 0.1.5+1
+name: ridemetrx
+description: Mountain bike suspension settings tracker with roughness detection.
+version: 0.2.0+1
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

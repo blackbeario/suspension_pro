@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:suspension_pro/features/auth/domain/user_notifier.dart';
-import 'package:suspension_pro/core/providers/service_providers.dart';
-import 'package:suspension_pro/features/profile/presentation/widgets/profile_pic.dart';
+import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
+import 'package:ridemetrx/core/providers/service_providers.dart';
+import 'package:ridemetrx/features/profile/presentation/widgets/profile_pic.dart';
 
 class ProfileFormScreen extends ConsumerStatefulWidget {
   const ProfileFormScreen({Key? key}) : super(key: key);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
+import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 
 class GetAiButton extends StatelessWidget {
   const GetAiButton({

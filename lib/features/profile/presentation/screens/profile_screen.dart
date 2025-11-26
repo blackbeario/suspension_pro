@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:suspension_pro/features/profile/presentation/widgets/profile_pic.dart';
-import 'package:suspension_pro/features/auth/domain/user_notifier.dart';
-import 'package:suspension_pro/features/auth/presentation/auth_view_model.dart';
-import 'package:suspension_pro/core/utilities/helpers.dart';
-import 'package:suspension_pro/features/profile/presentation/screens/profile_form_screen.dart';
-import 'package:suspension_pro/features/profile/presentation/widgets/roadmap/app_roadmap.dart';
+import 'package:ridemetrx/features/profile/presentation/widgets/profile_pic.dart';
+import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
+import 'package:ridemetrx/features/auth/presentation/auth_view_model.dart';
+import 'package:ridemetrx/core/utilities/helpers.dart';
+import 'package:ridemetrx/features/profile/presentation/screens/profile_form_screen.dart';
+import 'package:ridemetrx/features/profile/presentation/widgets/roadmap/app_roadmap.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -63,13 +63,13 @@ class ProfileScreen extends ConsumerWidget {
             child: ListTile(
               title: const Text('Privacy Policy'),
               trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () => loadURL('https://vibesoftware.io/privacy/suspension_pro'),
+              onTap: () => loadURL('https://vibesoftware.io/privacy/ridemetrx'),
             ),
           ),
           ListTile(
             title: const Text('Terms & Conditions'),
             trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () => loadURL('https://vibesoftware.io/terms/suspension_pro'),
+            onTap: () => loadURL('https://vibesoftware.io/terms/ridemetrx'),
           ),
           const SizedBox(height: 40),
           ListTile(

@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:suspension_pro/core/services/analytics_service.dart';
-import 'package:suspension_pro/core/services/auth_service.dart';
-import 'package:suspension_pro/core/services/db_service.dart';
-import 'package:suspension_pro/core/services/encryption_service.dart';
-import 'package:suspension_pro/core/services/hive_service.dart';
-import 'package:suspension_pro/core/services/in_app_service.dart';
-import 'package:suspension_pro/features/auth/domain/user_notifier.dart';
+import 'package:ridemetrx/core/services/analytics_service.dart';
+import 'package:ridemetrx/core/services/auth_service.dart';
+import 'package:ridemetrx/core/services/db_service.dart';
+import 'package:ridemetrx/core/services/encryption_service.dart';
+import 'package:ridemetrx/core/services/hive_service.dart';
+import 'package:ridemetrx/core/services/in_app_service.dart';
+import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
 
 part 'service_providers.g.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:suspension_pro/core/prompts/components.dart';
+import 'package:ridemetrx/core/prompts/components.dart';
 
 class Prompt {
   Prompt(

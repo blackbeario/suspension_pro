@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:suspension_pro/core/providers/service_providers.dart';
-import 'package:suspension_pro/features/auth/domain/user_notifier.dart';
-import 'package:suspension_pro/features/auth/presentation/auth_view_model.dart';
+import 'package:ridemetrx/core/providers/service_providers.dart';
+import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
+import 'package:ridemetrx/features/auth/presentation/auth_view_model.dart';
 
 /// Provider that listens to Firebase auth state changes and updates UserNotifier
 final authStateListenerProvider = StreamProvider<User?>((ref) {

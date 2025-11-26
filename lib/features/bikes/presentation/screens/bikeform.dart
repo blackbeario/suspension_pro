@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
-import 'package:suspension_pro/features/bikes/domain/models/fork.dart';
-import 'package:suspension_pro/features/bikes/domain/models/shock.dart';
-import 'package:suspension_pro/core/providers/service_providers.dart';
+import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
+import 'package:ridemetrx/features/bikes/domain/models/fork.dart';
+import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
+import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'fork_form.dart';
 import 'shock_form.dart';
 import 'package:flutter/cupertino.dart';

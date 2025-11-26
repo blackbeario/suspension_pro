@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:suspension_pro/core/providers/service_providers.dart';
-import 'package:suspension_pro/features/auth/domain/user_notifier.dart';
+import 'package:ridemetrx/core/providers/service_providers.dart';
+import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
 
 class ImageActionSheet extends ConsumerStatefulWidget {
   const ImageActionSheet({Key? key}) : super(key: key);

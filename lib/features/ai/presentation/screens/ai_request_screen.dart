@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:suspension_pro/features/ai/presentation/screens/ai_results.dart';
-import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
-import 'package:suspension_pro/features/bikes/domain/bikes_notifier.dart';
-import 'package:suspension_pro/features/purchases/domain/purchase_notifier.dart';
-import 'package:suspension_pro/features/purchases/presentation/widgets/credits_banner.dart';
-import 'package:suspension_pro/features/connectivity/presentation/widgets/connectivity_widget_wrapper.dart';
+import 'package:ridemetrx/features/ai/presentation/screens/ai_results.dart';
+import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
+import 'package:ridemetrx/features/bikes/domain/bikes_notifier.dart';
+import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
+import 'package:ridemetrx/features/purchases/presentation/widgets/credits_banner.dart';
+import 'package:ridemetrx/features/connectivity/presentation/widgets/connectivity_widget_wrapper.dart';
 
 class AiRequestScreen extends ConsumerStatefulWidget {
   const AiRequestScreen({Key? key, this.selectedBike}) : super(key: key);

@@ -1,4 +1,4 @@
-import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
+import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 
 class BikesState {
   final List<Bike> bikes;

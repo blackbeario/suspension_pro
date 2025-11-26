@@ -25,9 +25,9 @@ Future share(BuildContext context, String bikeName, String username, String sett
     String? shockProduct, shockSettings, frontTire, rearTire) async {
   final String? forkString = forkProduct != null ? '\n\n$forkProduct, Fork Settings: \n$forkSettings,' : null;
   final String? shockString = shockProduct != null ? '\n\n$shockProduct Shock Settings: \n$shockSettings,' : null;
-  final String appStoreString = '\n\nGet the Suspension Pro App for iOS soon on the Apple AppStore!';
+  final String appStoreString = '\n\nGet the RideMetrx App for iOS on the Apple AppStore!';
   final String body =
-      "Suspension Pro '$settingName' shared by ${username} $forkString $shockString \n\nFront Tire: \n$frontTire, /n/nRear Tire: \n$rearTire $appStoreString";
+      "RideMetrx '$settingName' shared by ${username} $forkString $shockString \n\nFront Tire: \n$frontTire, /n/nRear Tire: \n$rearTire $appStoreString";
 
   await Share.share(body, subject: '$bikeName $settingName Setting');
   // await db.addSharePoints(role);

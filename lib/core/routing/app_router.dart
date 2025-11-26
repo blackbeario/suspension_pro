@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:suspension_pro/features/auth/domain/user_notifier.dart';
-import 'package:suspension_pro/features/auth/presentation/screens/login_page.dart';
-import 'package:suspension_pro/features/bikes/presentation/screens/bikes_list_screen.dart';
-import 'package:suspension_pro/features/onboarding/presentation/screens/onboarding.dart';
-import 'package:suspension_pro/features/profile/presentation/screens/profile_screen.dart';
-import 'package:suspension_pro/features/ai/presentation/screens/ai_request_screen.dart';
+import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
+import 'package:ridemetrx/features/auth/presentation/screens/login_page.dart';
+import 'package:ridemetrx/features/bikes/presentation/screens/bikes_list_screen.dart';
+import 'package:ridemetrx/features/onboarding/presentation/screens/onboarding.dart';
+import 'package:ridemetrx/features/profile/presentation/screens/profile_screen.dart';
+import 'package:ridemetrx/features/ai/presentation/screens/ai_request_screen.dart';
 
 part 'app_router.g.dart';
 

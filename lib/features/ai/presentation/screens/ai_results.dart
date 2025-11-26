@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:suspension_pro/features/ai/domain/models/ai_response.dart';
-import 'package:suspension_pro/features/bikes/domain/models/setting.dart';
-import 'package:suspension_pro/core/providers/service_providers.dart';
-import 'package:suspension_pro/core/prompts/prompts.dart';
-import 'package:suspension_pro/core/utilities/helpers.dart';
+import 'package:ridemetrx/features/ai/domain/models/ai_response.dart';
+import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
+import 'package:ridemetrx/core/providers/service_providers.dart';
+import 'package:ridemetrx/core/prompts/prompts.dart';
+import 'package:ridemetrx/core/utilities/helpers.dart';
 
 class AiResultsDialog extends ConsumerStatefulWidget {
   const AiResultsDialog({

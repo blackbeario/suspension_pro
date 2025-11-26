@@ -2,14 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:suspension_pro/features/bikes/presentation/screens/bikeform.dart';
-import 'package:suspension_pro/features/bikes/presentation/screens/fork_form.dart';
-import 'package:suspension_pro/features/bikes/presentation/screens/settings_list.dart';
-import 'package:suspension_pro/features/bikes/presentation/screens/shock_form.dart';
-import 'package:suspension_pro/features/bikes/domain/bikes_notifier.dart';
-import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
-import 'package:suspension_pro/core/providers/service_providers.dart';
-import 'package:suspension_pro/core/utilities/helpers.dart';
+import 'package:ridemetrx/features/bikes/presentation/screens/bikeform.dart';
+import 'package:ridemetrx/features/bikes/presentation/screens/fork_form.dart';
+import 'package:ridemetrx/features/bikes/presentation/screens/settings_list.dart';
+import 'package:ridemetrx/features/bikes/presentation/screens/shock_form.dart';
+import 'package:ridemetrx/features/bikes/domain/bikes_notifier.dart';
+import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
+import 'package:ridemetrx/core/providers/service_providers.dart';
+import 'package:ridemetrx/core/utilities/helpers.dart';
 
 class BikesList extends ConsumerStatefulWidget {
   const BikesList({Key? key, required this.bikes}) : super(key: key);

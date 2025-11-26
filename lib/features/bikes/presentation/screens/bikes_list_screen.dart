@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
-import 'package:suspension_pro/features/bikes/domain/bikes_notifier.dart';
-import 'package:suspension_pro/features/bikes/presentation/widgets/bikes_list.dart';
-import 'package:suspension_pro/features/bikes/presentation/widgets/offline_bikes_list.dart';
-import 'package:suspension_pro/features/connectivity/presentation/widgets/connectivity_widget_wrapper.dart';
+import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
+import 'package:ridemetrx/features/bikes/domain/bikes_notifier.dart';
+import 'package:ridemetrx/features/bikes/presentation/widgets/bikes_list.dart';
+import 'package:ridemetrx/features/bikes/presentation/widgets/offline_bikes_list.dart';
+import 'package:ridemetrx/features/connectivity/presentation/widgets/connectivity_widget_wrapper.dart';
 
 class BikesListScreen extends ConsumerWidget {
   const BikesListScreen({Key? key, this.bike}) : super(key: key);

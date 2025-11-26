@@ -1,4 +1,4 @@
-import 'package:suspension_pro/features/auth/domain/models/user.dart';
+import 'package:ridemetrx/features/auth/domain/models/user.dart';
 
 /// Represents the current user state in the application
 class UserState {

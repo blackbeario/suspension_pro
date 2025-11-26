@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:suspension_pro/features/purchases/presentation/in_app_bloc.dart';
+import 'package:ridemetrx/features/purchases/presentation/in_app_bloc.dart';
 // import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 // import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
-import 'package:suspension_pro/features/purchases/presentation/presentation/consumable_store.dart';
+import 'package:ridemetrx/features/purchases/presentation/presentation/consumable_store.dart';
 
 class InAppPurchaseService {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;

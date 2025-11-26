@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:suspension_pro/features/purchases/domain/purchase_notifier.dart';
-import 'package:suspension_pro/core/providers/service_providers.dart';
+import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
+import 'package:ridemetrx/core/providers/service_providers.dart';
 
 class InAppProductList extends ConsumerWidget {
   const InAppProductList({Key? key}) : super(key: key);

@@ -1,7 +1,7 @@
 import 'package:hive_ce/hive.dart';
-import 'package:suspension_pro/core/hive_helper/hive_types.dart';
-import 'package:suspension_pro/core/hive_helper/hive_adapters.dart';
-import 'package:suspension_pro/core/hive_helper/fields/shock_fields.dart';
+import 'package:ridemetrx/core/hive_helper/hive_types.dart';
+import 'package:ridemetrx/core/hive_helper/hive_adapters.dart';
+import 'package:ridemetrx/core/hive_helper/fields/shock_fields.dart';
 
 
 part 'shock.g.dart';

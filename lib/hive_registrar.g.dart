@@ -3,12 +3,12 @@
 // Check in to version control
 
 import 'package:hive_ce/hive.dart';
-import 'package:suspension_pro/features/auth/domain/models/user.dart';
-import 'package:suspension_pro/features/bikes/domain/models/bike.dart';
-import 'package:suspension_pro/features/bikes/domain/models/component_setting.dart';
-import 'package:suspension_pro/features/bikes/domain/models/fork.dart';
-import 'package:suspension_pro/features/bikes/domain/models/setting.dart';
-import 'package:suspension_pro/features/bikes/domain/models/shock.dart';
+import 'package:ridemetrx/features/auth/domain/models/user.dart';
+import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
+import 'package:ridemetrx/features/bikes/domain/models/component_setting.dart';
+import 'package:ridemetrx/features/bikes/domain/models/fork.dart';
+import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
+import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:suspension_pro/features/bikes/domain/models/setting.dart';
+import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
 
 class AiResponseWidget extends StatelessWidget {
   AiResponseWidget({required this.response, required this.forkName, this.shockName});

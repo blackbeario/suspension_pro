@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:suspension_pro/features/auth/presentation/auth_view_model.dart';
-import 'package:suspension_pro/features/auth/presentation/screens/signup_page.dart';
+import 'package:ridemetrx/features/auth/presentation/auth_view_model.dart';
+import 'package:ridemetrx/features/auth/presentation/screens/signup_page.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -74,7 +74,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             Padding(
               padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
               child: Text(
-                'Suspension Pro',
+                'RideMetrx',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,

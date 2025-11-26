@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:suspension_pro/features/connectivity/domain/connectivity_notifier.dart';
+import 'package:ridemetrx/features/connectivity/domain/connectivity_notifier.dart';
 
 /// A widget that wraps its child and shows different content based on connectivity status
 /// Replaces the old ConnectivityWidgetWrapper that used Provider<ConnectivityStatus>

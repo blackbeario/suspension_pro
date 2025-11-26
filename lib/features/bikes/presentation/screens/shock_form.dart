@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:suspension_pro/features/bikes/domain/models/shock.dart';
-import 'package:suspension_pro/core/providers/service_providers.dart';
+import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
+import 'package:ridemetrx/core/providers/service_providers.dart';
 
 class ShockForm extends ConsumerStatefulWidget {
   ShockForm({this.bikeId, this.shock, this.shockCallback});

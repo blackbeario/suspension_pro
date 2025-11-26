@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:suspension_pro/features/purchases/domain/purchase_notifier.dart';
+import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
 
 class CreditsBanner extends ConsumerWidget {
   const CreditsBanner({Key? key}) : super(key: key);
