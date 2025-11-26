@@ -1,140 +1,128 @@
-# Suspension Pro - Sync & Monetization Strategy
+# RideMetrx - Sync & Monetization Strategy
 
-**Date:** 2025-11-23
-**Status:** Planning Phase - Ready for Implementation
+**Date:** 2025-11-26 (Updated after rebrand)
+**Status:** Ready for Phase 2 Implementation
 
 ---
 
 ## 📋 Executive Summary
 
-This document outlines the strategic direction and technical implementation plan for Suspension Pro's data synchronization and monetization strategy.
+This document outlines the strategic direction and technical implementation plan for RideMetrx's data synchronization and monetization strategy.
 
 ### Key Decisions Made:
-1. **Implement paid cloud sync** as part of a Pro tier subscription
-2. **Keep free tier fully functional** with Hive-only (local) storage
-3. **Deprecate or reframe AI features** (ChatGPT-based predictions are unreliable)
-4. **Focus on data persistence & history** as core value proposition
-5. **Build toward community database** for shared settings (future feature)
+1. **✅ COMPLETED: Rebranded to RideMetrx** - New bundle IDs, updated branding
+2. **✅ COMPLETED: Removed AI features** - ChatGPT-based predictions were unreliable
+3. **✅ COMPLETED: Updated IAP to subscriptions** - Pro tier pricing model
+4. **Implement paid cloud sync** as part of Pro tier subscription
+5. **Keep free tier fully functional** with Hive-only (unlimited bikes/settings)
+6. **Community database (free)** for shared settings
+7. **Maintenance tracking (free)** with manual entry
+8. **Metrx feature (Pro)** - Roughness detection using accelerometer + GPS
 
 ---
 
-## 🎯 Current State Analysis
+## 🎯 Current State (Post-Rebrand)
+
+### ✅ What's Been Completed:
+- **App rebranded to RideMetrx** (`io.vibesoftware.ridemetrx`)
+- **AI features removed** - Replaced with Community placeholder
+- **Email/text sharing removed** - Will be replaced with Community sharing
+- **Subscription model implemented** - Pro monthly ($2.99) & annual ($29.99)
+- **Free tier established** - Unlimited bikes + settings (Hive-only)
 
 ### What Works Now:
 - ✅ **Offline-first architecture** - Hive stores bikes and settings locally
 - ✅ **Firebase → Hive sync** - Online data automatically syncs down to local storage
 - ✅ **Settings always read from Hive** - UI displays local data (offline-capable)
-- ✅ **Share feature exists** - Settings can be shared via email/text
+- ✅ **Unlimited bikes/settings** - No artificial limits on free tier
 
-### What's Missing:
+### What's Still Missing:
 - ❌ **Hive → Firebase sync** - Offline changes don't push to cloud on reconnect
-- ❌ **Dirty data tracking** - No way to know which Hive records were modified offline
-- ❌ **Reconnection listener** - App doesn't trigger sync when connectivity restored
-- ❌ **Subscription/paywall logic** - No IAP subscription tier (only AI consumables)
-
-### Critical Code Evidence:
-
-**Settings Read from Hive Only:**
-```dart
-// lib/features/bikes/presentation/screens/settings_list.dart:33-36
-getSettings() async {
-  settings = await _getBikeSettingsFromHive(widget.bike.id);
-  setState(() {});
-}
-```
-
-**Firebase → Hive Sync (One-Way):**
-```dart
-// lib/features/bikes/domain/bikes_notifier.dart:34-38
-bikesStreamAsync.when(
-  data: (bikes) {
-    for (var bike in bikes) {
-      HiveService().putIntoBox('bikes', bike.id, bike, false);
-      _syncBikeSettings(bike.id);
-    }
-  },
-  // ...
-);
-```
-
-**Offline Updates Don't Sync:**
-```dart
-// lib/core/services/db_service.dart:158-174
-if (await ConnectivityWrapper.instance.isConnected) {
-  // Updates Firebase
-} else {
-  // TODO: Add to workmanager background tasks
-  debugPrint('offline - try later');
-}
-```
-
-**Hive Won't Overwrite Local Changes:**
-```dart
-// lib/core/services/hive_service.dart:26-28
-if (!box.containsKey(key) || overwrite) {
-  await box.put(key, object);
-}
-```
+- ❌ **Subscription paywall UI** - No UI to gate Pro features
+- ❌ **Metrx feature** - Accelerometer-based roughness detection
+- ❌ **Community database** - Shared settings browsing/contribution
+- ❌ **Maintenance reminders** - Push notifications for service due dates
 
 ---
 
-## 💰 Monetization Strategy
+## 💰 Final Monetization Strategy
 
-### Free Tier (Hive-Only)
-**What Users Get:**
-- Unlimited local bike/settings storage
-- Manual settings entry and editing
-- Basic manufacturer baseline settings
-- All core features (bikes, forks, shocks, settings)
-- Manual export/import for backup (JSON files)
+### Free Tier ("RideMetrx")
+**What makes it better than competitors:**
+- ✅ **Unlimited bikes** (vs competitor's 1 bike limit)
+- ✅ **Unlimited settings** (locally in Hive)
+- ✅ Full offline functionality
+- ✅ **Browse community database** (free tier can view shared settings)
+- ✅ **Import community setups**
+- ✅ **Full maintenance logging** (manual entry + notifications)
+- ✅ Basic manufacturer baseline settings
 
 **Limitations:**
-- No cloud sync (single device only)
-- No settings history/comparison
-- No maintenance tracking
-- No community database access
-- Photos stored locally only
+- ❌ No cloud sync (single device only)
+- ❌ No Metrx roughness detection
+- ❌ No Strava integration
+- ❌ Can't contribute to community with heatmap data
+- ❌ No automatic maintenance hour tracking
 
-### Pro Tier ($3.99/month or $24.99/year)
-**Premium Features:**
+---
+
+### Pro Tier ($2.99/month or $29.99/year)
+**Value Proposition:** *"Turn your phone into a $300 ShockWiz alternative"*
+
+**Core Features:**
 - ☁️ **Cloud sync** across unlimited devices
-- 📊 **Settings history** - Compare changes over time
-- 🔧 **Maintenance tracking** - Service reminders, hour tracking
-- 📷 **Cloud photo storage** - Bike images synced via Firebase Storage
-- 🗺️ **Location-tagged settings** - GPS-tagged for trail-specific setups
-- 🌐 **Community database access** - Browse/search shared settings
-- ✅ **Priority support**
+- 📊 **Metrx: Roughness Heatmap** - Record rides with accelerometer analysis
+- 🔄 **A/B Testing** - Compare settings changes objectively
+- 🗺️ **Trail Context** - Strava/Trailforks integration for trail names
+- 📈 **Automatic hour tracking** (Strava sync)
+- 🔔 **Service reminder push notifications**
+- 🌐 **Contribute heatmap data to community**
+- 📍 **GPS proximity search** in community database
+- 📸 **Cloud photo storage** for bikes
 
-### AI Features (Separate/Optional)
-**Current Status:** Exists but unreliable
-**Recommendation:** Deprecate or reframe as "experimental"
-
-**Options:**
-1. **Remove entirely** - Focus on proven features
-2. **Keep as bonus** - Include in Pro tier with lowered expectations
-3. **Consumable add-on** - $0.99 for 10 queries, marketed as "quick starter tool"
-
-**Why AI Doesn't Work:**
-- No training data (no massive dataset of perfect suspension settings)
-- ChatGPT hallucinates confident-sounding but inconsistent answers
-- Too many variables (terrain, skill, preference, conditions)
-- Users will discover inconsistency and lose trust
+**Subscription Product IDs:**
+- Monthly: `com.ridemetrx.pro.monthly` ($2.99/month)
+- Annual: `com.ridemetrx.pro.annual` ($29.99/year)
 
 ---
 
 ## 🏗️ Technical Architecture Plan
 
-### Phase 1: Bi-Directional Sync (IMMEDIATE PRIORITY)
+### ✅ Phase 1: Rebrand + Cleanup (COMPLETED)
+
+**Commit 1: Rebrand to RideMetrx**
+- ✅ Updated package name and bundle IDs
+- ✅ Updated all import statements (179 files)
+- ✅ Updated display names and UI strings
+- ✅ Bumped version to 0.2.0+1
+
+**Commit 2: Remove AI Features**
+- ✅ Deleted `lib/features/ai` directory
+- ✅ Removed chat_gpt_sdk dependency
+- ✅ Replaced AI navigation with Community placeholder
+- ✅ Updated bottom nav icon
+
+**Commit 3: Remove Old Sharing**
+- ✅ Replaced ShareButton with "Coming Soon" snackbar
+- ✅ Removed share() function and share_plus dependency
+
+**Commit 4: Update IAP to Subscriptions**
+- ✅ Replaced credits system with SubscriptionStatus
+- ✅ Added subscription product IDs
+- ✅ Updated PurchaseNotifier for subscription management
+
+---
+
+### Phase 2: Bi-Directional Sync (NEXT PRIORITY)
 
 **Goal:** Implement Hive → Firebase sync when connectivity restored
 
 **Components Needed:**
 
-#### 1.1 Dirty Data Tracking
-Add metadata to Hive models to track offline modifications:
+#### 2.1 Dirty Data Tracking
+Add metadata to Hive models:
 
 ```dart
-// Add to Bike, Setting, Fork, Shock models
 @HiveField(X)
 DateTime? lastModified;
 
@@ -142,117 +130,44 @@ DateTime? lastModified;
 bool isDirty; // true if modified while offline
 ```
 
-#### 1.2 Connectivity Listener
-Listen for connectivity changes and trigger sync:
-
+#### 2.2 Connectivity Listener
 ```dart
-// In ConnectivityNotifier or new SyncService
 ref.listen(connectivityNotifierProvider, (previous, current) {
   if (previous == false && current == true) {
-    // Just came back online
     _syncDirtyData();
   }
 });
 ```
 
-#### 1.3 Sync Service
-Create dedicated service to push dirty Hive data to Firebase:
-
-```dart
-class SyncService {
-  Future<void> syncDirtyBikes() async {
-    final box = Hive.box<Bike>('bikes');
-    final dirtyBikes = box.values.where((b) => b.isDirty);
-
-    for (final bike in dirtyBikes) {
-      await _db.addUpdateBike(bike);
-      bike.isDirty = false;
-      await box.put(bike.id, bike);
-    }
-  }
-
-  Future<void> syncDirtySettings() async {
-    final box = Hive.box<Setting>('settings');
-    final dirtySettings = box.values.where((s) => s.isDirty);
-
-    for (final setting in dirtySettings) {
-      await _db.updateSetting(setting);
-      setting.isDirty = false;
-      await box.put('${setting.bike}-${setting.id}', setting);
-    }
-  }
-}
-```
-
-#### 1.4 Mark Data as Dirty on Offline Edits
-Update `HiveService.putIntoBox()` and direct Hive writes:
-
-```dart
-void putIntoBox<T>(String boxName, String key, T object, bool overwrite) async {
-  final box = await Hive.box<T>(boxName);
-
-  // Mark as dirty if offline
-  if (object is Bike || object is Setting) {
-    object.isDirty = !(await ConnectivityWrapper.instance.isConnected);
-    object.lastModified = DateTime.now();
-  }
-
-  if (!box.containsKey(key) || overwrite) {
-    await box.put(key, object);
-  }
-}
-```
+#### 2.3 Sync Service
+Create `lib/core/services/sync_service.dart`:
+- Check subscription status (only Pro users sync to cloud)
+- Push dirty Hive records to Firebase
+- Mark as clean after successful sync
 
 **Files to Modify:**
-- `lib/features/bikes/domain/models/bike.dart` - Add dirty tracking fields
-- `lib/features/bikes/domain/models/setting.dart` - Add dirty tracking fields
-- `lib/core/services/hive_service.dart` - Mark data as dirty
-- `lib/core/services/sync_service.dart` - **NEW FILE** - Sync logic
-- `lib/features/connectivity/domain/connectivity_notifier.dart` - Trigger sync on reconnect
-
-**Testing Strategy:**
-1. Create bike/setting while offline
-2. Verify `isDirty = true` in Hive
-3. Restore connectivity
-4. Verify data appears in Firebase
-5. Verify `isDirty = false` after sync
+- `lib/features/bikes/domain/models/bike.dart` - Add dirty tracking
+- `lib/features/bikes/domain/models/setting.dart` - Add dirty tracking
+- `lib/core/services/hive_service.dart` - Mark dirty on offline writes
+- `lib/core/services/sync_service.dart` - **NEW** - Sync logic
+- `lib/features/connectivity/domain/connectivity_notifier.dart` - Trigger sync
 
 ---
 
-### Phase 2: Subscription & Paywall (NEXT PRIORITY)
+### Phase 3: Subscription Paywall UI
 
-**Goal:** Implement Pro tier subscription with IAP
+**Goal:** Gate cloud sync behind Pro subscription
 
-**Components Needed:**
+**Components:**
 
-#### 2.1 Subscription State Management
-Create Riverpod provider to track subscription status:
+#### 3.1 Paywall Screen
+Create `lib/features/purchases/presentation/screens/paywall_screen.dart`:
+- List Pro features
+- Show monthly vs annual pricing
+- "Restore Purchases" button
+- Purchase buttons
 
-```dart
-@riverpod
-class SubscriptionNotifier extends _$SubscriptionNotifier {
-  @override
-  SubscriptionState build() {
-    _checkSubscriptionStatus();
-    return SubscriptionState.free;
-  }
-
-  Future<void> _checkSubscriptionStatus() async {
-    // Query InAppPurchase for active subscription
-    // Update state to .pro or .free
-  }
-}
-
-enum SubscriptionState {
-  free,
-  pro,
-  loading,
-}
-```
-
-#### 2.2 Paywall UI Components
-Create reusable paywall widget:
-
+#### 3.2 Pro Feature Gate Widget
 ```dart
 class ProFeatureGate extends ConsumerWidget {
   final Widget child;
@@ -260,356 +175,217 @@ class ProFeatureGate extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final subState = ref.watch(subscriptionNotifierProvider);
-
-    if (subState == SubscriptionState.pro) {
-      return child;
-    }
-
-    return PaywallScreen(featureName: featureName);
+    final isPro = ref.watch(purchaseNotifierProvider).isPro;
+    return isPro ? child : PaywallScreen(feature: featureName);
   }
 }
 ```
 
-#### 2.3 Conditional Sync Behavior
+#### 3.3 Conditional Sync
 Only sync to cloud for Pro users:
-
 ```dart
 Future<void> syncDirtyData() async {
-  final subState = ref.read(subscriptionNotifierProvider);
-
-  if (subState != SubscriptionState.pro) {
-    debugPrint('Sync requires Pro subscription');
-    return;
+  if (!ref.read(purchaseNotifierProvider).isPro) {
+    return; // Free users stay local-only
   }
-
-  await _syncDirtyBikes();
-  await _syncDirtySettings();
+  await _syncToFirebase();
 }
 ```
 
-**Files to Create:**
-- `lib/features/purchases/domain/subscription_notifier.dart` - Subscription state
-- `lib/features/purchases/presentation/widgets/paywall_screen.dart` - Paywall UI
-- `lib/features/purchases/presentation/widgets/pro_feature_gate.dart` - Wrapper widget
+---
 
-**Files to Modify:**
-- `lib/core/services/sync_service.dart` - Check subscription before sync
-- `lib/features/bikes/presentation/screens/bikes_list_screen.dart` - Show Pro badge/upsell
-- `pubspec.yaml` - May need RevenueCat or Purchases SDK
+### Phase 4: Metrx Feature (Accelerometer + GPS)
+
+**Goal:** Roughness detection heatmaps (Pro tier feature)
+
+See `METRX_FEATURE.md` for full technical details from Gemini conversation.
+
+**Key Components:**
+- Phone accelerometer data capture (50Hz+)
+- GPS coordinate tracking
+- Spatial binning (10m segments)
+- RMS vibration calculation
+- A/B comparison between runs
+- Strava/Trailforks API for trail names
 
 ---
 
-### Phase 3: Settings History & Comparison (FUTURE)
+### Phase 5: Community Database
 
-**Goal:** Track and visualize setting changes over time
-
-**Data Structure:**
-```dart
-class SettingHistory {
-  final String id;
-  final String settingId;
-  final String bikeId;
-  final DateTime timestamp;
-  final ComponentSetting fork;
-  final ComponentSetting shock;
-  final String? location;
-  final String? notes;
-}
-```
-
-**Features:**
-- Timeline view of all changes to a setting
-- Side-by-side comparison ("Before vs After")
-- Chart showing LSC/HSC/LSR/HSR trends over time
-- Location tags from GPS ("Moab settings" vs "Home trails")
-
----
-
-### Phase 4: Maintenance Tracking (FUTURE)
-
-**Goal:** Remind users when suspension service is due
-
-**Data Structure:**
-```dart
-class MaintenanceRecord {
-  final String id;
-  final String bikeId;
-  final String component; // 'fork' or 'shock'
-  final ServiceType type; // lowerLeg, airCan, fullRebuild
-  final DateTime date;
-  final double cost;
-  final String? notes;
-  final int hoursAtService;
-}
-
-class ComponentUsage {
-  final String bikeId;
-  final String component;
-  final int totalHours;
-  final DateTime lastService;
-  final ServiceType lastServiceType;
-
-  // Calculated properties
-  int get hoursSinceService => totalHours - hoursAtLastService;
-  bool get lowerLegDue => hoursSinceService >= 50;
-  bool get airCanDue => hoursSinceService >= 100;
-}
-```
-
-**Features:**
-- Manual hour tracking or Strava integration
-- Service reminders (push notifications)
-- Service cost tracking
-- Resale value (proof of maintenance)
-
----
-
-### Phase 5: Community Database (FUTURE)
-
-**Goal:** Shared settings repository searchable by trail/location/components
+**Goal:** Shared settings repository (free to browse, Pro to contribute with heatmaps)
 
 **Firebase Structure:**
 ```
 /community_settings/
   /{setting_id}/
     userId: "abc123"
-    bikeComponents: {
-      fork: "2023 Fox 38 Factory"
-      shock: "2023 Fox DHX2"
-    }
+    bikeComponents: { fork: "2023 Fox 38", shock: "DHX2" }
     location: {
-      geohash: "9q8yy"  // For proximity queries
+      geohash: "9q8yy"
       name: "Whistler Bike Park"
-      coordinates: { lat: 50.1163, lng: -122.9574 }
+      coordinates: { lat, lng }
     }
     trailType: "bike_park"
-    riderWeight: 180
-    settings: {
-      fork: { LSC: 12, HSC: 10, LSR: 8, HSR: 6, springRate: 0.9 }
-      shock: { LSC: 8, HSC: 5, LSR: 10, HSR: 8, springRate: 450 }
-    }
+    settings: { fork: {...}, shock: {...} }
+    roughnessScore: 7.2  // Pro users only
     upvotes: 42
-    downvotes: 3
     created: timestamp
 ```
 
-**Query Methods:**
-1. **GPS Proximity:** "Settings used within 5 miles"
-2. **Trail Name:** Search by user-entered trail name
-3. **Trail Type:** Filter by DH / Enduro / XC / Park
-4. **Component Match:** "Other 2023 Fox 38 users"
+**Free Tier:** Browse, search, import settings
+**Pro Tier:** Contribute with heatmap data, GPS search, higher vote weight
 
-**Features:**
-- Share to community (replaces email share)
-- Browse by location (map view)
-- Vote on settings (quality filter)
-- Reputation system (trusted contributors)
+---
 
-**Integration with Existing Share Feature:**
-Current: Generate text with settings → share via email/SMS
-New: Add button "Share to Community" → uploads to Firestore
+### Phase 6: Maintenance Tracking
+
+**Goal:** Service reminders and hour tracking
+
+**Free Tier:**
+- Manual entry of service dates
+- Local push notifications for service due
+- Service cost tracking
+
+**Pro Tier:**
+- Auto hour tracking via Strava
+- Cloud backup of maintenance history
+- Advanced analytics
+
+---
+
+## 📂 Updated File Structure
+
+```
+lib/
+├── features/
+│   ├── bikes/           (existing - manages bikes & settings)
+│   ├── auth/            (existing - Firebase auth)
+│   ├── connectivity/    (existing - offline detection)
+│   ├── purchases/       (✅ UPDATED - now subscription-based)
+│   │   ├── domain/
+│   │   │   ├── purchase_state.dart (NEW: SubscriptionStatus)
+│   │   │   └── purchase_notifier.dart (NEW: subscription logic)
+│   │   └── presentation/
+│   │       ├── screens/
+│   │       │   ├── paywall_screen.dart (TODO)
+│   │       │   └── buy_credits.dart (LEGACY - to be removed)
+│   │       └── widgets/
+│   │           └── pro_feature_gate.dart (TODO)
+│   ├── metrx/           (TODO - roughness detection)
+│   │   ├── domain/
+│   │   │   ├── models/
+│   │   │   │   ├── ride_session.dart
+│   │   │   │   └── roughness_segment.dart
+│   │   │   └── metrx_service.dart
+│   │   └── presentation/
+│   │       └── screens/
+│   │           ├── record_screen.dart
+│   │           └── heatmap_viewer.dart
+│   └── community/       (TODO - shared settings)
+│       ├── domain/
+│       │   └── community_service.dart
+│       └── presentation/
+│           └── screens/
+│               ├── community_browser.dart
+│               └── setting_detail.dart
+├── core/
+│   ├── services/
+│   │   ├── sync_service.dart (TODO - dirty data sync)
+│   │   ├── hive_service.dart (existing)
+│   │   └── db_service.dart (existing)
+│   └── routing/
+│       └── app_router.dart (✅ UPDATED - Community placeholder)
+└── docs/
+    ├── SYNC_STRATEGY.md (THIS FILE)
+    └── METRX_FEATURE.md (TODO - accelerometer details)
+```
 
 ---
 
 ## 🚀 Implementation Roadmap
 
 ### Immediate Next Steps (This Week)
-1. ✅ Document current state (this file)
-2. ⬜ Add dirty tracking fields to Bike/Setting models
-3. ⬜ Update Hive adapters (run build_runner)
-4. ⬜ Create SyncService with dirty data sync logic
-5. ⬜ Add connectivity listener to trigger sync
-6. ⬜ Test offline → online sync flow
+1. ✅ Document current state (this file update)
+2. ⬜ Create `METRX_FEATURE.md` from Gemini conversation
+3. ⬜ Add dirty tracking fields to Bike/Setting models
+4. ⬜ Create SyncService with subscription check
+5. ⬜ Run build_runner to regenerate code
 
 ### Short Term (Next 2-4 Weeks)
-1. ⬜ Implement subscription state management
-2. ⬜ Build paywall UI components
-3. ⬜ Add subscription check to sync service
-4. ⬜ Configure IAP products in App Store / Play Store
-5. ⬜ Test free tier vs Pro tier behavior
+1. ⬜ Implement paywall UI
+2. ⬜ Gate cloud sync behind Pro check
+3. ⬜ Add "Upgrade to Pro" prompts in free tier
+4. ⬜ Configure IAP in App Store / Play Store
+5. ⬜ Test subscription purchase flow
 
 ### Medium Term (1-2 Months)
-1. ⬜ Settings history tracking
-2. ⬜ Comparison UI (before/after views)
-3. ⬜ Location tagging (GPS integration)
-4. ⬜ Polish Pro tier onboarding
+1. ⬜ Metrx feature MVP (accelerometer recording)
+2. ⬜ A/B comparison UI
+3. ⬜ Strava API integration for trail names
+4. ⬜ Heatmap visualization
 
 ### Long Term (3-6 Months)
-1. ⬜ Maintenance tracking system
-2. ⬜ Service reminders (push notifications)
-3. ⬜ Community database MVP
-4. ⬜ Map-based settings discovery
-
----
-
-## 🔧 Key Technical Considerations
-
-### Conflict Resolution Strategy
-**Scenario:** User modifies same setting on two devices while offline
-
-**Approach:** Last-write-wins (simplest)
-- Use `lastModified` timestamp
-- Most recent change overwrites older
-- No merge conflict UI (too complex for MVP)
-
-**Future:** Could add manual conflict resolution UI if users request it
-
-### Data Migration Plan
-**Challenge:** Existing users have Hive data without dirty tracking fields
-
-**Solution:**
-1. Add fields with default values (`isDirty = false`, `lastModified = null`)
-2. Run one-time migration on app startup to set `lastModified = DateTime.now()`
-3. Hive adapters will handle missing fields gracefully
-
-### Subscription Grace Period
-**Challenge:** User's subscription expires mid-ride (offline)
-
-**Solution:**
-- Cache subscription status in Hive
-- Use 7-day grace period before disabling Pro features
-- Allow viewing synced data even after expiration (no new syncs)
-
-### Free Tier Data Retention
-**Challenge:** User downgrades from Pro to Free
-
-**Solution:**
-- Keep all data in Hive (don't delete)
-- Stop syncing to Firebase (no new cloud saves)
-- Offer one-time manual export (JSON backup)
-- Re-enable sync if they re-subscribe
-
----
-
-## 📂 File Structure Overview
-
-```
-lib/
-├── features/
-│   ├── bikes/
-│   │   ├── domain/
-│   │   │   ├── models/
-│   │   │   │   ├── bike.dart (ADD: isDirty, lastModified)
-│   │   │   │   ├── setting.dart (ADD: isDirty, lastModified)
-│   │   │   │   ├── fork.dart (ADD: isDirty, lastModified)
-│   │   │   │   └── shock.dart (ADD: isDirty, lastModified)
-│   │   │   └── bikes_notifier.dart (MODIFY: use SyncService)
-│   │   └── presentation/
-│   │       └── screens/
-│   │           └── bikes_list_screen.dart (ADD: Pro upsell UI)
-│   ├── connectivity/
-│   │   ├── domain/
-│   │   │   └── connectivity_notifier.dart (MODIFY: trigger sync)
-│   │   └── presentation/
-│   │       └── widgets/
-│   │           └── connectivity_widget_wrapper.dart (MODIFY: show sync status)
-│   └── purchases/
-│       ├── domain/
-│       │   └── subscription_notifier.dart (NEW: Pro tier state)
-│       └── presentation/
-│           ├── screens/
-│           │   └── paywall_screen.dart (NEW: subscription UI)
-│           └── widgets/
-│               └── pro_feature_gate.dart (NEW: paywall wrapper)
-├── core/
-│   ├── services/
-│   │   ├── sync_service.dart (NEW: dirty data sync logic)
-│   │   ├── hive_service.dart (MODIFY: mark dirty on write)
-│   │   └── db_service.dart (MODIFY: remove TODO, use SyncService)
-│   └── providers/
-│       └── service_providers.dart (ADD: syncServiceProvider)
-└── SYNC_STRATEGY.md (THIS FILE)
-```
+1. ⬜ Community database implementation
+2. ⬜ Maintenance tracking with notifications
+3. ⬜ Advanced Metrx analytics
 
 ---
 
 ## 🧪 Testing Checklist
 
 ### Sync Testing
-- [ ] Create bike while offline → comes online → appears in Firebase
-- [ ] Edit setting while offline → comes online → updates in Firebase
-- [ ] Delete bike while offline → comes online → deletes from Firebase
-- [ ] Modify same setting on two devices offline → last write wins
-- [ ] Airplane mode → make changes → disable airplane mode → auto-sync
+- [ ] Create bike while offline → comes online → appears in Firebase (Pro only)
+- [ ] Edit setting while offline → comes online → updates Firebase (Pro only)
+- [ ] Free user tries to edit → stays in Hive only
+- [ ] Subscription expires → sync stops, local data remains
 
 ### Subscription Testing
-- [ ] Free user tries to access Pro feature → sees paywall
-- [ ] Purchase subscription → Pro features unlock immediately
-- [ ] Subscription expires → reverts to Free tier gracefully
+- [ ] Free user sees paywall when accessing Pro features
+- [ ] Purchase monthly subscription → Pro features unlock
+- [ ] Subscription expires → graceful degradation to Free tier
 - [ ] Restore purchases → Pro features re-enable
 
 ### Edge Cases
-- [ ] Poor connectivity (spotty signal) → retries sync
-- [ ] Sync fails → shows error, marks data still dirty
-- [ ] App force-quit during sync → resumes on next launch
-- [ ] Large dataset (100+ bikes/settings) → syncs efficiently
+- [ ] Poor connectivity → sync retries with backoff
+- [ ] Sync fails → data marked dirty for retry
+- [ ] Large dataset (100+ bikes) → syncs efficiently without timeout
 
 ---
 
-## 💬 Open Questions / Future Decisions
+## 💬 Open Questions
 
-### To Decide Later:
-1. **Subscription pricing:** $3.99/mo vs $24.99/yr vs different tiers?
-2. **AI feature fate:** Remove entirely or keep as Pro bonus?
-3. **Community database moderation:** How to handle spam/bad data?
-4. **Strava integration:** Worth the API complexity for hour tracking?
-5. **Platform priority:** iOS first, then Android? Or simultaneous?
+### Business Decisions:
+1. Should we offer a free trial? (e.g., 7 days Pro for new users)
+2. Lifetime purchase option? (e.g., $99.99 one-time)
+3. Student discount pricing?
 
-### User Research Needed:
-1. Would users pay $25/year for cloud sync + history?
-2. Is maintenance tracking valuable enough to drive subscriptions?
-3. Do riders actually use multiple devices (phone + tablet)?
-4. Would community database see adoption (network effects)?
+### Technical Decisions:
+1. Sync conflict resolution: last-write-wins vs manual merge UI?
+2. Sync frequency: immediate vs batched (every 5 minutes)?
+3. Offline grace period: 7 days vs 30 days for expired subscriptions?
 
 ---
 
-## 📞 Contact / Handoff Notes
+## 📞 Firebase Configuration Notes
 
-**For Next Claude Session:**
+**Project:** `suspension-pro` (keep existing Firebase project)
 
-Use this prompt to resume:
-
-```
-I'm working on Suspension Pro, a Flutter app for mountain bike suspension settings.
-We've been discussing implementing bi-directional Hive ↔ Firebase sync and a paid
-subscription model.
-
-Please read SYNC_STRATEGY.md in the project root for full context, then help me
-implement Phase 1 (dirty data tracking and sync service).
-
-Current branch: mvvm_refactor_claude
-Recent work: Fixed ConnectivityWidgetWrapper to use Riverpod instead of Provider
-```
-
-**Key Context Files:**
-- This file: `/Users/jfraz/Sites/suspension_pro/SYNC_STRATEGY.md`
-- Bikes data flow: `lib/features/bikes/domain/bikes_notifier.dart`
-- Settings UI: `lib/features/bikes/presentation/screens/settings_list.dart`
-- Database service: `lib/core/services/db_service.dart`
-- Hive service: `lib/core/services/hive_service.dart`
-
-**Branch:** `mvvm_refactor_claude`
-**Last Commit:** 923047c (Test claude refactor for mvvm pattern)
+**Before Deployment:**
+1. Download new `GoogleService-Info.plist` with bundle ID `io.vibesoftware.ridemetrx`
+2. Download new `google-services.json` with package `io.vibesoftware.ridemetrx`
+3. Update Firebase Console app registration
+4. No need to change Firestore database or storage bucket
 
 ---
 
-## 📚 Additional Resources
+## 📚 Related Documentation
 
-### Firebase Queries for Community Database
-- [Geohash for proximity queries](https://firebase.google.com/docs/firestore/solutions/geoqueries)
-- [Compound indexes for multi-field queries](https://firebase.google.com/docs/firestore/query-data/indexing)
-
-### Subscription Management
-- [RevenueCat](https://www.revenuecat.com/) - Simplifies cross-platform IAP
-- [in_app_purchase](https://pub.dev/packages/in_app_purchase) - Already using this
-
-### Offline-First Patterns
-- [Hive best practices](https://docs.hivedb.dev/#/)
-- [Optimistic UI updates](https://www.apollographql.com/docs/react/performance/optimistic-ui/)
+- `METRX_FEATURE.md` - Technical details on accelerometer-based roughness detection
+- `lib/features/purchases/domain/purchase_notifier.dart` - Subscription implementation
+- Gemini conversation PDF - Original Metrx feature planning
 
 ---
 
-**Document Version:** 1.0
-**Last Updated:** 2025-11-23
-**Author:** Strategic planning session with Claude (Sonnet 4.5)
+**Document Version:** 2.0 (Post-Rebrand)
+**Last Updated:** 2025-11-26
+**Author:** Strategic planning + implementation tracking
