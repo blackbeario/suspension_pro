@@ -5,28 +5,61 @@ import 'package:ridemetrx/features/purchases/domain/purchase_state.dart';
 
 part 'purchase_notifier.g.dart';
 
-/// StateNotifier for managing in-app purchase state
-/// Replaces the InAppBloc singleton pattern
+/// Product IDs for RideMetrx Pro subscriptions
+const String kProMonthlyId = 'com.ridemetrx.pro.monthly';
+const String kProAnnualId = 'com.ridemetrx.pro.annual';
+const Set<String> kProProductIds = {kProMonthlyId, kProAnnualId};
+
+/// StateNotifier for managing in-app purchase state (subscriptions)
+/// Manages RideMetrx Pro subscription status
 @riverpod
 class PurchaseNotifier extends _$PurchaseNotifier {
   @override
   PurchaseState build() {
-    // Initialize with empty state
-    _loadCreditsFromPrefs();
+    // Initialize and check subscription status
+    _checkSubscriptionStatus();
     return PurchaseState.initial();
   }
 
-  /// Load credits from SharedPreferences on initialization
-  Future<void> _loadCreditsFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final credits = prefs.getInt('credits') ?? 0;
-    state = state.copyWith(credits: credits);
+  /// Check current subscription status from past purchases
+  Future<void> _checkSubscriptionStatus() async {
+    // This will be called by the UI layer to check active subscriptions
+    // For now, default to no subscription
+    state = state.copyWith(
+      subscriptionStatus: SubscriptionStatus.none,
+      loading: false,
+    );
   }
 
-  /// Save credits to SharedPreferences
-  Future<void> _saveCreditsToPrefs(int credits) async {
+  /// Save subscription status to SharedPreferences for offline access
+  Future<void> _saveSubscriptionToPrefs(SubscriptionStatus status, DateTime? expiryDate) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('credits', credits);
+    await prefs.setString('subscription_status', status.name);
+    if (expiryDate != null) {
+      await prefs.setInt('subscription_expiry', expiryDate.millisecondsSinceEpoch);
+    }
+  }
+
+  /// Load subscription status from SharedPreferences (for offline grace period)
+  Future<void> _loadSubscriptionFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final statusString = prefs.getString('subscription_status');
+    final expiryTimestamp = prefs.getInt('subscription_expiry');
+
+    if (statusString != null) {
+      final status = SubscriptionStatus.values.firstWhere(
+        (e) => e.name == statusString,
+        orElse: () => SubscriptionStatus.unknown,
+      );
+      final expiryDate = expiryTimestamp != null
+          ? DateTime.fromMillisecondsSinceEpoch(expiryTimestamp)
+          : null;
+
+      state = state.copyWith(
+        subscriptionStatus: status,
+        subscriptionExpiryDate: expiryDate,
+      );
+    }
   }
 
   /// Update products list
@@ -60,29 +93,28 @@ class PurchaseNotifier extends _$PurchaseNotifier {
     state = state.copyWith(notFoundIds: notFoundIds);
   }
 
-  /// Update consumables
-  void setConsumables(List<String> consumables) {
-    state = state.copyWith(consumables: consumables);
-  }
-
   /// Update query product error
   void setQueryProductError(String? error) {
     state = state.copyWith(queryProductError: error);
   }
 
-  /// Set AI credits
-  Future<void> setCredits(int credits) async {
-    state = state.copyWith(credits: credits);
-    await _saveCreditsToPrefs(credits);
+  /// Update subscription status (called when purchase is verified)
+  Future<void> setSubscriptionStatus(SubscriptionStatus status, {DateTime? expiryDate}) async {
+    state = state.copyWith(
+      subscriptionStatus: status,
+      subscriptionExpiryDate: expiryDate,
+    );
+    await _saveSubscriptionToPrefs(status, expiryDate);
   }
 
-  /// Remove one credit (decrement)
-  Future<void> removeCredit() async {
-    if (state.credits > 0) {
-      final newCredits = state.credits - 1;
-      state = state.copyWith(credits: newCredits);
-      await _saveCreditsToPrefs(newCredits);
-    }
+  /// Check if subscription is active (helper method for UI)
+  bool get isProSubscriber => state.isPro;
+
+  /// Restore purchases (check for existing subscriptions)
+  Future<void> restorePurchases() async {
+    // TODO: Implement restore purchases logic with InAppPurchase API
+    // This will query past purchases and update subscription status
+    await _loadSubscriptionFromPrefs();
   }
 
   /// Update purchase pending state
