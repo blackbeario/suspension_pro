@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
 import 'package:ridemetrx/features/onboarding/presentation/screens/onboarding_page.dart';
 
 class Onboarding extends ConsumerStatefulWidget {
@@ -16,15 +15,6 @@ class Onboarding extends ConsumerStatefulWidget {
 class _OnboardingState extends ConsumerState<Onboarding> {
   final pageController = PageController();
   bool isLastPage = false;
-
-  @override
-  void initState() {
-    super.initState();
-    // Give new user 3 free credits
-    Future.microtask(() {
-      ref.read(purchaseNotifierProvider.notifier).setCredits(3);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

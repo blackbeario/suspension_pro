@@ -84,7 +84,7 @@ class _BikesListState extends ConsumerState<BikesList> {
 
                       return Dismissible(
                         background: ListTile(
-                          tileColor: CupertinoColors.destructiveRed.withOpacity(0.125),
+                          tileColor: CupertinoColors.destructiveRed.withValues(alpha: 0.125),
                           trailing: const Icon(Icons.delete, color: CupertinoColors.systemRed),
                         ),
                         direction: DismissDirection.endToStart,

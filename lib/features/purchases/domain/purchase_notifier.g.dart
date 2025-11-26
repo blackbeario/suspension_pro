@@ -6,10 +6,10 @@ part of 'purchase_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$purchaseNotifierHash() => r'bd50fb5e4baae0282245bc2a8286a878993d8bd2';
+String _$purchaseNotifierHash() => r'dca44a1ded9e1ddecaf0334b3c0c1422ac6316e3';
 
-/// StateNotifier for managing in-app purchase state
-/// Replaces the InAppBloc singleton pattern
+/// StateNotifier for managing in-app purchase state (subscriptions)
+/// Manages RideMetrx Pro subscription status
 ///
 /// Copied from [PurchaseNotifier].
 @ProviderFor(PurchaseNotifier)

@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
 import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'package:ridemetrx/features/purchases/presentation/widgets/connection_check_tile.dart';
-import 'package:ridemetrx/features/purchases/presentation/widgets/consumable_box.dart';
 import 'package:ridemetrx/features/purchases/presentation/widgets/product_list.dart';
 import 'package:ridemetrx/features/connectivity/presentation/widgets/connectivity_widget_wrapper.dart';
 
@@ -53,7 +52,6 @@ class _BuyCreditsState extends ConsumerState<BuyCredits> {
           children: const <Widget>[
             ConnectionCheckTile(),
             InAppProductList(),
-            PreviousConsumablePurchases(),
           ],
         ),
       );

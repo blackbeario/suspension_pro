@@ -156,7 +156,7 @@ class _BikeFormState extends ConsumerState<BikeForm> {
                         autofocus: false,
                         decoration: InputDecoration(
                             suffixIcon: _bikeController.text.length < 6 ?  Icon(Icons.pedal_bike_sharp,
-                                size: 24, color: CupertinoColors.activeBlue.withOpacity(0.5)) : Icon(Icons.check, color: Colors.green),
+                                size: 24, color: CupertinoColors.activeBlue.withValues(alpha: 0.5)) : Icon(Icons.check, color: Colors.green),
                             isDense: true,
                             filled: true,
                             hoverColor: Colors.blue.shade100,

@@ -101,7 +101,7 @@ class _SettingDetailsState extends ConsumerState<SettingDetails> {
                       return null;
                     },
                     decoration: InputDecoration(
-                      suffixIcon: Icon(Icons.settings, size: 24, color: CupertinoColors.activeBlue.withOpacity(0.5)),
+                      suffixIcon: Icon(Icons.settings, size: 24, color: CupertinoColors.activeBlue.withValues(alpha: 0.5)),
                       isDense: true,
                       filled: true,
                       hoverColor: Colors.blue.shade100,

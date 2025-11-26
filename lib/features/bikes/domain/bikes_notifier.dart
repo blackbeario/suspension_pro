@@ -177,7 +177,7 @@ class BikesNotifier extends _$BikesNotifier {
 
 /// Provider for offline bikes from Hive
 @riverpod
-List<Bike> offlineBikes(OfflineBikesRef ref) {
+List<Bike> offlineBikes(Ref ref) {
   final box = Hive.box<Bike>('bikes');
   return box.values.toList();
 }
