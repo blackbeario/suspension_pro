@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridemetrx/features/bikes/presentation/screens/setting_detail.dart';
-import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
-import 'package:ridemetrx/core/utilities/helpers.dart';
 
+/// Share button placeholder - will be replaced with Community share feature
+/// TODO: Implement community sharing when community database is ready
 class ShareButton extends ConsumerWidget {
   ShareButton({
     Key? key,
@@ -16,24 +16,22 @@ class ShareButton extends ConsumerWidget {
   final String? forkProduct;
   final String? shockProduct;
 
+  void _showComingSoon(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Coming Soon: Share to Community'),
+        duration: Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userState = ref.watch(userNotifierProvider);
     return TextButton.icon(
-      label: Text('Share'),
-      icon: Icon(Icons.share, size: 20),
-      onPressed: () => share(
-        context,
-        widget.bike!.id,
-        userState.userName,
-        widget.name!,
-        forkProduct ?? null,
-        widget.fork,
-        shockProduct ?? null,
-        widget.shock,
-        widget.frontTire,
-        widget.rearTire,
-      ),
+      label: const Text('Share'),
+      icon: const Icon(Icons.share, size: 20),
+      onPressed: () => _showComingSoon(context),
     );
   }
 }
