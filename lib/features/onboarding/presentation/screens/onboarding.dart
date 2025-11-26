@@ -53,16 +53,16 @@ class _OnboardingState extends ConsumerState<Onboarding> {
                 color: Colors.grey.shade900,
                 titleColor: Colors.amber.shade300,
                 subtitleColor: Colors.white,
-                title: 'Share Your Settings',
+                title: 'Community Settings',
                 subtitle:
-                    'Got it dialed? Share with your mates! Easily send your ride settings to your friends so they can import them. You can even rack up points for sharing, which gives you future access to unlock features.',
+                    'Browse suspension settings shared by riders near you. Find what works on your local trails and share your dialed setups with the community. Coming soon!',
                 imagePath: 'assets/mtbphone.jpg',
               ),
               OnboardingPage(
                 color: Colors.grey.shade900,
-                title: 'Generate Settings',
+                title: 'Metrx: Data-Driven Dialing',
                 subtitle:
-                    'Get suspension suggestions from AI based on bike, suspension components, rider weight and trail conditions. If you like the response, save it directly to your settings for that bike.',
+                    'Upgrade to Pro and unlock Metrx - use your phone\'s accelerometer to measure trail roughness and objectively compare suspension settings. See what works, not what you think worked.',
                 imagePath: 'assets/openai.jpg',
                 titleColor: Colors.teal,
                 subtitleColor: Colors.white,

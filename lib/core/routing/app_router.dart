@@ -24,14 +24,14 @@ GoRouter appRouter(Ref ref) {
       final isOnboarding = state.matchedLocation == '/onboarding';
       final isLogin = state.matchedLocation == '/login';
 
+      // If authenticated and on onboarding or login, redirect to home
+      if (isAuthenticated && (isOnboarding || isLogin)) {
+        return '/home';
+      }
+
       // If not authenticated and not on login/onboarding, go to login
       if (!isAuthenticated && !isLogin && !isOnboarding) {
         return '/login';
-      }
-
-      // If authenticated and on login, go to home
-      if (isAuthenticated && isLogin) {
-        return '/home';
       }
 
       return null; // No redirect needed
