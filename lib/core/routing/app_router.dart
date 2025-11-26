@@ -7,7 +7,6 @@ import 'package:ridemetrx/features/auth/presentation/screens/login_page.dart';
 import 'package:ridemetrx/features/bikes/presentation/screens/bikes_list_screen.dart';
 import 'package:ridemetrx/features/onboarding/presentation/screens/onboarding.dart';
 import 'package:ridemetrx/features/profile/presentation/screens/profile_screen.dart';
-import 'package:ridemetrx/features/ai/presentation/screens/ai_request_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -64,9 +63,9 @@ GoRouter appRouter(Ref ref) {
             builder: (context, state) => const ProfileScreen(),
           ),
           GoRoute(
-            path: '/ai',
-            name: 'ai',
-            builder: (context, state) => const AiRequestScreen(),
+            path: '/community',
+            name: 'community',
+            builder: (context, state) => const _CommunityPlaceholder(),
           ),
         ],
       ),
@@ -101,7 +100,7 @@ class _AppShellState extends State<AppShell> {
         context.go('/profile');
         break;
       case 2:
-        context.go('/ai');
+        context.go('/community');
         break;
     }
   }
@@ -114,7 +113,7 @@ class _AppShellState extends State<AppShell> {
       _selectedIndex = 0;
     } else if (location.startsWith('/profile')) {
       _selectedIndex = 1;
-    } else if (location.startsWith('/ai')) {
+    } else if (location.startsWith('/community')) {
       _selectedIndex = 2;
     }
 
@@ -133,10 +132,55 @@ class _AppShellState extends State<AppShell> {
             label: 'Account',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.smart_toy_outlined),
-            label: 'AI',
+            icon: Icon(Icons.people_outline),
+            label: 'Community',
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Temporary placeholder for Community feature
+/// TODO: Replace with actual community screen when implemented
+class _CommunityPlaceholder extends StatelessWidget {
+  const _CommunityPlaceholder({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Community'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(40.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.people_outline,
+                size: 80,
+                color: Colors.grey.shade400,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Community Coming Soon',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Browse and share suspension settings with other riders',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

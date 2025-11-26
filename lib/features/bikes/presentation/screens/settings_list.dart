@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:ridemetrx/features/bikes/presentation/widgets/get_ai_button.dart';
 import 'package:ridemetrx/features/bikes/presentation/widgets/share_button.dart';
 import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/bikes/domain/models/component_setting.dart';
@@ -123,8 +122,6 @@ class _SettingsListState extends ConsumerState<SettingsList> {
           onPressed: () => pushScreen(context, 'Add Setting', null, SettingDetails(bike: widget.bike), true),
           style: ElevatedButton.styleFrom(fixedSize: Size(240, 50)),
         ),
-        SizedBox(height: 30),
-        GetAiButton(bike: widget.bike),
         Expanded(child: Container())
       ],
     );

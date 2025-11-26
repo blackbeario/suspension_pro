@@ -39,7 +39,6 @@ dependencies:
   url_launcher: ^6.2.5
   date_format: ^2.0.4
   share_plus: ^10.1.4
-  chat_gpt_sdk: ^3.1.4
   shared_preferences:
   smooth_page_indicator:
   in_app_purchase: 3.1.13
