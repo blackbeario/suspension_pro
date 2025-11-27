@@ -38,6 +38,8 @@ class _BikesListState extends ConsumerState<BikesList> {
   @override
   Widget build(BuildContext context) {
     final db = ref.read(databaseServiceProvider);
+    // Watch the provider to ensure it's initialized before accessing notifier
+    ref.watch(bikesNotifierProvider);
     final bikesNotifier = ref.read(bikesNotifierProvider.notifier);
     List<Bike> bikes = widget.bikes;
 

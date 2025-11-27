@@ -1,4 +1,4 @@
-import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 /// Subscription status enum
 enum SubscriptionStatus {
@@ -8,28 +8,24 @@ enum SubscriptionStatus {
   unknown,   // Status not yet determined
 }
 
-/// Represents the in-app purchase state
+/// Represents the in-app purchase state (RevenueCat)
 class PurchaseState {
-  final List<ProductDetails> products;
-  final List<PurchaseDetails> purchases;
-  final List<String> notFoundIds;
-  final bool isAvailable;
   final bool purchasePending;
   final bool loading;
-  final String? queryProductError;
+  final String? errorMessage;
   final SubscriptionStatus subscriptionStatus;
   final DateTime? subscriptionExpiryDate;
+  final CustomerInfo? customerInfo;  // RevenueCat customer data
+  final Offerings? offerings;        // Available products from RevenueCat
 
   const PurchaseState({
-    this.products = const [],
-    this.purchases = const [],
-    this.notFoundIds = const [],
-    this.isAvailable = false,
     this.purchasePending = false,
     this.loading = true,
-    this.queryProductError,
+    this.errorMessage,
     this.subscriptionStatus = SubscriptionStatus.unknown,
     this.subscriptionExpiryDate,
+    this.customerInfo,
+    this.offerings,
   });
 
   /// Empty/initial state
@@ -40,26 +36,23 @@ class PurchaseState {
 
   /// Copy with method for immutable updates
   PurchaseState copyWith({
-    List<ProductDetails>? products,
-    List<PurchaseDetails>? purchases,
-    List<String>? notFoundIds,
-    bool? isAvailable,
     bool? purchasePending,
     bool? loading,
-    String? queryProductError,
+    String? errorMessage,
+    bool clearError = false,
     SubscriptionStatus? subscriptionStatus,
     DateTime? subscriptionExpiryDate,
+    CustomerInfo? customerInfo,
+    Offerings? offerings,
   }) {
     return PurchaseState(
-      products: products ?? this.products,
-      purchases: purchases ?? this.purchases,
-      notFoundIds: notFoundIds ?? this.notFoundIds,
-      isAvailable: isAvailable ?? this.isAvailable,
       purchasePending: purchasePending ?? this.purchasePending,
       loading: loading ?? this.loading,
-      queryProductError: queryProductError ?? this.queryProductError,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       subscriptionStatus: subscriptionStatus ?? this.subscriptionStatus,
       subscriptionExpiryDate: subscriptionExpiryDate ?? this.subscriptionExpiryDate,
+      customerInfo: customerInfo ?? this.customerInfo,
+      offerings: offerings ?? this.offerings,
     );
   }
 }

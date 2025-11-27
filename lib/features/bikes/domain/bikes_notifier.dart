@@ -27,32 +27,32 @@ class BikesNotifier extends _$BikesNotifier {
   @override
   BikesState build() {
     // Listen to bikes stream and update state
-    final bikesStreamAsync = ref.watch(bikesStreamProvider);
+    ref.listen(bikesStreamProvider, (previous, next) {
+      next.when(
+        data: (bikes) {
+          // Sync bikes to Hive for offline access
+          for (var bike in bikes) {
+            HiveService().putIntoBox('bikes', bike.id, bike, false);
+            _syncBikeSettings(bike.id);
+          }
 
-    bikesStreamAsync.when(
-      data: (bikes) {
-        // Sync bikes to Hive for offline access
-        for (var bike in bikes) {
-          HiveService().putIntoBox('bikes', bike.id, bike, false);
-          _syncBikeSettings(bike.id);
-        }
-
-        state = state.copyWith(
-          bikes: bikes,
-          isLoading: false,
-          clearError: true,
-        );
-      },
-      loading: () {
-        state = state.copyWith(isLoading: true);
-      },
-      error: (error, stack) {
-        state = state.copyWith(
-          isLoading: false,
-          errorMessage: error.toString(),
-        );
-      },
-    );
+          state = state.copyWith(
+            bikes: bikes,
+            isLoading: false,
+            clearError: true,
+          );
+        },
+        loading: () {
+          state = state.copyWith(isLoading: true);
+        },
+        error: (error, stack) {
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage: error.toString(),
+          );
+        },
+      );
+    });
 
     return const BikesState();
   }

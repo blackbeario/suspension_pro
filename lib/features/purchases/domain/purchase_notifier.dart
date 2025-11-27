@@ -1,4 +1,5 @@
-import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:flutter/services.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ridemetrx/features/purchases/domain/purchase_state.dart';
@@ -6,37 +7,167 @@ import 'package:ridemetrx/features/purchases/domain/purchase_state.dart';
 part 'purchase_notifier.g.dart';
 
 /// Product IDs for RideMetrx Pro subscriptions
-const String kProMonthlyId = 'com.ridemetrx.pro.monthly';
-const String kProAnnualId = 'com.ridemetrx.pro.annual';
-const Set<String> kProProductIds = {kProMonthlyId, kProAnnualId};
+/// These are defined in RevenueCat dashboard, not App Store Connect
+const String kProMonthlyId = 'pro_monthly';
+const String kProAnnualId = 'pro_annual';
 
-/// StateNotifier for managing in-app purchase state (subscriptions)
+/// StateNotifier for managing RevenueCat subscription state
 /// Manages RideMetrx Pro subscription status
 @riverpod
 class PurchaseNotifier extends _$PurchaseNotifier {
   @override
   PurchaseState build() {
     // Initialize and check subscription status
-    _checkSubscriptionStatus();
+    _initializeRevenueCat();
     return PurchaseState.initial();
   }
 
-  /// Check current subscription status from past purchases
-  Future<void> _checkSubscriptionStatus() async {
-    // This will be called by the UI layer to check active subscriptions
-    // For now, default to no subscription
+  /// Initialize RevenueCat and check subscription status
+  Future<void> _initializeRevenueCat() async {
+    try {
+      // Check current customer info
+      final customerInfo = await Purchases.getCustomerInfo();
+      _updateSubscriptionStatus(customerInfo);
+
+      state = state.copyWith(
+        loading: false,
+        customerInfo: customerInfo,
+      );
+    } catch (e) {
+      print('PurchaseNotifier: Failed to initialize: $e');
+      // Load from cache if offline
+      await _loadSubscriptionFromPrefs();
+      state = state.copyWith(
+        loading: false,
+        errorMessage: 'Failed to check subscription status',
+      );
+    }
+  }
+
+  /// Fetch available offerings from RevenueCat
+  Future<void> fetchOfferings() async {
+    try {
+      final offerings = await Purchases.getOfferings();
+      state = state.copyWith(offerings: offerings);
+    } catch (e) {
+      print('PurchaseNotifier: Failed to fetch offerings: $e');
+      state = state.copyWith(
+        errorMessage: 'Failed to load products',
+      );
+    }
+  }
+
+  /// Purchase a product
+  Future<bool> purchaseProduct(Package package) async {
+    state = state.copyWith(purchasePending: true, clearError: true);
+
+    try {
+      final PurchaseResult purchaseResult = await Purchases.purchase(PurchaseParams.package(package));
+      final CustomerInfo customerInfo = purchaseResult.customerInfo;
+      _updateSubscriptionStatus(customerInfo); 
+
+      state = state.copyWith(
+        purchasePending: false,
+        customerInfo: customerInfo,
+      );
+
+      return state.isPro;
+    } on PlatformException catch (e) {
+      final errorCode = PurchasesErrorHelper.getErrorCode(e);
+      String errorMessage;
+
+      if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
+        errorMessage = 'Purchase cancelled';
+      } else if (errorCode == PurchasesErrorCode.purchaseNotAllowedError) {
+        errorMessage = 'Purchase not allowed';
+      } else {
+        errorMessage = 'Purchase failed: ${e.message}';
+      }
+
+      print('PurchaseNotifier: Purchase error: $errorMessage');
+      state = state.copyWith(
+        purchasePending: false,
+        errorMessage: errorMessage,
+      );
+
+      return false;
+    } catch (e) {
+      print('PurchaseNotifier: Unexpected error: $e');
+      state = state.copyWith(
+        purchasePending: false,
+        errorMessage: 'An unexpected error occurred',
+      );
+
+      return false;
+    }
+  }
+
+  /// Restore purchases
+  Future<bool> restorePurchases() async {
+    state = state.copyWith(purchasePending: true, clearError: true);
+
+    try {
+      final customerInfo = await Purchases.restorePurchases();
+      _updateSubscriptionStatus(customerInfo);
+
+      state = state.copyWith(
+        purchasePending: false,
+        customerInfo: customerInfo,
+      );
+
+      return state.isPro;
+    } catch (e) {
+      print('PurchaseNotifier: Restore failed: $e');
+      state = state.copyWith(
+        purchasePending: false,
+        errorMessage: 'Failed to restore purchases',
+      );
+
+      return false;
+    }
+  }
+
+  /// Update subscription status from CustomerInfo
+  void _updateSubscriptionStatus(CustomerInfo customerInfo) {
+    // Check if user has active entitlement for Pro
+    final hasPro = customerInfo.entitlements.active.containsKey('pro');
+
+    SubscriptionStatus status;
+    DateTime? expiryDate;
+
+    if (hasPro) {
+      status = SubscriptionStatus.active;
+      final proEntitlement = customerInfo.entitlements.active['pro'];
+      expiryDate = proEntitlement?.expirationDate != null
+          ? DateTime.parse(proEntitlement!.expirationDate!)
+          : null;
+    } else {
+      // Check if there was a previous subscription
+      final hadPro = customerInfo.entitlements.all.containsKey('pro');
+      status = hadPro ? SubscriptionStatus.expired : SubscriptionStatus.none;
+    }
+
     state = state.copyWith(
-      subscriptionStatus: SubscriptionStatus.none,
-      loading: false,
+      subscriptionStatus: status,
+      subscriptionExpiryDate: expiryDate,
     );
+
+    // Save to SharedPreferences for offline access
+    _saveSubscriptionToPrefs(status, expiryDate);
   }
 
   /// Save subscription status to SharedPreferences for offline access
-  Future<void> _saveSubscriptionToPrefs(SubscriptionStatus status, DateTime? expiryDate) async {
+  Future<void> _saveSubscriptionToPrefs(
+    SubscriptionStatus status,
+    DateTime? expiryDate,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('subscription_status', status.name);
     if (expiryDate != null) {
-      await prefs.setInt('subscription_expiry', expiryDate.millisecondsSinceEpoch);
+      await prefs.setInt(
+        'subscription_expiry',
+        expiryDate.millisecondsSinceEpoch,
+      );
     }
   }
 
@@ -55,70 +186,26 @@ class PurchaseNotifier extends _$PurchaseNotifier {
           ? DateTime.fromMillisecondsSinceEpoch(expiryTimestamp)
           : null;
 
-      state = state.copyWith(
-        subscriptionStatus: status,
-        subscriptionExpiryDate: expiryDate,
-      );
+      // Check if cached subscription is still valid
+      if (expiryDate != null && DateTime.now().isBefore(expiryDate)) {
+        state = state.copyWith(
+          subscriptionStatus: status,
+          subscriptionExpiryDate: expiryDate,
+        );
+      } else {
+        // Expired, set to none
+        state = state.copyWith(
+          subscriptionStatus: SubscriptionStatus.none,
+        );
+      }
     }
-  }
-
-  /// Update products list
-  void setProducts(List<ProductDetails> products) {
-    state = state.copyWith(products: products);
-  }
-
-  /// Update purchases list
-  void setPurchases(List<PurchaseDetails> purchases) {
-    state = state.copyWith(purchases: purchases);
-  }
-
-  /// Add a purchase to the list
-  void addPurchase(PurchaseDetails purchase) {
-    final updatedPurchases = [...state.purchases, purchase];
-    state = state.copyWith(purchases: updatedPurchases);
-  }
-
-  /// Update loading state
-  void setLoading(bool loading) {
-    state = state.copyWith(loading: loading);
-  }
-
-  /// Update availability
-  void setAvailability(bool isAvailable) {
-    state = state.copyWith(isAvailable: isAvailable);
-  }
-
-  /// Update not found IDs
-  void setNotFoundIds(List<String> notFoundIds) {
-    state = state.copyWith(notFoundIds: notFoundIds);
-  }
-
-  /// Update query product error
-  void setQueryProductError(String? error) {
-    state = state.copyWith(queryProductError: error);
-  }
-
-  /// Update subscription status (called when purchase is verified)
-  Future<void> setSubscriptionStatus(SubscriptionStatus status, {DateTime? expiryDate}) async {
-    state = state.copyWith(
-      subscriptionStatus: status,
-      subscriptionExpiryDate: expiryDate,
-    );
-    await _saveSubscriptionToPrefs(status, expiryDate);
   }
 
   /// Check if subscription is active (helper method for UI)
   bool get isProSubscriber => state.isPro;
 
-  /// Restore purchases (check for existing subscriptions)
-  Future<void> restorePurchases() async {
-    // TODO: Implement restore purchases logic with InAppPurchase API
-    // This will query past purchases and update subscription status
-    await _loadSubscriptionFromPrefs();
-  }
-
-  /// Update purchase pending state
-  void setPurchasePending(bool pending) {
-    state = state.copyWith(purchasePending: pending);
+  /// Clear error message
+  void clearError() {
+    state = state.copyWith(clearError: true);
   }
 }

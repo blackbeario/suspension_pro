@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
-import 'package:ridemetrx/core/services/hive_service.dart';
-import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/bikes/domain/models/component_setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:ridemetrx/features/bikes/domain/models/fork.dart';
 import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
 import 'package:ridemetrx/features/bikes/presentation/widgets/settings_form_field.dart';
+import 'package:ridemetrx/features/bikes/domain/settings_notifier.dart';
 
 class SettingDetails extends ConsumerStatefulWidget {
   SettingDetails({this.name, this.bike, this.fork, this.shock, this.frontTire, this.rearTire, this.notes});
@@ -38,12 +37,19 @@ class _SettingDetailsState extends ConsumerState<SettingDetails> {
       _rearTire;
   final _notesController = TextEditingController();
 
+  // Track the original setting ID when editing (null for new settings)
+  String? _originalSettingId;
+
   @override
   void initState() {
     super.initState();
     String? $setting = widget.name;
     ComponentSetting? $fork = widget.fork;
     ComponentSetting? $shock = widget.shock;
+
+    // Store the original ID when editing an existing setting
+    _originalSettingId = $setting;
+
     _settingNameController.text = $setting != null ? $setting : '';
     _notesController.text = widget.notes ?? '';
     _hscFork = $fork?.hsc ?? '';
@@ -60,9 +66,14 @@ class _SettingDetailsState extends ConsumerState<SettingDetails> {
     _rearTire = widget.rearTire ?? '';
   }
 
-  Future _updateSetting(bikeId, BuildContext context) async {
-    Navigator.pop(context);
-    final String settingId = bikeId + '-' + _settingNameController.text;
+  Future _addUpdateSetting(bikeId, BuildContext context) async {
+    final settingsNotifier = ref.read(settingsNotifierProvider(bikeId).notifier);
+
+    // If editing and the name changed, delete the old setting first
+    if (_originalSettingId != null && _originalSettingId != _settingNameController.text) {
+      await settingsNotifier.deleteSetting(_originalSettingId!);
+    }
+
     final Setting setting = Setting(
       id: _settingNameController.text,
       bike: bikeId,
@@ -73,9 +84,10 @@ class _SettingDetailsState extends ConsumerState<SettingDetails> {
       notes: _notesController.text,
     );
 
-    HiveService().putIntoBox('settings', settingId, setting, true);
-    final db = ref.read(databaseServiceProvider);
-    await db.updateSetting(setting);
+    // Use the settings notifier to save the setting
+    await settingsNotifier.addUpdateSetting(setting);
+
+    Navigator.pop(context);
   }
 
   @override
@@ -232,7 +244,7 @@ class _SettingDetailsState extends ConsumerState<SettingDetails> {
                   onPressed: _settingNameController.text.isNotEmpty
                       ? () async {
                           if (_formKey.currentState!.validate()) {
-                            await _updateSetting(widget.bike!.id, context);
+                            await _addUpdateSetting(widget.bike!.id, context);
                           }
                         }
                       : null,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ridemetrx/features/profile/presentation/widgets/profile_pic.dart';
+import 'package:ridemetrx/features/purchases/presentation/screens/paywall_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
 import 'package:ridemetrx/features/auth/presentation/screens/login_page.dart';
@@ -63,9 +65,9 @@ GoRouter appRouter(Ref ref) {
             builder: (context, state) => const ProfileScreen(),
           ),
           GoRoute(
-            path: '/community',
-            name: 'community',
-            builder: (context, state) => const _CommunityPlaceholder(),
+            path: '/paywall',
+            name: 'paywall',
+            builder: (context, state) => const PaywallScreen(),
           ),
         ],
       ),
@@ -100,7 +102,7 @@ class _AppShellState extends State<AppShell> {
         context.go('/profile');
         break;
       case 2:
-        context.go('/community');
+        context.go('/paywall');
         break;
     }
   }
@@ -113,7 +115,7 @@ class _AppShellState extends State<AppShell> {
       _selectedIndex = 0;
     } else if (location.startsWith('/profile')) {
       _selectedIndex = 1;
-    } else if (location.startsWith('/community')) {
+    } else if (location.startsWith('/paywall')) {
       _selectedIndex = 2;
     }
 
@@ -122,18 +124,21 @@ class _AppShellState extends State<AppShell> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) => _onItemTapped(index, context),
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.format_list_bulleted_rounded),
             label: 'Bikes',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_outlined),
-            label: 'Account',
+          icon: Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: ProfilePic(size: 30, showBorder: false),
+          ),
+            label: 'Profile',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.people_outline),
-            label: 'Community',
+            icon: Icon(Icons.shield_moon_outlined),
+            label: 'Pro',
           ),
         ],
       ),

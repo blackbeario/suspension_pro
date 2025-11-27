@@ -78,7 +78,8 @@ class DatabaseService {
           'brand': bike.fork!.brand,
           'model': bike.fork!.model,
           'spacers': bike.fork!.spacers,
-          'spacing': bike.fork!.spacing
+          'spacing': bike.fork!.spacing,
+          'serialNumber': bike.fork!.serialNumber
         },
       if (bike.shock != null)
         'shock': {
@@ -86,7 +87,8 @@ class DatabaseService {
           'stroke': bike.shock!.stroke,
           'brand': bike.shock!.brand,
           'model': bike.shock!.model,
-          'spacers': bike.shock!.spacers
+          'spacers': bike.shock!.spacers,
+          'serialNumber': bike.shock!.serialNumber
         }
     }, SetOptions(merge: true));
   }
@@ -120,7 +122,7 @@ class DatabaseService {
         'model': fork.model,
         'spacers': fork.spacers,
         'spacing': fork.spacing,
-        'serial': fork.serialNumber,
+        'serialNumber': fork.serialNumber,
       }
     }, SetOptions(merge: true));
   }
@@ -136,7 +138,7 @@ class DatabaseService {
         'brand': shock.brand,
         'model': shock.model,
         'spacers': shock.spacers,
-        'serial': shock.serialNumber,
+        'serialNumber': shock.serialNumber,
       }
     }, SetOptions(merge: true));
   }

@@ -23,7 +23,7 @@ dynamic getEnv(String key, {dynamic defaultValue}) {
 // Old email/text share function removed - will be replaced with Community sharing
 // TODO: Implement community sharing feature
 
-void pushScreen(BuildContext context, String title, List<Widget>? actions, Widget form, bool isFullscreen) async {
+Future<void> pushScreen(BuildContext context, String title, List<Widget>? actions, Widget form, bool isFullscreen) async {
   await Navigator.of(context).push(
     MaterialPageRoute(
         fullscreenDialog: isFullscreen,

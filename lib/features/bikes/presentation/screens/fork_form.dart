@@ -202,7 +202,7 @@ class _ForkFormState extends ConsumerState<ForkForm> {
                                 'wheelsize': _wheelsizeController.text,
                                 'spacers': _spacersController.text,
                                 'spacing': _spacingController.text,
-                                'serial': _serialNumberController.text
+                                'serialNumber': _serialNumberController.text
                               });
                       }
                     },

@@ -18,7 +18,7 @@ class BikesListScreen extends ConsumerWidget {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text('Bikes & Settings'),
-        actions: const [
+        actions:  [
           SizedBox(
             width: 60,
             child: ConnectivityWidgetWrapper(

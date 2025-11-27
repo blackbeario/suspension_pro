@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_ce/hive.dart';
 import 'package:ridemetrx/features/bikes/presentation/widgets/share_button.dart';
 import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/bikes/domain/models/component_setting.dart';
@@ -8,7 +7,7 @@ import 'package:ridemetrx/features/bikes/domain/models/fork.dart';
 import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
 import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
 import 'package:ridemetrx/core/utilities/helpers.dart';
-import 'package:ridemetrx/core/providers/service_providers.dart';
+import 'package:ridemetrx/features/bikes/domain/settings_notifier.dart';
 import 'setting_detail.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -21,34 +20,7 @@ class SettingsList extends ConsumerStatefulWidget {
 }
 
 class _SettingsListState extends ConsumerState<SettingsList> {
-  List<Setting> settings = [];
-
-  @override
-  void initState() {
-    super.initState();
-    getSettings();
-  }
-
-  getSettings() async {
-    settings = await _getBikeSettingsFromHive(widget.bike.id);
-    setState(() {});
-  }
-
-  Future<List<Setting>> _getBikeSettingsFromHive(String bikeId) async {
-    List<String> keysList = [];
-    List<Setting> settingsList = [];
-    var box = Hive.box<Setting>('settings');
-    var boxKeys = box.keys;
-    for (var key in boxKeys) keysList.add(key);
-    var bikeSettings = keysList.where((String key) => key.contains(bikeId));
-    for (String key in bikeSettings) {
-      Setting setting = box.get(key)!;
-      settingsList.add(setting);
-    }
-    return settingsList;
-  }
-
-  Widget _getSettings(BuildContext context, Bike bike) {
+  Widget _getSettings(BuildContext context, Bike bike, List<Setting> settings) {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: settings.length,
@@ -69,13 +41,10 @@ class _SettingsListState extends ConsumerState<SettingsList> {
             shape: null,
           ),
           direction: DismissDirection.horizontal,
-          onDismissed: (direction) => setState(() {
-            final key = bike.id + '-' + settings[index].id;
-            Hive.box<Setting>('settings').delete(key);
-            final db = ref.read(databaseServiceProvider);
-            db.deleteSetting(bike.id, settings[index].id);
-            settings.removeAt(index);
-          }),
+          onDismissed: (direction) {
+            final settingsNotifier = ref.read(settingsNotifierProvider(bike.id).notifier);
+            settingsNotifier.deleteSetting(settings[index].id);
+          },
           key: PageStorageKey(settings[index]),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -112,14 +81,19 @@ class _SettingsListState extends ConsumerState<SettingsList> {
 
   @override
   Widget build(BuildContext context) {
+    // Watch the settings provider for the current bike
+    final settings = ref.watch(settingsNotifierProvider(widget.bike.id));
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _getSettings(context, widget.bike),
+        _getSettings(context, widget.bike, settings),
         ElevatedButton(
           child: Text('Add Manual Setting'),
-          onPressed: () => pushScreen(context, 'Add Setting', null, SettingDetails(bike: widget.bike), true),
+          onPressed: () {
+            pushScreen(context, 'Add Setting', null, SettingDetails(bike: widget.bike), true);
+          },
           style: ElevatedButton.styleFrom(fixedSize: Size(240, 50)),
         ),
         Expanded(child: Container())

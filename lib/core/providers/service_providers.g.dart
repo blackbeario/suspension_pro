@@ -65,28 +65,6 @@ final hiveServiceProvider = AutoDisposeProvider<HiveService>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef HiveServiceRef = AutoDisposeProviderRef<HiveService>;
-String _$inAppPurchaseServiceHash() =>
-    r'408bd896a09d5932a34126bb824d37e246af8621';
-
-/// In-App Purchase Service Provider
-/// Handles purchase flow and verification
-///
-/// Copied from [inAppPurchaseService].
-@ProviderFor(inAppPurchaseService)
-final inAppPurchaseServiceProvider =
-    AutoDisposeProvider<InAppPurchaseService>.internal(
-  inAppPurchaseService,
-  name: r'inAppPurchaseServiceProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$inAppPurchaseServiceHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef InAppPurchaseServiceRef = AutoDisposeProviderRef<InAppPurchaseService>;
 String _$analyticsServiceHash() => r'bc02c9f2dac78875378bad38e1cd8f8b22d97a7d';
 
 /// Analytics Service Provider

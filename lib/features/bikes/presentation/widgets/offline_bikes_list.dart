@@ -3,12 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridemetrx/features/bikes/presentation/screens/bikeform.dart';
 import 'package:ridemetrx/features/bikes/presentation/widgets/bikes_list.dart';
 import 'package:ridemetrx/features/bikes/presentation/widgets/new_user_action.dart';
-import 'package:ridemetrx/features/profile/presentation/widgets/profile_pic.dart';
-import 'package:ridemetrx/features/purchases/presentation/screens/buy_credits.dart';
+import 'package:ridemetrx/features/connectivity/presentation/widgets/connectivity_widget_wrapper.dart';
 import 'package:ridemetrx/features/profile/presentation/screens/profile_screen.dart';
 import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
-import 'package:ridemetrx/features/connectivity/presentation/widgets/connectivity_widget_wrapper.dart';
+import 'package:ridemetrx/features/purchases/presentation/screens/paywall_screen.dart';
 
 class OfflineBikesList extends ConsumerStatefulWidget {
   const OfflineBikesList({Key? key, required this.bikes}) : super(key: key);
@@ -97,9 +96,9 @@ class _OfflineBikesListState extends ConsumerState<OfflineBikesList> {
                             offlineWidget: SizedBox(),
                             stacked: false,
                             child: NewUserAction(
-                              title: 'Purchase AI Credits',
+                              title: 'Go Pro!', 
                               icon: Icon(Icons.monetization_on_outlined),
-                              screen: BuyCredits(),
+                              screen: PaywallScreen(),
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -107,10 +106,6 @@ class _OfflineBikesListState extends ConsumerState<OfflineBikesList> {
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: ProfilePic(size: profilePicSize),
                 ),
               ],
             ),

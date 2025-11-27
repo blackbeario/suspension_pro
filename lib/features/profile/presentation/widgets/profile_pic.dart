@@ -11,7 +11,10 @@ class ProfilePicEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      child: ProfilePic(size: 100),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: ProfilePic(size: 100, showBorder: true),
+      ),
       onTap: () => showAdaptiveDialog(
         useRootNavigator: true,
         context: context,
@@ -22,40 +25,37 @@ class ProfilePicEditor extends StatelessWidget {
 }
 
 class ProfilePic extends ConsumerWidget {
-  ProfilePic({Key? key, required this.size}) : super(key: key);
+  ProfilePic({Key? key, required this.size, this.backgroundColor, required this.showBorder}) : super(key: key);
 
   final double size;
+  final Color? backgroundColor;
+  final bool showBorder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userState = ref.watch(userNotifierProvider);
-    return Padding(
-      padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-      child: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: Colors.black38,
-            width: size * 0.025,
-          ),
+    return Container(
+      decoration: showBorder ? BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Colors.black38,
+          width: size * 0.025,
         ),
-        child: CircleAvatar(
-          backgroundColor: CupertinoColors.activeBlue,
-          radius: size / 2,
-          child: ClipOval(
-            child: userState.profilePic.isNotEmpty
-                ? CachedNetworkImage(
-                    imageUrl: userState.profilePic,
-                        width: size,
-                        height: size,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) =>
-                            CupertinoActivityIndicator(animating: true),
-                    errorWidget: (context, url, error) =>
-                        Image.asset('assets/genericUserPic.png'),
-                  )
-                : Icon(Icons.person_add),
-          ),
+      ) : null,
+      child: CircleAvatar(
+        backgroundColor: backgroundColor ?? Colors.white,
+        radius: size / 2,
+        child: ClipOval(
+          child: userState.profilePic.isNotEmpty
+              ? CachedNetworkImage(
+                  imageUrl: userState.profilePic,
+                  width: size,
+                  height: size,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => CupertinoActivityIndicator(animating: true),
+                  errorWidget: (context, url, error) => Image.asset('assets/genericUserPic.png'),
+                )
+              : Icon(Icons.account_circle_outlined),
         ),
       ),
     );

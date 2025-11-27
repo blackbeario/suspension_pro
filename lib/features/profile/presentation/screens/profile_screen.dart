@@ -33,7 +33,8 @@ class ProfileScreen extends ConsumerWidget {
         children: [
           Column(
             children: [
-              ProfilePic(size: 100),
+              ProfilePic(size: 100, showBorder: true),
+              SizedBox(height: 20),
               Text(
                 '${user.firstName} ${user.lastName}',
                 style: const TextStyle(fontSize: 18),

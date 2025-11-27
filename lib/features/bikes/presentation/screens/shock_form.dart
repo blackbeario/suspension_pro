@@ -143,9 +143,7 @@ class _ShockFormState extends ConsumerState<ShockForm> {
                     keyboardType: TextInputType.number),
                 TextFormField(
                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                    decoration: InputDecoration(
-                      hintText: 'Shock Serial Number',
-                    ),
+                    decoration: _decoration('Shock Serial Number'),
                     controller: _serialNumberController,
                     keyboardType: TextInputType.text),
                 SizedBox(height: 30),
@@ -163,7 +161,7 @@ class _ShockFormState extends ConsumerState<ShockForm> {
                                   'model': _modelController.text,
                                   'spacers': _spacersController.text,
                                   'stroke': _strokeController.text,
-                                  'serial': _serialNumberController.text,
+                                  'serialNumber': _serialNumberController.text,
                                 });
                         }
                       }),

@@ -6,7 +6,7 @@ part of 'sync_service.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$syncServiceHash() => r'b58fcf1a1758fc6c3c6ffa040f7a97703702a1cf';
+String _$syncServiceHash() => r'f1f1bd9677cb875861d5020df408645f380beacb';
 
 /// Service for syncing dirty Hive data to Firebase
 /// Only syncs for Pro subscribers

@@ -5,7 +5,6 @@ import 'package:ridemetrx/core/services/auth_service.dart';
 import 'package:ridemetrx/core/services/db_service.dart';
 import 'package:ridemetrx/core/services/encryption_service.dart';
 import 'package:ridemetrx/core/services/hive_service.dart';
-import 'package:ridemetrx/core/services/in_app_service.dart';
 import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
 
 part 'service_providers.g.dart';
@@ -31,13 +30,6 @@ AuthService authService(Ref ref) {
 @riverpod
 HiveService hiveService(Ref ref) {
   return HiveService();
-}
-
-/// In-App Purchase Service Provider
-/// Handles purchase flow and verification
-@riverpod
-InAppPurchaseService inAppPurchaseService(Ref ref) {
-  return InAppPurchaseService();
 }
 
 /// Analytics Service Provider

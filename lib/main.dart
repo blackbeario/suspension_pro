@@ -11,17 +11,46 @@ import 'package:ridemetrx/features/connectivity/domain/connectivity_notifier.dar
 import 'package:ridemetrx/core/services/sync_service.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import 'dart:io' show Platform;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final bool showHome = prefs.getBool('showHome') ?? false;
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: ".env.dev"); // TODO: change to prod
   await Firebase.initializeApp();
   await Hive.initFlutter();
   await registerAdapters();
+
+  // Initialize RevenueCat
+  await _initializeRevenueCat();
+
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   runApp(ProviderScope(child: MyApp(showHome: showHome)));
+}
+
+/// Initialize RevenueCat SDK with platform-specific API keys
+Future<void> _initializeRevenueCat() async {
+  // Enable debug logs in development
+  await Purchases.setLogLevel(LogLevel.debug);
+
+  // Get API key from environment
+  // final apiKey = dotenv.env['REVENUECAT_SANDBOX_API_KEY'];
+  final apiKey = Platform.isIOS
+      ? dotenv.env['REVENUECAT_IOS_API_KEY']
+      : dotenv.env['REVENUECAT_ANDROID_API_KEY']; // TODO: Set your Android key
+
+  if (apiKey == null || apiKey.isEmpty) {
+    print('RevenueCat: Warning - API key not found in .env file');
+    return;
+  }
+
+  // Configure RevenueCat
+  final configuration = PurchasesConfiguration(apiKey);
+  await Purchases.configure(configuration);
+
+  print('RevenueCat: Initialized successfully');
 }
 
 class MyApp extends ConsumerWidget {

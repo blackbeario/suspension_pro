@@ -34,7 +34,7 @@ class _BikeFormState extends ConsumerState<BikeForm> {
 
   void showForkForm(forkValues) async {
     setState(() {
-      fork = forkValues;
+      fork = Fork(bikeId: _getBikeName(), brand: forkValues['brand'], model: forkValues['model'], travel: forkValues['travel'], year: forkValues['year'], serialNumber: forkValues['serialNumber']);
       _isVisibleForkForm = !_isVisibleForkForm;
       _isVisibleShockForm = !_isVisibleShockForm;
     });
@@ -45,7 +45,7 @@ class _BikeFormState extends ConsumerState<BikeForm> {
       if (shockValues['year'] == '' && shockValues['brand'] == '' && shockValues['model'] == '') {
         shock = null;
       } else {
-        shock = shockValues;
+        shock = Shock(bikeId: _getBikeName(), year: shockValues['year'], brand: shockValues['brand'], model: shockValues['model'], spacers: shockValues['spacers'], stroke: shockValues['stroke'], serialNumber: shockValues['serialNumber']);
       }
       _isVisibleShockForm = !_isVisibleShockForm;
       _addUpdateBike();
@@ -78,8 +78,9 @@ class _BikeFormState extends ConsumerState<BikeForm> {
 
   Future<bool> _addUpdateBike() async {
     Navigator.pop(context);
-    final Box box = await Hive.box('bikes');
-    final Bike bike = Bike(id: _bikeController.text, yearModel: int.parse(_yearModelController.text), fork: fork, shock: shock);
+    final Box<Bike> box = Hive.box<Bike>('bikes');
+    final Bike bike =
+        Bike(id: _bikeController.text, yearModel: int.parse(_yearModelController.text), fork: fork, shock: shock);
     box.put(_bikeController.text, bike);
     print(box.get(_bikeController.text));
 
@@ -91,21 +92,22 @@ class _BikeFormState extends ConsumerState<BikeForm> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        children: [
-          Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      children: [
+        Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
             Form(
               key: _formKey,
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                  width: 110,
+                    width: 110,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                      padding: const EdgeInsets.fromLTRB(16, 8, 4, 0),
                       child: TextFormField(
                         key: yearKey,
                         focusNode: yearNode,
@@ -114,7 +116,10 @@ class _BikeFormState extends ConsumerState<BikeForm> {
                         maxLength: 4,
                         decoration: InputDecoration(
                           counterText: '',
-                          suffixIcon: _yearModelController.text.length != 4 ?  null : Icon(Icons.check),
+                          suffixIcon: _yearModelController.text.length != 4 ? null : Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Icon(Icons.check),
+                          ),
                           suffixIconColor: Colors.green,
                           suffixIconConstraints: BoxConstraints(maxWidth: 40),
                           isDense: true,
@@ -132,8 +137,7 @@ class _BikeFormState extends ConsumerState<BikeForm> {
                         controller: _yearModelController,
                         keyboardType: TextInputType.text,
                         validator: (_yearModelController) {
-                          if (_yearModelController == null || _yearModelController.isEmpty)
-                            return 'Enter year';
+                          if (_yearModelController == null || _yearModelController.isEmpty) return 'Enter year';
                           return null;
                         },
                         // maxLength: 4,
@@ -148,19 +152,22 @@ class _BikeFormState extends ConsumerState<BikeForm> {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                      padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
                       child: TextFormField(
                         key: modelKey,
                         focusNode: modelNode,
                         enabled: !_isVisibleShockForm,
                         autofocus: false,
                         decoration: InputDecoration(
-                            suffixIcon: _bikeController.text.length < 6 ?  Icon(Icons.pedal_bike_sharp,
-                                size: 24, color: CupertinoColors.activeBlue.withValues(alpha: 0.5)) : Icon(Icons.check, color: Colors.green),
+                            suffixIcon: _bikeController.text.length < 6
+                                ? Icon(Icons.pedal_bike_sharp,
+                                    size: 24, color: CupertinoColors.activeBlue.withValues(alpha: 0.5))
+                                : Icon(Icons.check, color: Colors.green),
                             isDense: true,
                             filled: true,
                             hoverColor: Colors.blue.shade100,
-                            helper: _bikeController.text.length < 6 ? Text('Minimum 6 characters') : SizedBox(height: 20),
+                            helper:
+                                _bikeController.text.length < 6 ? Text('Minimum 6 characters') : SizedBox(height: 20),
                             semanticCounterText: 'Must enter 3 chars',
                             counterText: _bikeController.text.length < 6
                                 ? '${_enteredText.length.toString()} character(s)'
@@ -175,8 +182,7 @@ class _BikeFormState extends ConsumerState<BikeForm> {
                         controller: _bikeController,
                         keyboardType: TextInputType.text,
                         validator: (_bikeController) {
-                          if (_bikeController == null || _bikeController.isEmpty)
-                            return 'Enter bike model';
+                          if (_bikeController == null || _bikeController.isEmpty) return 'Enter bike model';
                           return null;
                         },
                         onChanged: (value) {
@@ -189,48 +195,48 @@ class _BikeFormState extends ConsumerState<BikeForm> {
                     ),
                   ),
                 ],
-              ),),
-              Visibility(
-                visible: _isVisibleForkForm,
-                maintainState: true,
-                child: ForkForm(bikeId: _getBikeName(), fork: _getFork(), forkCallback: (val) => showForkForm(val)),
               ),
-              Visibility(
-                child: TextButton(
-                  child: Text('< back to fork'),
-                  onPressed: () {
-                    setState(() {
-                      _isVisibleForkForm = !_isVisibleForkForm;
-                      _isVisibleShockForm = !_isVisibleShockForm;
-                    });
-                  },
-                ),
-                visible: _isVisibleShockForm,
+            ),
+            Visibility(
+              visible: _isVisibleForkForm,
+              maintainState: true,
+              child: ForkForm(bikeId: _getBikeName(), fork: _getFork(), forkCallback: (val) => showForkForm(val)),
+            ),
+            Visibility(
+              child: TextButton(
+                child: Text('< back to fork'),
+                onPressed: () {
+                  setState(() {
+                    _isVisibleForkForm = !_isVisibleForkForm;
+                    _isVisibleShockForm = !_isVisibleShockForm;
+                  });
+                },
               ),
-              Visibility(
-                maintainState: true,
-                visible: _isVisibleShockForm,
-                child:
-                    ShockForm(bikeId: _getBikeName(), shock: _getShock(), shockCallback: (val) => showShockForm(fork, val)),
-              ),
-              SizedBox(height: 20),
-              widget.bike != null
-                  ? CupertinoButton(
-                      color: CupertinoColors.quaternaryLabel,
-                      child: Text('Save'),
-                      onPressed: _bikeController.text.isNotEmpty ? () async => await _addUpdateBike() : null)
-                  : Container(),
-            ],
-          ),
-        ],
+              visible: _isVisibleShockForm,
+            ),
+            Visibility(
+              maintainState: true,
+              visible: _isVisibleShockForm,
+              child: ShockForm(
+                  bikeId: _getBikeName(), shock: _getShock(), shockCallback: (val) => showShockForm(fork, val)),
+            ),
+            SizedBox(height: 20),
+            widget.bike != null
+                ? CupertinoButton(
+                    color: CupertinoColors.quaternaryLabel,
+                    child: Text('Save'),
+                    onPressed: _bikeController.text.isNotEmpty ? () async => await _addUpdateBike() : null)
+                : Container(),
+          ],
+        ),
+      ],
     );
   }
 
   void _checkFieldLength(String value, int requirement) {
     if (value.length < requirement) {
       _isVisibleForkForm = false;
-    } else if (_bikeController.text.isNotEmpty)
-      _isVisibleForkForm = true;
+    } else if (_bikeController.text.isNotEmpty) _isVisibleForkForm = true;
   }
 
   String _getModelYear() {
