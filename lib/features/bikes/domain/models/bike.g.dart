@@ -23,13 +23,15 @@ class BikeAdapter extends TypeAdapter<Bike> {
       shock: fields[3] as Shock?,
       index: (fields[4] as num?)?.toInt(),
       bikePic: fields[5] as String?,
+      lastModified: fields[6] as DateTime?,
+      isDirty: fields[7] == null ? false : fields[7] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Bike obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -41,7 +43,11 @@ class BikeAdapter extends TypeAdapter<Bike> {
       ..writeByte(4)
       ..write(obj.index)
       ..writeByte(5)
-      ..write(obj.bikePic);
+      ..write(obj.bikePic)
+      ..writeByte(6)
+      ..write(obj.lastModified)
+      ..writeByte(7)
+      ..write(obj.isDirty);
   }
 
   @override

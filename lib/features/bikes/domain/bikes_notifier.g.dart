@@ -24,7 +24,7 @@ final bikesStreamProvider = AutoDisposeStreamProvider<List<Bike>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef BikesStreamRef = AutoDisposeStreamProviderRef<List<Bike>>;
-String _$offlineBikesHash() => r'ab59280e01afa15cd351100576742cf5176cd575';
+String _$offlineBikesHash() => r'1d62945909a1b2a65561f24e309a91d3d1e8748a';
 
 /// Provider for offline bikes from Hive
 ///

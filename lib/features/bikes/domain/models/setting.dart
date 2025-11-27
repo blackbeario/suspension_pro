@@ -29,8 +29,24 @@ class Setting extends HiveObject{
   final String? rearTire;
 	@HiveField(SettingFields.notes)
   final String? notes;
+	@HiveField(SettingFields.lastModified)
+  final DateTime? lastModified;
+	@HiveField(SettingFields.isDirty)
+  final bool isDirty;
 
-  Setting({required this.id, this.bike, this.fork, this.shock, this.riderWeight, this.updated, this.frontTire, this.rearTire, this.notes});
+  Setting({
+    required this.id,
+    this.bike,
+    this.fork,
+    this.shock,
+    this.riderWeight,
+    this.updated,
+    this.frontTire,
+    this.rearTire,
+    this.notes,
+    this.lastModified,
+    this.isDirty = false,
+  });
 
   factory Setting.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -44,6 +60,10 @@ class Setting extends HiveObject{
       rearTire: data['rearTire'] ?? '',
       updated: data['updated'] != null ? DateTime.fromMillisecondsSinceEpoch(data['updated']) : null,
       notes: data['notes'] ?? '',
+      lastModified: data['lastModified'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(data['lastModified'])
+          : null,
+      isDirty: false, // Data from Firebase is always clean
     );
   }
 
@@ -70,6 +90,8 @@ class Setting extends HiveObject{
     'updated': updated?.millisecondsSinceEpoch,
     'notes': notes,
     'riderWeight': riderWeight,
+    'lastModified': lastModified?.millisecondsSinceEpoch,
+    'isDirty': isDirty,
   };
 }
 

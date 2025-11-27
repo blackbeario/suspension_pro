@@ -8,6 +8,7 @@ import 'package:ridemetrx/core/routing/app_router.dart';
 import 'package:ridemetrx/core/themes/styles.dart';
 import 'package:ridemetrx/features/auth/presentation/auth_state_listener.dart';
 import 'package:ridemetrx/features/connectivity/domain/connectivity_notifier.dart';
+import 'package:ridemetrx/core/services/sync_service.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -36,6 +37,15 @@ class MyApp extends ConsumerWidget {
 
     // Listen to Firebase auth state changes
     ref.watch(authStateListenerProvider);
+
+    // Listen to connectivity changes and trigger sync when going online
+    ref.listen<bool>(connectivityNotifierProvider, (previous, current) {
+      // If previous was offline (false) and current is online (true)
+      if (previous == false && current == true) {
+        print('App: Connectivity restored, triggering sync...');
+        ref.read(syncServiceProvider.notifier).syncDirtyData();
+      }
+    });
 
     return MaterialApp.router(
       routerConfig: router,

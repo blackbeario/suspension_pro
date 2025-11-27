@@ -5,4 +5,6 @@ class BikeFields {
 	static const int shock = 3;
 	static const int index = 4;
 	static const int bikePic = 5;
+	static const int lastModified = 6;
+	static const int isDirty = 7;
 }

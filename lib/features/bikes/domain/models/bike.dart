@@ -22,8 +22,21 @@ class Bike extends HiveObject{
   int? index;
 	@HiveField(BikeFields.bikePic)
   final String? bikePic;
+	@HiveField(BikeFields.lastModified)
+  final DateTime? lastModified;
+	@HiveField(BikeFields.isDirty)
+  final bool isDirty;
 
-  Bike({required this.id, this.yearModel, this.fork, this.shock, this.index, this.bikePic});
+  Bike({
+    required this.id,
+    this.yearModel,
+    this.fork,
+    this.shock,
+    this.index,
+    this.bikePic,
+    this.lastModified,
+    this.isDirty = false,
+  });
 
   factory Bike.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -35,6 +48,10 @@ class Bike extends HiveObject{
       shock: data["shock"] != null ? Shock.fromJson(doc.id, data["shock"]) : null,
       index: data["index"] ?? null,
       bikePic: data['bikePic'] ?? '',
+      lastModified: data['lastModified'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(data['lastModified'])
+          : null,
+      isDirty: false, // Data from Firebase is always clean
     );
   }
 
@@ -44,5 +61,7 @@ class Bike extends HiveObject{
         "shock": shock,
         "index": index,
         'bikePic': bikePic,
+        'lastModified': lastModified?.millisecondsSinceEpoch,
+        'isDirty': isDirty,
       };
 }
