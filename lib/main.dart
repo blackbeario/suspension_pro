@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:ridemetrx/core/hive_helper/register_adapters.dart';
@@ -12,7 +13,6 @@ import 'package:ridemetrx/core/services/sync_service.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'dart:io' show Platform;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,18 +36,28 @@ Future<void> _initializeRevenueCat() async {
   await Purchases.setLogLevel(LogLevel.debug);
 
   // Get API key from environment
-  // final apiKey = dotenv.env['REVENUECAT_SANDBOX_API_KEY'];
-  final apiKey = Platform.isIOS
-      ? dotenv.env['REVENUECAT_IOS_API_KEY']
-      : dotenv.env['REVENUECAT_ANDROID_API_KEY']; // TODO: Set your Android key
+  final apiKey = dotenv.env['REVENUECAT_SANDBOX_API_KEY'];
+  // final apiKey = Platform.isIOS
+  //     ? dotenv.env['REVENUECAT_IOS_API_KEY']
+  //     : dotenv.env['REVENUECAT_ANDROID_API_KEY'];
 
   if (apiKey == null || apiKey.isEmpty) {
     print('RevenueCat: Warning - API key not found in .env file');
     return;
   }
 
-  // Configure RevenueCat
+  // Check if user is already logged in to Firebase
+  final currentUser = FirebaseAuth.instance.currentUser;
+
+  // Configure RevenueCat with Firebase UID if user is logged in
   final configuration = PurchasesConfiguration(apiKey);
+  if (currentUser != null) {
+    configuration.appUserID = currentUser.uid;
+    print('RevenueCat: Configuring with Firebase UID: ${currentUser.uid}');
+  } else {
+    print('RevenueCat: Configuring anonymously (no user logged in)');
+  }
+
   await Purchases.configure(configuration);
 
   print('RevenueCat: Initialized successfully');

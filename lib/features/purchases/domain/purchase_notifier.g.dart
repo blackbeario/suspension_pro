@@ -6,7 +6,7 @@ part of 'purchase_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$purchaseNotifierHash() => r'db40ed08647c8a79c1c74c18888c569666b0be5c';
+String _$purchaseNotifierHash() => r'453942b4d241b790def306c5806ef4567489a3dc';
 
 /// StateNotifier for managing RevenueCat subscription state
 /// Manages RideMetrx Pro subscription status

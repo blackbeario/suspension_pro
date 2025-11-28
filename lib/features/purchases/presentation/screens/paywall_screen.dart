@@ -3,13 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
+import 'package:ridemetrx/features/purchases/domain/paywall_display_manager.dart';
 
 /// Paywall screen showing Pro features and pricing
 /// Displayed when free users try to access Pro features
 class PaywallScreen extends ConsumerStatefulWidget {
   final String? featureName;
+  final VoidCallback? onDismiss;
 
-  const PaywallScreen({Key? key, this.featureName}) : super(key: key);
+  const PaywallScreen({Key? key, this.featureName, this.onDismiss}) : super(key: key);
 
   @override
   ConsumerState<PaywallScreen> createState() => _PaywallScreenState();
@@ -23,6 +25,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     Future.microtask(() {
       ref.read(purchaseNotifierProvider.notifier).fetchOfferings();
     });
+
+    // Record that paywall was shown
+    PaywallDisplayManager.recordPaywallShown();
   }
 
   @override
@@ -43,13 +48,13 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       // Hero section
                       const Icon(
                         Icons.rocket_launch,
-                        size: 80,
+                        size: 40,
                         color: Colors.teal,
                       ),
                       const SizedBox(height: 16),
                       Text(
                         'RideMetrx Pro',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Colors.teal,
                             ),
@@ -73,8 +78,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       ),
                       _buildFeatureItem(
                         icon: Icons.analytics_outlined,
-                        title: 'Metrx Roughness Detection',
-                        description: 'Measure trail roughness with accelerometer + GPS data',
+                        title: 'Verifyable Feedback Data',
+                        description: 'Measure trail feedback with accelerometer + GPS data',
                       ),
                       _buildFeatureItem(
                         icon: Icons.compare_arrows,
@@ -84,13 +89,13 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       _buildFeatureItem(
                         icon: Icons.map_outlined,
                         title: 'Strava Integration',
-                        description: 'Auto-track ride hours and link trail names',
+                        description: 'Export data, auto-track maintenance hours and link trail names',
                       ),
-                      _buildFeatureItem(
-                        icon: Icons.share_location,
-                        title: 'Community Contributions',
-                        description: 'Share your heatmap data with other riders',
-                      ),
+                      // _buildFeatureItem(
+                      //   icon: Icons.share_location,
+                      //   title: 'Community Contributions',
+                      //   description: 'Share your Metrx heatmap data with other riders',
+                      // ),
                       _buildFeatureItem(
                         icon: Icons.photo_library,
                         title: 'Cloud Photo Storage',
@@ -141,7 +146,10 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 
                       // Maybe later button
                       TextButton(
-                        onPressed: () => context.pop(),
+                        onPressed: () {
+                          widget.onDismiss?.call();
+                          context.pop();
+                        },
                         child: Text(
                           'Maybe Later',
                           style: TextStyle(color: Colors.grey.shade600),
@@ -293,7 +301,6 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                             backgroundColor: Colors.green,
                           ),
                         );
-                        context.pop();
                       }
                     },
               style: ElevatedButton.styleFrom(

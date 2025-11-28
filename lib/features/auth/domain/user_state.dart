@@ -9,6 +9,8 @@ class UserState {
   final String lastName;
   final String profilePic;
   final int aiCredits;
+  final bool isPro;
+  final DateTime? subscriptionExpiryDate;
   final bool isAuthenticated;
 
   const UserState({
@@ -19,6 +21,8 @@ class UserState {
     this.lastName = '',
     this.profilePic = '',
     this.aiCredits = 0,
+    this.isPro = false,
+    this.subscriptionExpiryDate,
   }) : isAuthenticated = uid != '';
 
   /// Create UserState from AppUser model
@@ -31,6 +35,8 @@ class UserState {
       lastName: user.lastName ?? '',
       profilePic: user.profilePic ?? '',
       aiCredits: user.aiCredits ?? 0,
+      isPro: user.isPro ?? false,
+      subscriptionExpiryDate: user.subscriptionExpiryDate,
     );
   }
 
@@ -61,6 +67,8 @@ class UserState {
     String? lastName,
     String? profilePic,
     int? aiCredits,
+    bool? isPro,
+    DateTime? subscriptionExpiryDate,
   }) {
     return UserState(
       uid: uid ?? this.uid,
@@ -70,6 +78,8 @@ class UserState {
       lastName: lastName ?? this.lastName,
       profilePic: profilePic ?? this.profilePic,
       aiCredits: aiCredits ?? this.aiCredits,
+      isPro: isPro ?? this.isPro,
+      subscriptionExpiryDate: subscriptionExpiryDate ?? this.subscriptionExpiryDate,
     );
   }
 
@@ -83,7 +93,9 @@ class UserState {
         other.firstName == firstName &&
         other.lastName == lastName &&
         other.profilePic == profilePic &&
-        other.aiCredits == aiCredits;
+        other.aiCredits == aiCredits &&
+        other.isPro == isPro &&
+        other.subscriptionExpiryDate == subscriptionExpiryDate;
   }
 
   @override
@@ -96,6 +108,8 @@ class UserState {
       lastName,
       profilePic,
       aiCredits,
+      isPro,
+      subscriptionExpiryDate,
     );
   }
 }

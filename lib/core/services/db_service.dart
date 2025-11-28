@@ -49,6 +49,14 @@ class DatabaseService {
     return await _db.collection('users').doc(uid).set({'updated': $updated, 'profilePic': filePath}, SetOptions(merge: true));
   }
 
+  /// Update user subscription status in Firestore
+  Future<void> updateSubscriptionStatus(bool isPro, DateTime? expiryDate) async {
+    return await _db.collection('users').doc(uid).set({
+      'isPro': isPro,
+      'subscriptionExpiryDate': expiryDate?.millisecondsSinceEpoch,
+    }, SetOptions(merge: true));
+  }
+
   Future<void> setBikePic(String bikeid, String filePath) async {
     var $now = DateTime.now();
     var $updated = $now.millisecondsSinceEpoch;

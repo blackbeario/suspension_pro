@@ -1,8 +1,11 @@
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ridemetrx/features/purchases/domain/purchase_state.dart';
+import 'package:ridemetrx/core/services/db_service.dart';
+import 'package:ridemetrx/features/purchases/domain/paywall_display_manager.dart';
 
 part 'purchase_notifier.g.dart';
 
@@ -17,31 +20,11 @@ const String kProAnnualId = 'pro_annual';
 class PurchaseNotifier extends _$PurchaseNotifier {
   @override
   PurchaseState build() {
-    // Initialize and check subscription status
-    _initializeRevenueCat();
+    // Note: We don't check subscription status here because:
+    // 1. RevenueCat is configured in main.dart (must happen before Riverpod)
+    // 2. Subscription status is checked in auth_state_listener after Purchases.logIn()
+    // This ensures we check status AFTER the user is properly linked to RevenueCat
     return PurchaseState.initial();
-  }
-
-  /// Initialize RevenueCat and check subscription status
-  Future<void> _initializeRevenueCat() async {
-    try {
-      // Check current customer info
-      final customerInfo = await Purchases.getCustomerInfo();
-      _updateSubscriptionStatus(customerInfo);
-
-      state = state.copyWith(
-        loading: false,
-        customerInfo: customerInfo,
-      );
-    } catch (e) {
-      print('PurchaseNotifier: Failed to initialize: $e');
-      // Load from cache if offline
-      await _loadSubscriptionFromPrefs();
-      state = state.copyWith(
-        loading: false,
-        errorMessage: 'Failed to check subscription status',
-      );
-    }
   }
 
   /// Fetch available offerings from RevenueCat
@@ -62,15 +45,24 @@ class PurchaseNotifier extends _$PurchaseNotifier {
     state = state.copyWith(purchasePending: true, clearError: true);
 
     try {
+      print('PurchaseNotifier: Starting purchase for package: ${package.identifier}');
       final PurchaseResult purchaseResult = await Purchases.purchase(PurchaseParams.package(package));
       final CustomerInfo customerInfo = purchaseResult.customerInfo;
-      _updateSubscriptionStatus(customerInfo); 
+
+      print('PurchaseNotifier: Purchase completed. CustomerInfo received.');
+      print('PurchaseNotifier: Original App User ID: ${customerInfo.originalAppUserId}');
+      print('PurchaseNotifier: Active entitlements: ${customerInfo.entitlements.active.keys.toList()}');
+      print('PurchaseNotifier: All entitlements: ${customerInfo.entitlements.all.keys.toList()}');
+
+      _updateSubscriptionStatus(customerInfo);
 
       state = state.copyWith(
         purchasePending: false,
         customerInfo: customerInfo,
       );
 
+      print('PurchaseNotifier: isPro after update: ${state.isPro}');
+      print('PurchaseNotifier: subscriptionStatus: ${state.subscriptionStatus}');
       return state.isPro;
     } on PlatformException catch (e) {
       final errorCode = PurchasesErrorHelper.getErrorCode(e);
@@ -129,22 +121,29 @@ class PurchaseNotifier extends _$PurchaseNotifier {
 
   /// Update subscription status from CustomerInfo
   void _updateSubscriptionStatus(CustomerInfo customerInfo) {
-    // Check if user has active entitlement for Pro
-    final hasPro = customerInfo.entitlements.active.containsKey('pro');
+    // Check if user has active entitlement for RideMetrx Pro
+    print('PurchaseNotifier: Checking for "RideMetrx Pro" entitlement...');
+    final hasPro = customerInfo.entitlements.active.containsKey('RideMetrx Pro');
+    print('PurchaseNotifier: Has "RideMetrx Pro" entitlement: $hasPro');
 
     SubscriptionStatus status;
     DateTime? expiryDate;
 
     if (hasPro) {
       status = SubscriptionStatus.active;
-      final proEntitlement = customerInfo.entitlements.active['pro'];
+      final proEntitlement = customerInfo.entitlements.active['RideMetrx Pro'];
       expiryDate = proEntitlement?.expirationDate != null
           ? DateTime.parse(proEntitlement!.expirationDate!)
           : null;
+      print('PurchaseNotifier: Pro entitlement active, expiry: $expiryDate');
+
+      // Reset paywall tracking since user is now Pro
+      PaywallDisplayManager.resetPaywallTracking();
     } else {
       // Check if there was a previous subscription
-      final hadPro = customerInfo.entitlements.all.containsKey('pro');
+      final hadPro = customerInfo.entitlements.all.containsKey('RideMetrx Pro');
       status = hadPro ? SubscriptionStatus.expired : SubscriptionStatus.none;
+      print('PurchaseNotifier: No active pro entitlement. Status: $status');
     }
 
     state = state.copyWith(
@@ -154,55 +153,80 @@ class PurchaseNotifier extends _$PurchaseNotifier {
 
     // Save to SharedPreferences for offline access
     _saveSubscriptionToPrefs(status, expiryDate);
+
+    // Sync to Firestore
+    _syncSubscriptionToFirestore(hasPro, expiryDate);
+  }
+
+  /// Sync subscription status to Firestore
+  Future<void> _syncSubscriptionToFirestore(bool isPro, DateTime? expiryDate) async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        final db = DatabaseService(uid: currentUser.uid);
+        await db.updateSubscriptionStatus(isPro, expiryDate);
+        print('PurchaseNotifier: Synced subscription to Firestore for user: ${currentUser.uid}');
+      }
+    } catch (e) {
+      print('PurchaseNotifier: Failed to sync subscription to Firestore: $e');
+    }
   }
 
   /// Save subscription status to SharedPreferences for offline access
+  /// Uses Firebase UID to make it user-specific
   Future<void> _saveSubscriptionToPrefs(
     SubscriptionStatus status,
     DateTime? expiryDate,
   ) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('subscription_status', status.name);
-    if (expiryDate != null) {
-      await prefs.setInt(
-        'subscription_expiry',
-        expiryDate.millisecondsSinceEpoch,
-      );
-    }
-  }
+    try {
+      // Use Firebase UID directly instead of RevenueCat's originalAppUserId
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        print('PurchaseNotifier: No Firebase user logged in, skipping prefs save');
+        return;
+      }
 
-  /// Load subscription status from SharedPreferences (for offline grace period)
-  Future<void> _loadSubscriptionFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final statusString = prefs.getString('subscription_status');
-    final expiryTimestamp = prefs.getInt('subscription_expiry');
-
-    if (statusString != null) {
-      final status = SubscriptionStatus.values.firstWhere(
-        (e) => e.name == statusString,
-        orElse: () => SubscriptionStatus.unknown,
-      );
-      final expiryDate = expiryTimestamp != null
-          ? DateTime.fromMillisecondsSinceEpoch(expiryTimestamp)
-          : null;
-
-      // Check if cached subscription is still valid
-      if (expiryDate != null && DateTime.now().isBefore(expiryDate)) {
-        state = state.copyWith(
-          subscriptionStatus: status,
-          subscriptionExpiryDate: expiryDate,
-        );
-      } else {
-        // Expired, set to none
-        state = state.copyWith(
-          subscriptionStatus: SubscriptionStatus.none,
+      final userId = currentUser.uid;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('subscription_status_$userId', status.name);
+      if (expiryDate != null) {
+        await prefs.setInt(
+          'subscription_expiry_$userId',
+          expiryDate.millisecondsSinceEpoch,
         );
       }
+      print('PurchaseNotifier: Saved subscription to prefs for user: $userId');
+    } catch (e) {
+      print('PurchaseNotifier: Failed to save subscription to prefs: $e');
     }
   }
+
 
   /// Check if subscription is active (helper method for UI)
   bool get isProSubscriber => state.isPro;
+
+  /// Refresh customer info from RevenueCat (e.g., after login)
+  Future<void> refreshCustomerInfo() async {
+    try {
+      print('PurchaseNotifier: Refreshing customer info...');
+      final customerInfo = await Purchases.getCustomerInfo();
+
+      // Get Firebase user for comparison
+      final firebaseUser = FirebaseAuth.instance.currentUser;
+      print('PurchaseNotifier: Firebase UID: ${firebaseUser?.uid ?? "Not logged in"}');
+      print('PurchaseNotifier: RevenueCat originalAppUserId: ${customerInfo.originalAppUserId}');
+      print('PurchaseNotifier: Note: originalAppUserId may show anonymous ID, but subscription is linked to Firebase UID');
+
+      _updateSubscriptionStatus(customerInfo);
+
+      state = state.copyWith(
+        customerInfo: customerInfo,
+      );
+      print('PurchaseNotifier: Customer info refreshed. isPro: ${state.isPro}');
+    } catch (e) {
+      print('PurchaseNotifier: Failed to refresh customer info: $e');
+    }
+  }
 
   /// Clear error message
   void clearError() {

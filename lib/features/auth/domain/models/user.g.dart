@@ -25,13 +25,15 @@ class AppUserAdapter extends TypeAdapter<AppUser> {
       email: fields[5] as String,
       created: fields[6] as DateTime?,
       aiCredits: (fields[7] as num?)?.toInt(),
+      isPro: fields[8] as bool?,
+      subscriptionExpiryDate: fields[9] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, AppUser obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +49,11 @@ class AppUserAdapter extends TypeAdapter<AppUser> {
       ..writeByte(6)
       ..write(obj.created)
       ..writeByte(7)
-      ..write(obj.aiCredits);
+      ..write(obj.aiCredits)
+      ..writeByte(8)
+      ..write(obj.isPro)
+      ..writeByte(9)
+      ..write(obj.subscriptionExpiryDate);
   }
 
   @override

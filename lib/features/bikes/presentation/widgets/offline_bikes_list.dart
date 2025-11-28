@@ -8,6 +8,7 @@ import 'package:ridemetrx/features/profile/presentation/screens/profile_screen.d
 import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
 import 'package:ridemetrx/features/purchases/presentation/screens/paywall_screen.dart';
+import 'package:ridemetrx/features/purchases/domain/paywall_display_manager.dart';
 
 class OfflineBikesList extends ConsumerStatefulWidget {
   const OfflineBikesList({Key? key, required this.bikes}) : super(key: key);
@@ -21,17 +22,31 @@ class OfflineBikesList extends ConsumerStatefulWidget {
 class _OfflineBikesListState extends ConsumerState<OfflineBikesList> {
   final double profilePicSize = 50;
   bool finished = false;
+  bool shouldShowPaywall = false;
 
   @override
   void initState() {
     super.initState();
     _initAnimation();
+    _checkPaywallDisplay();
   }
 
   void _initAnimation() {
     Future.delayed(Duration.zero, () {
       setState(() => finished = !finished);
     });
+  }
+
+  Future<void> _checkPaywallDisplay() async {
+    final user = ref.read(userNotifierProvider);
+    final shouldShow = await PaywallDisplayManager.shouldShowPaywall(
+      isPro: user.isPro,
+      hasNoBikes: widget.bikes.isEmpty,
+    );
+
+    if (mounted) {
+      setState(() => shouldShowPaywall = shouldShow);
+    }
   }
 
   @override
@@ -92,15 +107,20 @@ class _OfflineBikesListState extends ConsumerState<OfflineBikesList> {
                             icon: Icon(Icons.pedal_bike),
                             screen: BikeForm(),
                           ),
-                          ConnectivityWidgetWrapper(
-                            offlineWidget: SizedBox(),
-                            stacked: false,
-                            child: NewUserAction(
-                              title: 'Go Pro!', 
-                              icon: Icon(Icons.monetization_on_outlined),
-                              screen: PaywallScreen(),
+                          if (shouldShowPaywall)
+                            ConnectivityWidgetWrapper(
+                              offlineWidget: SizedBox(),
+                              stacked: false,
+                              child: NewUserAction(
+                                title: 'Go Pro!',
+                                icon: Icon(Icons.monetization_on_outlined),
+                                screen: PaywallScreen(
+                                  onDismiss: () async {
+                                    await PaywallDisplayManager.recordPaywallDismissed();
+                                  },
+                                ),
+                              ),
                             ),
-                          ),
                           const SizedBox(height: 20),
                         ],
                       ),

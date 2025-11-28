@@ -7,4 +7,6 @@ class AppUserFields {
   static const int email = 5;
   static const int created = 6;
   static const int aiCredits = 7;
+  static const int isPro = 8;
+  static const int subscriptionExpiryDate = 9;
 }

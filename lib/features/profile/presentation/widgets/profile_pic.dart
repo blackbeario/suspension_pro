@@ -13,7 +13,7 @@ class ProfilePicEditor extends StatelessWidget {
     return GestureDetector(
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
-        child: ProfilePic(size: 100, showBorder: true),
+        child: ProfilePic(picSize: 100, showBorder: true),
       ),
       onTap: () => showAdaptiveDialog(
         useRootNavigator: true,
@@ -25,39 +25,68 @@ class ProfilePicEditor extends StatelessWidget {
 }
 
 class ProfilePic extends ConsumerWidget {
-  ProfilePic({Key? key, required this.size, this.backgroundColor, required this.showBorder}) : super(key: key);
+  ProfilePic({Key? key, required this.picSize, this.backgroundColor, required this.showBorder, this.proIconSize}) : super(key: key);
 
-  final double size;
+  final double picSize;
+  final double? proIconSize;
   final Color? backgroundColor;
   final bool showBorder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userState = ref.watch(userNotifierProvider);
-    return Container(
-      decoration: showBorder ? BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: Colors.black38,
-          width: size * 0.025,
+    final isPro = userState.isPro;
+
+    return Stack(
+      children: [
+        Container(
+          padding: EdgeInsets.only(right: proIconSize != null ? 8 : 0),
+          decoration: showBorder ? BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.black38,
+              width: picSize * 0.025,
+            ),
+          ) : null,
+          child: CircleAvatar(
+            backgroundColor: backgroundColor ?? Colors.white,
+            radius: picSize / 2,
+            child: ClipOval(
+              child: userState.profilePic.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: userState.profilePic,
+                      width: picSize,
+                      height: picSize,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => CupertinoActivityIndicator(animating: true),
+                      errorWidget: (context, url, error) => Image.asset('assets/genericUserPic.png'),
+                    )
+                  : Icon(Icons.account_circle_outlined),
+            ),
+          ),
         ),
-      ) : null,
-      child: CircleAvatar(
-        backgroundColor: backgroundColor ?? Colors.white,
-        radius: size / 2,
-        child: ClipOval(
-          child: userState.profilePic.isNotEmpty
-              ? CachedNetworkImage(
-                  imageUrl: userState.profilePic,
-                  width: size,
-                  height: size,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => CupertinoActivityIndicator(animating: true),
-                  errorWidget: (context, url, error) => Image.asset('assets/genericUserPic.png'),
-                )
-              : Icon(Icons.account_circle_outlined),
-        ),
-      ),
+        if (isPro)
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.all(picSize * 0.04),
+              decoration: BoxDecoration(
+                color: Colors.amber.shade600,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white,
+                  width: picSize * 0.02,
+                ),
+              ),
+              child: Icon(
+                Icons.star,
+                color: Colors.white,
+                size: proIconSize != null ? picSize * proIconSize! : picSize * 0.2,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

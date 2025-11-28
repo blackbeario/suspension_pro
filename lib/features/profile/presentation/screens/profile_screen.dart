@@ -7,6 +7,7 @@ import 'package:ridemetrx/features/auth/presentation/auth_view_model.dart';
 import 'package:ridemetrx/core/utilities/helpers.dart';
 import 'package:ridemetrx/features/profile/presentation/screens/profile_form_screen.dart';
 import 'package:ridemetrx/features/profile/presentation/widgets/roadmap/app_roadmap.dart';
+import 'package:ridemetrx/features/purchases/presentation/screens/subscription_management_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -33,17 +34,78 @@ class ProfileScreen extends ConsumerWidget {
         children: [
           Column(
             children: [
-              ProfilePic(size: 100, showBorder: true),
+              ProfilePic(picSize: 100, showBorder: true),
               SizedBox(height: 20),
-              Text(
-                '${user.firstName} ${user.lastName}',
-                style: const TextStyle(fontSize: 18),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '${user.firstName} ${user.lastName}',
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                  if (user.isPro) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.amber.shade600, Colors.amber.shade800],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(
+                            Icons.star,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            'PRO',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
               ),
               const SizedBox(height: 10),
               Text(user.email),
             ],
           ),
           const SizedBox(height: 40),
+          if (user.isPro)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.star,
+                    color: Colors.amber.shade700,
+                  ),
+                ),
+                title: const Text('Manage Subscription'),
+                subtitle: const Text('View Pro benefits'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const SubscriptionManagementScreen(),
+                  ),
+                ),
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: ListTile(
@@ -64,13 +126,13 @@ class ProfileScreen extends ConsumerWidget {
             child: ListTile(
               title: const Text('Privacy Policy'),
               trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () => loadURL('https://vibesoftware.io/privacy/ridemetrx'),
+              onTap: () => loadURL('https://vibesoftware.io/privacy/suspension_pro'),
             ),
           ),
           ListTile(
             title: const Text('Terms & Conditions'),
             trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () => loadURL('https://vibesoftware.io/terms/ridemetrx'),
+            onTap: () => loadURL('https://vibesoftware.io/terms/suspension_pro'),
           ),
           const SizedBox(height: 40),
           ListTile(

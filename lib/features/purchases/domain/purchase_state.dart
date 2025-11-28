@@ -29,7 +29,7 @@ class PurchaseState {
   });
 
   /// Empty/initial state
-  factory PurchaseState.initial() => const PurchaseState();
+  factory PurchaseState.initial() => const PurchaseState(loading: false);
 
   /// Helper: Check if user has active Pro subscription
   bool get isPro => subscriptionStatus == SubscriptionStatus.active;

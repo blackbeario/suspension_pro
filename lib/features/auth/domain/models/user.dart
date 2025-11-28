@@ -25,6 +25,10 @@ class AppUser extends HiveObject{
   final DateTime? created;
 	@HiveField(AppUserFields.aiCredits)
   int? aiCredits;
+  @HiveField(AppUserFields.isPro)
+  bool? isPro;
+  @HiveField(AppUserFields.subscriptionExpiryDate)
+  DateTime? subscriptionExpiryDate;
 
 
   AppUser({
@@ -36,6 +40,8 @@ class AppUser extends HiveObject{
     required this.email,
     this.created,
     this.aiCredits,
+    this.isPro,
+    this.subscriptionExpiryDate,
   });
 
   factory AppUser.fromSnapshot(Map<String, dynamic> data) => AppUser(
@@ -47,6 +53,10 @@ class AppUser extends HiveObject{
         email: data['email'] ?? '',
         aiCredits: data['aiCredits'] ?? 0,
         created: data['created'] != null ? DateTime.fromMillisecondsSinceEpoch(data['created']) : null,
+        isPro: data['isPro'] ?? false,
+        subscriptionExpiryDate: data['subscriptionExpiryDate'] != null
+            ? DateTime.fromMillisecondsSinceEpoch(data['subscriptionExpiryDate'])
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -56,6 +66,8 @@ class AppUser extends HiveObject{
         'profilePic': profilePic,
         'email': email,
         'aiCredits': aiCredits,
-        'created': created?.millisecondsSinceEpoch
+        'created': created?.millisecondsSinceEpoch,
+        'isPro': isPro ?? false,
+        'subscriptionExpiryDate': subscriptionExpiryDate?.millisecondsSinceEpoch,
       };
 }

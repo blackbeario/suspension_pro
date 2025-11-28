@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ridemetrx/features/profile/presentation/widgets/profile_pic.dart';
-import 'package:ridemetrx/features/purchases/presentation/screens/paywall_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
 import 'package:ridemetrx/features/auth/presentation/screens/login_page.dart';
@@ -65,9 +64,9 @@ GoRouter appRouter(Ref ref) {
             builder: (context, state) => const ProfileScreen(),
           ),
           GoRoute(
-            path: '/paywall',
-            name: 'paywall',
-            builder: (context, state) => const PaywallScreen(),
+            path: '/community',
+            name: 'community',
+            builder: (context, state) => const _CommunityPlaceholder(),
           ),
         ],
       ),
@@ -102,7 +101,7 @@ class _AppShellState extends State<AppShell> {
         context.go('/profile');
         break;
       case 2:
-        context.go('/paywall');
+        context.go('/community');
         break;
     }
   }
@@ -115,7 +114,7 @@ class _AppShellState extends State<AppShell> {
       _selectedIndex = 0;
     } else if (location.startsWith('/profile')) {
       _selectedIndex = 1;
-    } else if (location.startsWith('/paywall')) {
+    } else if (location.startsWith('/community')) {
       _selectedIndex = 2;
     }
 
@@ -132,13 +131,13 @@ class _AppShellState extends State<AppShell> {
           BottomNavigationBarItem(
           icon: Padding(
             padding: const EdgeInsets.only(bottom: 6),
-            child: ProfilePic(size: 30, showBorder: false),
+            child: ProfilePic(picSize: 30, proIconSize: 0.4, showBorder: false),
           ),
             label: 'Profile',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shield_moon_outlined),
-            label: 'Pro',
+            icon: Icon(Icons.people_outline),
+            label: 'Community',
           ),
         ],
       ),

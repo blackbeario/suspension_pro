@@ -59,6 +59,8 @@ class AuthService {
       'email': email,
       'username': email,
       'lastActivity': DateTime.now(),
+      'isPro': false,
+      'subscriptionExpiryDate': null,
     }, SetOptions(merge: true));
   }
 
@@ -114,6 +116,8 @@ class AuthService {
         email: email,
         created: DateTime.now(),
         aiCredits: 0,
+        isPro: false,
+        subscriptionExpiryDate: null,
       );
       // Store the user with the email as the key
       hiveUserBox.put(email, user);
@@ -140,6 +144,8 @@ class AuthService {
           hiveUser.lastName = user.lastName ?? '';
           hiveUser.aiCredits = user.aiCredits ?? 0;
           hiveUser.profilePic = user.profilePic;
+          hiveUser.isPro = user.isPro ?? false;
+          hiveUser.subscriptionExpiryDate = user.subscriptionExpiryDate;
           hiveUser.save();
         }
       }
