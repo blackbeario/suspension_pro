@@ -89,6 +89,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _getSettings(context, widget.bike, settings),
+        SizedBox(height: 20),
         ElevatedButton(
           child: Text('Add Manual Setting'),
           onPressed: () {

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:ridemetrx/features/bikes/domain/models/fork.dart';
+import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
+import 'package:ridemetrx/features/bikes/domain/bikes_notifier.dart';
 import 'package:ridemetrx/core/providers/service_providers.dart';
+import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
 
 class ForkForm extends ConsumerStatefulWidget {
   ForkForm({this.bikeId, this.fork, this.forkCallback});
@@ -62,6 +65,8 @@ class _ForkFormState extends ConsumerState<ForkForm> {
 
   void _updateFork(bikeId, BuildContext context) async {
     Navigator.pop(context);
+
+    // 1. Save fork to forks box
     final Box box = await Hive.openBox('forks');
     final Fork fork = Fork(
         bikeId: bikeId,
@@ -75,9 +80,30 @@ class _ForkFormState extends ConsumerState<ForkForm> {
         spacers: _spacersController.text,
         spacing: _spacingController.text,
         serialNumber: _serialNumberController.text);
-    box.put(bikeId, fork);
-    final db = ref.read(databaseServiceProvider);
-    db.updateFork(bikeId, fork);
+    await box.put(bikeId, fork);
+    print('ForkForm: Fork saved to forks box for bike $bikeId');
+
+    // 2. Update the bike object to reference this fork
+    final bikesBox = await Hive.openBox<Bike>('bikes');
+    final bike = bikesBox.get(bikeId);
+    if (bike != null) {
+      final updatedBike = bike.copyWith(fork: fork);
+      await bikesBox.put(bikeId, updatedBike);
+      print('ForkForm: Updated bike object with fork reference');
+    }
+
+    // 3. Only sync to Firebase if user is Pro
+    final isPro = ref.read(purchaseNotifierProvider).isPro;
+    if (isPro) {
+      final db = ref.read(databaseServiceProvider);
+      await db.updateFork(bikeId, fork);
+      print('ForkForm: Fork synced to Firebase for bike $bikeId');
+    } else {
+      print('ForkForm: User is not Pro, fork saved locally only');
+    }
+
+    // 4. Refresh BikesNotifier to trigger UI rebuild
+    ref.read(bikesNotifierProvider.notifier).refreshFromHive();
   }
 
   @override
@@ -92,19 +118,20 @@ class _ForkFormState extends ConsumerState<ForkForm> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(color: Colors.white),
-                    child: Container(
-                        margin: EdgeInsets.only(top: 0),
-                        padding: EdgeInsets.all(2),
-                        width: 75,
-                        height: 75,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withValues(alpha: 0.25),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Image.asset('assets/fork.png'))),
+                // Container(
+                //     width: double.infinity,
+                //     decoration: BoxDecoration(color: Colors.white),
+                //     child: Container(
+                //         margin: EdgeInsets.only(top: 0),
+                //         padding: EdgeInsets.all(2),
+                //         width: 75,
+                //         height: 75,
+                //         decoration: BoxDecoration(
+                //           color: Colors.grey.withValues(alpha: 0.25),
+                //           shape: BoxShape.circle,
+                //         ),
+                //         child: Image.asset('assets/fork.png')),
+                //   ),
                 TextFormField(
                     validator: (_yearController) {
                       if (_yearController == null || _yearController.isEmpty)

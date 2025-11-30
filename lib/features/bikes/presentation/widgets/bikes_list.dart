@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:ridemetrx/features/bikes/presentation/screens/bikeform.dart';
 import 'package:ridemetrx/features/bikes/presentation/screens/fork_form.dart';
 import 'package:ridemetrx/features/bikes/presentation/screens/settings_list.dart';
@@ -10,6 +11,8 @@ import 'package:ridemetrx/features/bikes/domain/bikes_notifier.dart';
 import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'package:ridemetrx/core/utilities/helpers.dart';
+import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
+import 'package:ridemetrx/features/purchases/presentation/screens/paywall_screen.dart';
 
 class BikesList extends ConsumerStatefulWidget {
   const BikesList({Key? key, required this.bikes}) : super(key: key);
@@ -86,8 +89,10 @@ class _BikesListState extends ConsumerState<BikesList> {
 
                       return Dismissible(
                         background: ListTile(
-                          tileColor: CupertinoColors.destructiveRed.withValues(alpha: 0.125),
-                          trailing: const Icon(Icons.delete, color: CupertinoColors.systemRed),
+                          tileColor: CupertinoColors.destructiveRed
+                              .withValues(alpha: 0.125),
+                          trailing: const Icon(Icons.delete,
+                              color: CupertinoColors.systemRed),
                         ),
                         direction: DismissDirection.endToStart,
                         confirmDismiss: (direction) async {
@@ -97,17 +102,35 @@ class _BikesListState extends ConsumerState<BikesList> {
                         child: Container(
                           decoration: index != bikes.length - 1
                               ? BoxDecoration(
-                                  border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          color: Colors.grey.shade300)),
                                 )
                               : null,
                           child: Theme(
-                            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                            data: Theme.of(context)
+                                .copyWith(dividerColor: Colors.transparent),
                             child: ExpansionTile(
-                              leading: bike.bikePic == null || bike.bikePic!.isEmpty
+                              leading: bike.bikePic == null ||
+                                      bike.bikePic!.isEmpty
                                   ? CupertinoButton(
                                       padding: const EdgeInsets.only(bottom: 0),
                                       child: const Icon(Icons.photo_camera),
-                                      onPressed: () => bikesNotifier.uploadBikeImage(bike.id),
+                                      onPressed: () {
+                                        final isPro = ref
+                                            .read(purchaseNotifierProvider)
+                                            .isPro;
+                                        if (isPro)
+                                          bikesNotifier.uploadBikeImage(bike.id);
+                                        else {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              fullscreenDialog: true,
+                                              builder: (context) => PaywallScreen(showAppBar: true)
+                                            ),
+                                          );
+                                        }
+                                      },
                                     )
                                   : CircleAvatar(
                                       child: ClipOval(
@@ -116,30 +139,38 @@ class _BikesListState extends ConsumerState<BikesList> {
                                           fit: BoxFit.cover,
                                           width: 40,
                                           height: 40,
-                                          placeholder: (context, url) => const Icon(Icons.pedal_bike_sharp),
-                                          errorWidget: (context, url, error) => const Icon(Icons.photo_camera),
+                                          placeholder: (context, url) =>
+                                              const Icon(
+                                                  Icons.pedal_bike_sharp),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.photo_camera),
                                         ),
                                       ),
                                     ),
                               initiallyExpanded: _selectedBike!.id == bike.id,
                               key: PageStorageKey(bike),
-                              title: Text(bikeName, style: const TextStyle(fontSize: 18)),
+                              title: Text(bikeName,
+                                  style: const TextStyle(fontSize: 18)),
                               children: [
                                 // Fork section
                                 fork != null
                                     ? Container(
                                         decoration: BoxDecoration(
-                                          color: CupertinoColors.extraLightBackgroundGray.withValues(alpha: 0.5),
+                                          color: CupertinoColors
+                                              .extraLightBackgroundGray
+                                              .withValues(alpha: 0.5),
                                         ),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
                                             Container(
                                               padding: const EdgeInsets.all(2),
                                               width: 35,
                                               height: 35,
-                                              child: Image.asset('assets/fork.png'),
+                                              child: Image.asset(
+                                                  'assets/fork.png'),
                                             ),
                                             Container(
                                               padding: EdgeInsets.zero,
@@ -150,64 +181,83 @@ class _BikesListState extends ConsumerState<BikesList> {
                                                 dense: true,
                                                 title: Text(
                                                   '${fork.year} ${fork.brand} ${fork.model}',
-                                                  style: const TextStyle(color: Colors.black87),
+                                                  style: const TextStyle(
+                                                      color: Colors.black87),
                                                 ),
                                                 subtitle: Text(
-                                                  '${fork.travel ?? ''}mm / ${fork.damper ?? ''} / ${fork.offset ?? ''}mm / ${fork.wheelsize ?? ''}"',
-                                                  style: const TextStyle(color: Colors.black54),
+                                                  '${fork.travel != null ? fork.travel! + 'mm' : ''}${fork.damper != null ? ' / ' + fork.damper! : ''}${fork.offset != null ? ' / ' + fork.offset! + 'mm' : ''}${fork.wheelsize != null ? ' / ' + fork.wheelsize! + '"' : ''}',
+                                                  style: const TextStyle(
+                                                      color: Colors.black54),
                                                 ),
                                                 onTap: () {
                                                   pushScreen(
                                                     context,
                                                     '${fork.brand} ${fork.model}',
                                                     null,
-                                                    ForkForm(bikeId: bike.id, fork: fork),
+                                                    ForkForm(
+                                                        bikeId: bike.id,
+                                                        fork: fork),
                                                     true,
                                                   );
-                                                  setState(() => _selectedBike = bike);
+                                                  setState(() =>
+                                                      _selectedBike = bike);
                                                 },
                                               ),
                                             ),
                                             IconButton(
                                               icon: const Icon(
-                                                Icons.remove_circle_outline_sharp,
+                                                Icons
+                                                    .remove_circle_outline_sharp,
                                                 size: 16,
                                                 color: Colors.black38,
                                               ),
-                                              onPressed: () {
-                                                _confirmDelete(context, bike.id, 'fork');
-                                              },
+                                              onPressed: () => _confirmDelete(
+                                                  context, bike.id, 'fork'),
                                             ),
                                           ],
                                         ),
                                       )
                                     : Container(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            40, 10, 40, 0),
                                         width: double.infinity,
                                         decoration: BoxDecoration(
-                                          color: CupertinoColors.extraLightBackgroundGray.withValues(alpha: 0.5),
+                                          color: CupertinoColors
+                                              .extraLightBackgroundGray
+                                              .withValues(alpha: 0.5),
                                         ),
                                         child: OutlinedButton(
                                           style: ElevatedButton.styleFrom(
                                             alignment: Alignment.center,
                                             fixedSize: const Size(280, 20),
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                            backgroundColor: CupertinoColors.extraLightBackgroundGray,
-                                            foregroundColor: CupertinoColors.black,
+                                            backgroundColor: CupertinoColors
+                                                .extraLightBackgroundGray,
+                                            foregroundColor:
+                                                CupertinoColors.black,
                                           ),
                                           child: Row(
-                                            children: const [Icon(Icons.add), Text(' Add Fork')],
+                                            children: const [
+                                              Icon(Icons.add_circle_outline,
+                                                  size: 16, color: Colors.grey),
+                                              SizedBox(width: 10),
+                                              Text(' Add Fork'),
+                                            ],
                                           ),
                                           onPressed: () {
                                             pushScreen(
                                               context,
                                               'Add Fork',
                                               null,
-                                              ForkForm(bikeId: bike.id, fork: fork),
+                                              ForkForm(
+                                                  bikeId: bike.id, fork: fork),
                                               true,
                                             );
-                                            setState(() => _selectedBike = bike);
+                                            setState(
+                                                () => _selectedBike = bike);
                                           },
                                         ),
                                       ),
@@ -215,17 +265,21 @@ class _BikesListState extends ConsumerState<BikesList> {
                                 shock != null
                                     ? Container(
                                         decoration: BoxDecoration(
-                                          color: CupertinoColors.extraLightBackgroundGray.withValues(alpha: 0.5),
+                                          color: CupertinoColors
+                                              .extraLightBackgroundGray
+                                              .withValues(alpha: 0.5),
                                         ),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
                                             Container(
                                               padding: const EdgeInsets.all(4),
                                               width: 35,
                                               height: 35,
-                                              child: Image.asset('assets/shock.png'),
+                                              child: Image.asset(
+                                                  'assets/shock.png'),
                                             ),
                                             Container(
                                               padding: EdgeInsets.zero,
@@ -236,53 +290,68 @@ class _BikesListState extends ConsumerState<BikesList> {
                                                 dense: true,
                                                 title: Text(
                                                   '${shock.year} ${shock.brand} ${shock.model}',
-                                                  style: const TextStyle(color: Colors.black87),
+                                                  style: const TextStyle(
+                                                      color: Colors.black87),
                                                 ),
                                                 subtitle: Text(
                                                   shock.stroke ?? '',
-                                                  style: const TextStyle(color: Colors.black54),
+                                                  style: const TextStyle(
+                                                      color: Colors.black54),
                                                 ),
                                                 onTap: () {
                                                   pushScreen(
                                                     context,
                                                     '${shock.brand} ${shock.model}',
                                                     null,
-                                                    ShockForm(bikeId: bike.id, shock: shock),
+                                                    ShockForm(
+                                                        bikeId: bike.id,
+                                                        shock: shock),
                                                     true,
                                                   );
-                                                  setState(() => _selectedBike = bike);
+                                                  setState(() =>
+                                                      _selectedBike = bike);
                                                 },
                                               ),
                                             ),
                                             IconButton(
                                               icon: const Icon(
-                                                Icons.remove_circle_outline_sharp,
+                                                Icons
+                                                    .remove_circle_outline_sharp,
                                                 size: 16,
                                                 color: Colors.black38,
                                               ),
-                                              onPressed: () => _confirmDelete(context, bike.id, 'shock'),
+                                              onPressed: () => _confirmDelete(
+                                                  context, bike.id, 'shock'),
                                             ),
                                           ],
                                         ),
                                       )
                                     : Container(
                                         width: double.maxFinite,
-                                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            40, 0, 40, 10),
                                         decoration: BoxDecoration(
-                                          color: CupertinoColors.extraLightBackgroundGray.withValues(alpha: 0.5),
+                                          color: CupertinoColors
+                                              .extraLightBackgroundGray
+                                              .withValues(alpha: 0.5),
                                         ),
                                         child: OutlinedButton(
                                           style: ElevatedButton.styleFrom(
                                             alignment: Alignment.center,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                            backgroundColor: CupertinoColors.extraLightBackgroundGray,
-                                            foregroundColor: CupertinoColors.black,
+                                            backgroundColor: CupertinoColors
+                                                .extraLightBackgroundGray,
+                                            foregroundColor:
+                                                CupertinoColors.black,
                                           ),
                                           child: Row(
                                             children: const [
-                                              Icon(Icons.add),
+                                              Icon(Icons.add_circle_outline,
+                                                  size: 16, color: Colors.grey),
+                                              SizedBox(width: 10),
                                               Text(' Add Shock'),
                                             ],
                                           ),
@@ -291,26 +360,35 @@ class _BikesListState extends ConsumerState<BikesList> {
                                               context,
                                               'Add Shock',
                                               null,
-                                              ShockForm(bikeId: bike.id, shock: shock),
+                                              ShockForm(
+                                                  bikeId: bike.id,
+                                                  shock: shock),
                                               true,
                                             );
-                                            setState(() => _selectedBike = bike);
+                                            setState(
+                                                () => _selectedBike = bike);
                                           },
                                         ),
                                       ),
                                 // Settings section
                                 Container(
                                   decoration: const BoxDecoration(
-                                    color: CupertinoColors.extraLightBackgroundGray,
+                                    color: CupertinoColors
+                                        .extraLightBackgroundGray,
                                   ),
                                   child: GestureDetector(
                                     child: const ListTile(
-                                      leading: Icon(CupertinoIcons.settings, color: Colors.black54),
-                                      title: Text('Ride Settings', style: TextStyle(color: Colors.black87)),
-                                      trailing: Icon(Icons.arrow_forward_ios, color: Colors.black38),
+                                      leading: Icon(CupertinoIcons.settings,
+                                          color: Colors.black54),
+                                      title: Text('Ride Settings',
+                                          style:
+                                              TextStyle(color: Colors.black87)),
+                                      trailing: Icon(Icons.arrow_forward_ios,
+                                          color: Colors.black38),
                                     ),
                                     onTap: () {
-                                      pushScreen(context, bike.id, null, SettingsList(bike: bike), false);
+                                      pushScreen(context, bike.id, null,
+                                          SettingsList(bike: bike), false);
                                       setState(() => _selectedBike = bike);
                                     },
                                   ),
@@ -325,7 +403,8 @@ class _BikesListState extends ConsumerState<BikesList> {
                   const Divider(),
                   ElevatedButton(
                     child: const Text('Add Bike'),
-                    onPressed: () => pushScreen(context, 'Add Bike', null, BikeForm(), true),
+                    onPressed: () =>
+                        pushScreen(context, 'Add Bike', null, BikeForm(), true),
                   ),
                   const SizedBox(height: 20),
                 ],
@@ -337,25 +416,60 @@ class _BikesListState extends ConsumerState<BikesList> {
     );
   }
 
-  Future<bool> _confirmDelete(BuildContext context, String bikeId, String? component) {
+  Future<bool> _confirmDelete(
+      BuildContext context, String bikeId, String? component) {
     final db = ref.read(databaseServiceProvider);
+    final bikesNotifier = ref.read(bikesNotifierProvider.notifier);
 
     showAdaptiveDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog.adaptive(
-          title: component != null ? Text('Delete $component') : Text('Delete $bikeId'),
+          title: component != null
+              ? Text('Delete $component')
+              : Text('Delete $bikeId'),
           actions: <Widget>[
             CupertinoDialogAction(
               child: const Text('Okay'),
               isDestructiveAction: true,
-              onPressed: () {
+              onPressed: () async {
                 Navigator.pop(context, true);
                 if (component == null) {
-                  db.deleteBike(bikeId);
-                }
-                if (component != null) {
-                  db.deleteField(bikeId, component);
+                  // Use BikesNotifier for proper tombstone deletion
+                  bikesNotifier.deleteBike(bikeId);
+                } else if (component == 'fork' || component == 'shock') {
+                  // 1. Delete component from its box
+                  final boxName = component == 'fork' ? 'forks' : 'shocks';
+                  final componentBox = await Hive.openBox(boxName);
+                  await componentBox.delete(bikeId);
+                  print(
+                      'BikesList: $component deleted from $boxName box for bike $bikeId');
+
+                  // 2. Update the bike object to remove the component reference
+                  final bikesBox = await Hive.openBox<Bike>('bikes');
+                  final bike = bikesBox.get(bikeId);
+                  if (bike != null) {
+                    final updatedBike = component == 'fork'
+                        ? bike.copyWith(fork: null)
+                        : bike.copyWith(shock: null);
+                    await bikesBox.put(bikeId, updatedBike);
+                    print(
+                        'BikesList: Updated bike object to remove $component reference');
+                  }
+
+                  // 3. Only sync to Firebase if user is Pro
+                  final isPro = ref.read(purchaseNotifierProvider).isPro;
+                  if (isPro) {
+                    await db.deleteField(bikeId, component);
+                    print(
+                        'BikesList: $component deletion synced to Firebase for bike $bikeId');
+                  } else {
+                    print(
+                        'BikesList: User is not Pro, $component deleted locally only');
+                  }
+
+                  // 4. Refresh BikesNotifier to trigger UI rebuild
+                  bikesNotifier.refreshFromHive();
                 }
               },
             ),

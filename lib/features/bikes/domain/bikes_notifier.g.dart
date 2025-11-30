@@ -24,9 +24,9 @@ final bikesStreamProvider = AutoDisposeStreamProvider<List<Bike>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef BikesStreamRef = AutoDisposeStreamProviderRef<List<Bike>>;
-String _$offlineBikesHash() => r'1d62945909a1b2a65561f24e309a91d3d1e8748a';
+String _$offlineBikesHash() => r'd5e9f4d753532293dc3f6c8d26b461917fbf9365';
 
-/// Provider for offline bikes from Hive
+/// Provider for offline bikes from Hive (excludes deleted items)
 ///
 /// Copied from [offlineBikes].
 @ProviderFor(offlineBikes)
@@ -42,7 +42,7 @@ final offlineBikesProvider = AutoDisposeProvider<List<Bike>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef OfflineBikesRef = AutoDisposeProviderRef<List<Bike>>;
-String _$bikesNotifierHash() => r'c335eac17383beab508be0dbdcdc289d423dc490';
+String _$bikesNotifierHash() => r'3b95b8c99a1b503391456a46f4981f15a48117c1';
 
 /// StateNotifier for managing bikes state and operations
 ///

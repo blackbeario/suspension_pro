@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ridemetrx/features/bikes/presentation/widgets/new_user_action.dart';
 import 'package:ridemetrx/features/profile/presentation/widgets/profile_pic.dart';
 import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
 import 'package:ridemetrx/features/auth/presentation/auth_view_model.dart';
 import 'package:ridemetrx/core/utilities/helpers.dart';
 import 'package:ridemetrx/features/profile/presentation/screens/profile_form_screen.dart';
 import 'package:ridemetrx/features/profile/presentation/widgets/roadmap/app_roadmap.dart';
+import 'package:ridemetrx/features/purchases/domain/paywall_display_manager.dart';
+import 'package:ridemetrx/features/purchases/presentation/screens/paywall_screen.dart';
 import 'package:ridemetrx/features/purchases/presentation/screens/subscription_management_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -22,7 +25,8 @@ class ProfileScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const ProfileFormScreen()),
+              MaterialPageRoute(
+                  builder: (context) => const ProfileFormScreen()),
             ),
             child: const Text('Edit'),
           ),
@@ -46,10 +50,14 @@ class ProfileScreen extends ConsumerWidget {
                   if (user.isPro) ...[
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Colors.amber.shade600, Colors.amber.shade800],
+                          colors: [
+                            Colors.amber.shade600,
+                            Colors.amber.shade800
+                          ],
                         ),
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -106,6 +114,20 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ),
             ),
+          if (!user.isPro)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: NewUserAction(
+                showAppBar: false,
+                title: 'Go Pro!',
+                icon: Icon(Icons.star, color: Colors.amber.shade700),
+                screen: PaywallScreen(
+                  onDismiss: () async {
+                    await PaywallDisplayManager.recordPaywallDismissed();
+                  },
+                ),
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: ListTile(
@@ -126,13 +148,15 @@ class ProfileScreen extends ConsumerWidget {
             child: ListTile(
               title: const Text('Privacy Policy'),
               trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () => loadURL('https://vibesoftware.io/privacy/suspension_pro'),
+              onTap: () =>
+                  loadURL('https://vibesoftware.io/privacy/suspension_pro'),
             ),
           ),
           ListTile(
             title: const Text('Terms & Conditions'),
             trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () => loadURL('https://vibesoftware.io/terms/suspension_pro'),
+            onTap: () =>
+                loadURL('https://vibesoftware.io/terms/suspension_pro'),
           ),
           const SizedBox(height: 40),
           ListTile(

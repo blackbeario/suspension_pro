@@ -1,56 +1,56 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'bike.dart';
+part of 'data_conflict.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class BikeAdapter extends TypeAdapter<Bike> {
+class DataConflictAdapter extends TypeAdapter<DataConflict> {
   @override
-  final typeId = 0;
+  final typeId = 6;
 
   @override
-  Bike read(BinaryReader reader) {
+  DataConflict read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Bike(
+    return DataConflict(
       id: fields[0] as String,
-      yearModel: (fields[1] as num?)?.toInt(),
-      fork: fields[2] as Fork?,
-      shock: fields[3] as Shock?,
-      index: (fields[4] as num?)?.toInt(),
-      bikePic: fields[5] as String?,
-      lastModified: fields[6] as DateTime?,
-      isDirty: fields[7] == null ? false : fields[7] as bool,
-      isDeleted: fields[8] == null ? false : fields[8] as bool,
+      itemType: fields[1] as String,
+      itemId: fields[2] as String,
+      bikeId: fields[3] as String,
+      localVersion: (fields[4] as Map).cast<String, dynamic>(),
+      remoteVersion: (fields[5] as Map).cast<String, dynamic>(),
+      detectedAt: fields[6] as DateTime,
+      localModifiedAt: fields[7] as DateTime,
+      remoteModifiedAt: fields[8] as DateTime,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Bike obj) {
+  void write(BinaryWriter writer, DataConflict obj) {
     writer
       ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.yearModel)
+      ..write(obj.itemType)
       ..writeByte(2)
-      ..write(obj.fork)
+      ..write(obj.itemId)
       ..writeByte(3)
-      ..write(obj.shock)
+      ..write(obj.bikeId)
       ..writeByte(4)
-      ..write(obj.index)
+      ..write(obj.localVersion)
       ..writeByte(5)
-      ..write(obj.bikePic)
+      ..write(obj.remoteVersion)
       ..writeByte(6)
-      ..write(obj.lastModified)
+      ..write(obj.detectedAt)
       ..writeByte(7)
-      ..write(obj.isDirty)
+      ..write(obj.localModifiedAt)
       ..writeByte(8)
-      ..write(obj.isDeleted);
+      ..write(obj.remoteModifiedAt);
   }
 
   @override
@@ -59,7 +59,7 @@ class BikeAdapter extends TypeAdapter<Bike> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is BikeAdapter &&
+      other is DataConflictAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

@@ -10,6 +10,7 @@ import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'package:ridemetrx/core/services/hive_service.dart';
 import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
 import 'package:ridemetrx/features/bikes/domain/bikes_state.dart';
+import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
 import 'package:hive_ce/hive.dart';
 
 part 'bikes_notifier.g.dart';
@@ -26,18 +27,22 @@ Stream<List<Bike>> bikesStream(Ref ref) {
 class BikesNotifier extends _$BikesNotifier {
   @override
   BikesState build() {
-    // Listen to bikes stream and update state
+    // Listen to bikes stream and smart-merge with Hive
     ref.listen(bikesStreamProvider, (previous, next) {
       next.when(
-        data: (bikes) {
-          // Sync bikes to Hive for offline access
-          for (var bike in bikes) {
-            HiveService().putIntoBox('bikes', bike.id, bike, false);
+        data: (firebaseBikes) {
+          // Smart merge bikes from Firebase into Hive
+          _smartMergeBikes(firebaseBikes);
+
+          // Sync settings for each bike
+          for (var bike in firebaseBikes) {
             _syncBikeSettings(bike.id);
           }
 
+          // Update state from Hive (source of truth)
+          final hiveBikes = _getBikesFromHive();
           state = state.copyWith(
-            bikes: bikes,
+            bikes: hiveBikes,
             isLoading: false,
             clearError: true,
           );
@@ -46,7 +51,11 @@ class BikesNotifier extends _$BikesNotifier {
           state = state.copyWith(isLoading: true);
         },
         error: (error, stack) {
+          print('BikesNotifier: Error loading bikes: $error');
+          // Fall back to Hive data
+          final hiveBikes = _getBikesFromHive();
           state = state.copyWith(
+            bikes: hiveBikes,
             isLoading: false,
             errorMessage: error.toString(),
           );
@@ -55,6 +64,42 @@ class BikesNotifier extends _$BikesNotifier {
     });
 
     return const BikesState();
+  }
+
+  /// Smart merge Firebase bikes into Hive (same logic as settings)
+  void _smartMergeBikes(List<Bike> firebaseBikes) {
+    final box = Hive.box<Bike>('bikes');
+
+    for (final firebaseBike in firebaseBikes) {
+      final hiveBike = box.get(firebaseBike.id);
+
+      if (hiveBike == null) {
+        // New bike from another device → add to Hive
+        print('BikesNotifier: New bike from Firebase: ${firebaseBike.id}');
+        box.put(firebaseBike.id, firebaseBike);
+      } else if (hiveBike.isDeleted) {
+        // Local has tombstone → ignore Firebase data
+        print('BikesNotifier: Ignoring Firebase bike ${firebaseBike.id} (locally deleted)');
+      } else if (hiveBike.isDirty) {
+        // Local has unsync'd changes → keep local
+        print('BikesNotifier: Keeping local dirty bike ${firebaseBike.id}');
+      } else {
+        // Hive is clean → accept Firebase update
+        final hiveTime = hiveBike.lastModified ?? DateTime(2000);
+        final firebaseTime = firebaseBike.lastModified ?? DateTime(2000);
+
+        if (firebaseTime.isAfter(hiveTime) || firebaseTime == hiveTime) {
+          print('BikesNotifier: Updating bike ${firebaseBike.id} from Firebase');
+          box.put(firebaseBike.id, firebaseBike);
+        }
+      }
+    }
+  }
+
+  /// Get bikes from Hive (excludes deleted items)
+  List<Bike> _getBikesFromHive() {
+    final box = Hive.box<Bike>('bikes');
+    return box.values.where((bike) => !bike.isDeleted).toList();
   }
 
   /// Sync bike settings from Firebase to Hive
@@ -169,15 +214,76 @@ class BikesNotifier extends _$BikesNotifier {
     return bike.id;
   }
 
+  /// Delete a bike (uses tombstone pattern for sync safety)
+  Future<void> deleteBike(String bikeId) async {
+    final bikeBox = Hive.box<Bike>('bikes');
+    final bike = bikeBox.get(bikeId);
+
+    if (bike == null) {
+      print('BikesNotifier: Bike $bikeId not found');
+      return;
+    }
+
+    final now = DateTime.now();
+
+    // Mark as deleted (tombstone) instead of actually deleting
+    final deletedBike = Bike(
+      id: bike.id,
+      yearModel: bike.yearModel,
+      fork: bike.fork,
+      shock: bike.shock,
+      index: bike.index,
+      bikePic: bike.bikePic,
+      lastModified: now,
+      isDirty: true, // Mark as dirty so it syncs
+      isDeleted: true, // TOMBSTONE
+    );
+
+    // Save tombstone to Hive
+    bikeBox.put(bikeId, deletedBike);
+
+    // Update UI state immediately (remove from visible bikes)
+    final updatedBikes = state.bikes.where((b) => b.id != bikeId).toList();
+    state = state.copyWith(bikes: updatedBikes);
+
+    // Check if user is Pro before syncing to Firebase
+    final isPro = ref.read(purchaseNotifierProvider).isPro;
+    if (!isPro) {
+      print('BikesNotifier: User is not Pro, bike $bikeId deleted locally only (tombstone saved)');
+      return;
+    }
+
+    // Try to sync deletion to Firebase (Pro users only)
+    try {
+      final db = ref.read(databaseServiceProvider);
+      await db.deleteBike(bikeId);
+      print('BikesNotifier: Successfully deleted bike $bikeId from Firebase');
+
+      // Successfully synced deletion - now we can remove the tombstone from Hive
+      bikeBox.delete(bikeId);
+    } catch (e) {
+      // Firebase delete failed - tombstone will be synced later by SyncService
+      print('BikesNotifier: Failed to delete bike $bikeId from Firebase: $e');
+      print('BikesNotifier: Tombstone saved, will sync deletion when connectivity restored');
+    }
+  }
+
+  /// Refresh bikes state from Hive (for when bikes are added/updated outside Firebase stream)
+  void refreshFromHive() {
+    final hiveBikes = _getBikesFromHive();
+    state = state.copyWith(bikes: hiveBikes, clearError: true);
+    print('BikesNotifier: Refreshed state from Hive - ${hiveBikes.length} bikes');
+  }
+
   /// Clear error message
   void clearError() {
     state = state.copyWith(clearError: true);
   }
 }
 
-/// Provider for offline bikes from Hive
+/// Provider for offline bikes from Hive (excludes deleted items)
 @riverpod
 List<Bike> offlineBikes(Ref ref) {
   final box = Hive.box<Bike>('bikes');
-  return box.values.toList();
+  return box.values.where((bike) => !bike.isDeleted).toList();
 }

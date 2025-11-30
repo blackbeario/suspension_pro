@@ -10,8 +10,9 @@ import 'package:ridemetrx/features/purchases/domain/paywall_display_manager.dart
 class PaywallScreen extends ConsumerStatefulWidget {
   final String? featureName;
   final VoidCallback? onDismiss;
+  final bool? showAppBar;
 
-  const PaywallScreen({Key? key, this.featureName, this.onDismiss}) : super(key: key);
+  const PaywallScreen({Key? key, this.featureName, this.onDismiss, this.showAppBar}) : super(key: key);
 
   @override
   ConsumerState<PaywallScreen> createState() => _PaywallScreenState();

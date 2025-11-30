@@ -49,13 +49,18 @@ final authStateListenerProvider = StreamProvider<User?>((ref) {
               print('Error streaming user data: $e');
             }
           } else {
-            // User is logged out - reset RevenueCat to anonymous
-            try {
-              print('AuthStateListener: Logging out of RevenueCat');
-              await Purchases.logOut();
-              print('AuthStateListener: RevenueCat logout successful');
-            } catch (e) {
-              print('AuthStateListener: Failed to logout of RevenueCat: $e');
+            // User is logged out - only call RevenueCat logout if there was a previous authenticated user
+            final previousUser = previous?.value;
+            if (previousUser != null) {
+              try {
+                print('AuthStateListener: Logging out of RevenueCat');
+                await Purchases.logOut();
+                print('AuthStateListener: RevenueCat logout successful');
+              } catch (e) {
+                print('AuthStateListener: Failed to logout of RevenueCat: $e');
+              }
+            } else {
+              print('AuthStateListener: No previous user, skipping RevenueCat logout');
             }
 
             // Clear user state

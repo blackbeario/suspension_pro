@@ -7,9 +7,9 @@ part of 'connectivity_notifier.dart';
 // **************************************************************************
 
 String _$connectivityNotifierHash() =>
-    r'0a591df3d6f067609c74cb96ff024a95e942bd54';
+    r'ca8e6615ffde8ea3400389ca95ea2d3180102f3d';
 
-/// StateNotifier for managing connectivity state
+/// StateNotifier for managing connectivity state with periodic polling
 /// Replaces the ConnectivityBloc singleton pattern
 ///
 /// Copied from [ConnectivityNotifier].

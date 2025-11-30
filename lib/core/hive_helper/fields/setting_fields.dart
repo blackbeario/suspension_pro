@@ -10,4 +10,5 @@ class SettingFields {
 	static const int notes = 8;
 	static const int lastModified = 9;
 	static const int isDirty = 10;
+	static const int isDeleted = 11;
 }

@@ -9,12 +9,14 @@ import 'package:ridemetrx/features/bikes/domain/models/component_setting.dart';
 import 'package:ridemetrx/features/bikes/domain/models/fork.dart';
 import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
 import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
+import 'package:ridemetrx/features/sync/domain/models/data_conflict.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(AppUserAdapter());
     registerAdapter(BikeAdapter());
     registerAdapter(ComponentAdapter());
+    registerAdapter(DataConflictAdapter());
     registerAdapter(ForkAdapter());
     registerAdapter(SettingAdapter());
     registerAdapter(ShockAdapter());
@@ -26,6 +28,7 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(AppUserAdapter());
     registerAdapter(BikeAdapter());
     registerAdapter(ComponentAdapter());
+    registerAdapter(DataConflictAdapter());
     registerAdapter(ForkAdapter());
     registerAdapter(SettingAdapter());
     registerAdapter(ShockAdapter());
