@@ -113,24 +113,50 @@ class _BikesListState extends ConsumerState<BikesList> {
                             child: ExpansionTile(
                               leading: bike.bikePic == null ||
                                       bike.bikePic!.isEmpty
-                                  ? CupertinoButton(
-                                      padding: const EdgeInsets.only(bottom: 0),
-                                      child: const Icon(Icons.photo_camera),
-                                      onPressed: () {
-                                        final isPro = ref
-                                            .read(purchaseNotifierProvider)
-                                            .isPro;
-                                        if (isPro)
-                                          bikesNotifier.uploadBikeImage(bike.id);
-                                        else {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              fullscreenDialog: true,
-                                              builder: (context) => PaywallScreen(showAppBar: true)
+                                  ? Stack(
+                                      children: [
+                                        CupertinoButton(
+                                          padding: const EdgeInsets.only(bottom: 0),
+                                          child: const Icon(Icons.photo_camera),
+                                          onPressed: () {
+                                            final isPro = ref
+                                                .read(purchaseNotifierProvider)
+                                                .isPro;
+                                            if (isPro)
+                                              bikesNotifier.uploadBikeImage(bike.id);
+                                            else {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  fullscreenDialog: true,
+                                                  builder: (context) => PaywallScreen(showAppBar: true)
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                        // Pro badge indicator
+                                        if (!ref.watch(purchaseNotifierProvider).isPro)
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: Container(
+                                              padding: const EdgeInsets.all(3),
+                                              decoration: BoxDecoration(
+                                                color: Colors.amber.shade600,
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: Colors.white,
+                                                  width: 1.5,
+                                                ),
+                                              ),
+                                              child: const Icon(
+                                                Icons.star,
+                                                color: Colors.white,
+                                                size: 10,
+                                              ),
                                             ),
-                                          );
-                                        }
-                                      },
+                                          ),
+                                      ],
                                     )
                                   : CircleAvatar(
                                       child: ClipOval(

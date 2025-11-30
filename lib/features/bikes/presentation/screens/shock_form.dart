@@ -97,12 +97,21 @@ class _ShockFormState extends ConsumerState<ShockForm> {
   Future<void> _deleteShock(String bikeId, BuildContext context) async {
     Navigator.pop(context);
 
-    // Delete from Hive (source of truth)
+    // 1. Delete from Hive shocks box
     final Box shockBox = await Hive.openBox('shocks');
     await shockBox.delete(bikeId);
     print('ShockForm: Shock deleted from Hive for bike $bikeId');
 
-    // Only sync to Firebase if user is Pro
+    // 2. Update the bike object to remove the shock reference
+    final bikesBox = await Hive.openBox<Bike>('bikes');
+    final bike = bikesBox.get(bikeId);
+    if (bike != null) {
+      final updatedBike = bike.copyWith(shock: null);
+      await bikesBox.put(bikeId, updatedBike);
+      print('ShockForm: Updated bike object to remove shock reference');
+    }
+
+    // 3. Only sync to Firebase if user is Pro
     final isPro = ref.read(purchaseNotifierProvider).isPro;
     if (isPro) {
       final db = ref.read(databaseServiceProvider);
@@ -111,6 +120,9 @@ class _ShockFormState extends ConsumerState<ShockForm> {
     } else {
       print('ShockForm: User is not Pro, shock deleted locally only');
     }
+
+    // 4. Refresh BikesNotifier to trigger UI rebuild
+    ref.read(bikesNotifierProvider.notifier).refreshFromHive();
   }
 
   @override
