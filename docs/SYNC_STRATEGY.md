@@ -113,84 +113,67 @@ This document outlines the strategic direction and technical implementation plan
 
 ---
 
-### Phase 2: Bi-Directional Sync (NEXT PRIORITY)
+### ✅ Phase 2: Bi-Directional Sync (COMPLETED)
 
-**Goal:** Implement Hive → Firebase sync when connectivity restored
+**Goal:** ✅ Implement Hive → Firebase sync when connectivity restored
 
-**Components Needed:**
+**Completed Components:**
 
-#### 2.1 Dirty Data Tracking
-Add metadata to Hive models:
+#### 2.1 ✅ Dirty Data Tracking
+- ✅ `bike.dart:25-28` - Added `lastModified` and `isDirty` fields
+- ✅ `setting.dart:32-35` - Added `lastModified` and `isDirty` fields
+- ✅ Both models track when modified and if they need Firebase sync
 
-```dart
-@HiveField(X)
-DateTime? lastModified;
+#### 2.2 ✅ Connectivity Listener
+- ✅ `main.dart:80-87` - Listens to connectivity changes
+- ✅ Triggers `syncDirtyData()` when going from offline → online
 
-@HiveField(Y)
-bool isDirty; // true if modified while offline
-```
+#### 2.3 ✅ Sync Service
+- ✅ `lib/core/services/sync_service.dart` - Full implementation
+- ✅ Checks Pro subscription status (only Pro users sync to cloud)
+- ✅ Pushes dirty Hive records to Firebase
+- ✅ Marks records as clean after successful sync
+- ✅ Includes `forceSyncAll()` for manual sync
 
-#### 2.2 Connectivity Listener
-```dart
-ref.listen(connectivityNotifierProvider, (previous, current) {
-  if (previous == false && current == true) {
-    _syncDirtyData();
-  }
-});
-```
+#### 2.4 ✅ Error Handling (Added 2025-11-29)
+- ✅ `settings_notifier.dart:100-136` - Catches Firebase sync failures
+- ✅ `bikeform.dart:97-120` - Catches Firebase sync failures
+- ✅ Both mark data as `isDirty: true` when Firebase sync fails
+- ✅ Data will auto-sync when connectivity is restored
 
-#### 2.3 Sync Service
-Create `lib/core/services/sync_service.dart`:
-- Check subscription status (only Pro users sync to cloud)
-- Push dirty Hive records to Firebase
-- Mark as clean after successful sync
-
-**Files to Modify:**
-- `lib/features/bikes/domain/models/bike.dart` - Add dirty tracking
-- `lib/features/bikes/domain/models/setting.dart` - Add dirty tracking
-- `lib/core/services/hive_service.dart` - Mark dirty on offline writes
-- `lib/core/services/sync_service.dart` - **NEW** - Sync logic
-- `lib/features/connectivity/domain/connectivity_notifier.dart` - Trigger sync
+**How It Works:**
+1. User edits bike/setting (online or offline)
+2. Data saves to Hive immediately (UI updates instantly)
+3. Tries to sync to Firebase
+4. **If sync fails** → marks as `isDirty: true` in Hive
+5. When connectivity restored → `SyncService` finds dirty records and syncs them
+6. After successful sync → marks as `isDirty: false`
 
 ---
 
-### Phase 3: Subscription Paywall UI
+### ✅ Phase 3: Subscription Paywall UI (COMPLETED)
 
-**Goal:** Gate cloud sync behind Pro subscription
+**Goal:** ✅ Gate cloud sync behind Pro subscription
 
-**Components:**
+**Completed Components:**
 
-#### 3.1 Paywall Screen
-Create `lib/features/purchases/presentation/screens/paywall_screen.dart`:
-- List Pro features
-- Show monthly vs annual pricing
-- "Restore Purchases" button
-- Purchase buttons
+#### 3.1 ✅ Paywall Screen
+- ✅ `paywall_screen.dart` - Full paywall UI implementation
+- ✅ Lists all Pro features (cloud sync, Metrx, Strava, etc.)
+- ✅ Shows monthly ($2.99) vs annual ($29.99) pricing from RevenueCat
+- ✅ "Restore Purchases" button
+- ✅ "Maybe Later" dismissal
+- ✅ Purchase flow with loading states and error handling
 
-#### 3.2 Pro Feature Gate Widget
-```dart
-class ProFeatureGate extends ConsumerWidget {
-  final Widget child;
-  final String featureName;
+#### 3.2 ✅ Pro Feature Gate Widget
+- ✅ `pro_feature_gate.dart` - ProFeatureGate widget
+- ✅ Helper functions: `checkProFeature()` and `showProUpgradeSnackbar()`
+- ✅ Can show paywall screen or snackbar notification
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isPro = ref.watch(purchaseNotifierProvider).isPro;
-    return isPro ? child : PaywallScreen(feature: featureName);
-  }
-}
-```
-
-#### 3.3 Conditional Sync
-Only sync to cloud for Pro users:
-```dart
-Future<void> syncDirtyData() async {
-  if (!ref.read(purchaseNotifierProvider).isPro) {
-    return; // Free users stay local-only
-  }
-  await _syncToFirebase();
-}
-```
+#### 3.3 ✅ Conditional Sync
+- ✅ `sync_service.dart:22-29` - Checks Pro status before syncing
+- ✅ Free users stay local-only (no cloud sync)
+- ✅ Pro users get automatic bi-directional sync
 
 ---
 
@@ -304,19 +287,20 @@ lib/
 
 ## 🚀 Implementation Roadmap
 
-### Immediate Next Steps (This Week)
-1. ✅ Document current state (this file update)
-2. ⬜ Create `METRX_FEATURE.md` from Gemini conversation
-3. ⬜ Add dirty tracking fields to Bike/Setting models
-4. ⬜ Create SyncService with subscription check
-5. ⬜ Run build_runner to regenerate code
+### ✅ Completed (2025-11-26 to 2025-11-29)
+1. ✅ Document current state (this file)
+2. ✅ Create `METRX_FEATURE.md` from Gemini conversation
+3. ✅ Add dirty tracking fields to Bike/Setting models
+4. ✅ Create SyncService with subscription check
+5. ✅ Implement paywall UI
+6. ✅ Gate cloud sync behind Pro check
+7. ✅ Add error handling for offline sync failures
+8. ✅ Test subscription purchase flow with RevenueCat test products
 
-### Short Term (Next 2-4 Weeks)
-1. ⬜ Implement paywall UI
-2. ⬜ Gate cloud sync behind Pro check
-3. ⬜ Add "Upgrade to Pro" prompts in free tier
-4. ⬜ Configure IAP in App Store / Play Store
-5. ⬜ Test subscription purchase flow
+### Immediate Next Steps (This Week)
+1. ⬜ **Decide: Metrx vs Community first?**
+2. ⬜ Configure IAP in App Store / Play Store (production)
+3. ⬜ Improve paywall UI design (current version is functional but basic)
 
 ### Medium Term (1-2 Months)
 1. ⬜ Metrx feature MVP (accelerometer recording)

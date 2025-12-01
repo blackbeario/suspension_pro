@@ -28,13 +28,14 @@ class SettingAdapter extends TypeAdapter<Setting> {
       notes: fields[8] as String?,
       lastModified: fields[9] as DateTime?,
       isDirty: fields[10] == null ? false : fields[10] as bool,
+      isDeleted: fields[11] == null ? false : fields[11] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Setting obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class SettingAdapter extends TypeAdapter<Setting> {
       ..writeByte(9)
       ..write(obj.lastModified)
       ..writeByte(10)
-      ..write(obj.isDirty);
+      ..write(obj.isDirty)
+      ..writeByte(11)
+      ..write(obj.isDeleted);
   }
 
   @override

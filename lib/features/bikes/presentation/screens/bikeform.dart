@@ -4,7 +4,9 @@ import 'package:hive_ce/hive.dart';
 import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/bikes/domain/models/fork.dart';
 import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
+import 'package:ridemetrx/features/bikes/domain/bikes_notifier.dart';
 import 'package:ridemetrx/core/providers/service_providers.dart';
+import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
 import 'fork_form.dart';
 import 'shock_form.dart';
 import 'package:flutter/cupertino.dart';
@@ -79,13 +81,61 @@ class _BikeFormState extends ConsumerState<BikeForm> {
   Future<bool> _addUpdateBike() async {
     Navigator.pop(context);
     final Box<Bike> box = Hive.box<Bike>('bikes');
-    final Bike bike =
-        Bike(id: _bikeController.text, yearModel: int.parse(_yearModelController.text), fork: fork, shock: shock);
-    box.put(_bikeController.text, bike);
-    print(box.get(_bikeController.text));
+    final now = DateTime.now();
 
-    final db = ref.read(databaseServiceProvider);
-    db.addUpdateBike(bike);
+    // Check if user has Pro subscription
+    final isPro = ref.read(purchaseNotifierProvider).isPro;
+
+    // Create bike with appropriate flags
+    final Bike bike = Bike(
+      id: _bikeController.text,
+      yearModel: int.parse(_yearModelController.text),
+      fork: fork,
+      shock: shock,
+      lastModified: now,
+      isDirty: !isPro, // Free users are dirty (local-only), Pro users start clean
+    );
+
+    box.put(_bikeController.text, bike);
+    print('BikeForm: Saved bike ${bike.id} to Hive');
+
+    // Refresh BikesNotifier state from Hive to trigger UI update
+    ref.read(bikesNotifierProvider.notifier).refreshFromHive();
+
+    // Only sync to Firebase if user is Pro
+    if (!isPro) {
+      print('BikeForm: User is not Pro, bike ${bike.id} saved locally only');
+      return Future.value(false);
+    }
+
+    // Try to sync to Firebase (Pro users only)
+    try {
+      final db = ref.read(databaseServiceProvider);
+      await db.addUpdateBike(bike);
+      print('BikeForm: Successfully synced bike ${bike.id} to Firebase');
+    } catch (e) {
+      // Firebase sync failed - mark as dirty for later sync
+      print('BikeForm: Failed to sync bike ${bike.id} to Firebase: $e');
+      print('BikeForm: Marking bike as dirty for later sync');
+
+      final dirtyBike = Bike(
+        id: bike.id,
+        yearModel: bike.yearModel,
+        fork: bike.fork,
+        shock: bike.shock,
+        index: bike.index,
+        bikePic: bike.bikePic,
+        lastModified: now,
+        isDirty: true, // Mark as dirty
+      );
+
+      // Re-save to Hive with dirty flag
+      box.put(_bikeController.text, dirtyBike);
+
+      // Refresh again with dirty version
+      ref.read(bikesNotifierProvider.notifier).refreshFromHive();
+    }
+
     return Future.value(false);
   }
 

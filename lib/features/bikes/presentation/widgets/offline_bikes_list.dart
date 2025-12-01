@@ -97,15 +97,19 @@ class _OfflineBikesListState extends ConsumerState<OfflineBikesList> {
                             ),
                           ),
                           NewUserAction(
+                            showAppBar: true,
                             title: _getProfileString(user),
                             icon: const Icon(Icons.edit_note),
                             screen: const ProfileScreen(),
                             complete: user.isProfileComplete,
+                            showIcon: true,
                           ),
                           NewUserAction(
+                            showAppBar: true,
                             title: 'Add Your First Bike',
                             icon: Icon(Icons.pedal_bike),
                             screen: BikeForm(),
+                            showIcon: true,
                           ),
                           if (shouldShowPaywall)
                             ConnectivityWidgetWrapper(
@@ -113,12 +117,14 @@ class _OfflineBikesListState extends ConsumerState<OfflineBikesList> {
                               stacked: false,
                               child: NewUserAction(
                                 title: 'Go Pro!',
+                                showAppBar: false,
                                 icon: Icon(Icons.monetization_on_outlined),
                                 screen: PaywallScreen(
                                   onDismiss: () async {
                                     await PaywallDisplayManager.recordPaywallDismissed();
                                   },
                                 ),
+                                showIcon: true,
                               ),
                             ),
                           const SizedBox(height: 20),

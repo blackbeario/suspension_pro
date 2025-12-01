@@ -5,4 +5,5 @@ class HiveTypes {
 	static const int fork = 3;
 	static const int shock = 4;
 	static const int appUser = 5;
+	static const int dataConflict = 6;
 }

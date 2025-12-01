@@ -26,6 +26,8 @@ class Bike extends HiveObject{
   final DateTime? lastModified;
 	@HiveField(BikeFields.isDirty)
   final bool isDirty;
+	@HiveField(BikeFields.isDeleted)
+  final bool isDeleted;
 
   Bike({
     required this.id,
@@ -36,6 +38,7 @@ class Bike extends HiveObject{
     this.bikePic,
     this.lastModified,
     this.isDirty = false,
+    this.isDeleted = false,
   });
 
   factory Bike.fromFirestore(DocumentSnapshot doc) {
@@ -52,6 +55,7 @@ class Bike extends HiveObject{
           ? DateTime.fromMillisecondsSinceEpoch(data['lastModified'])
           : null,
       isDirty: false, // Data from Firebase is always clean
+      isDeleted: data['isDeleted'] ?? false,
     );
   }
 
@@ -63,5 +67,35 @@ class Bike extends HiveObject{
         'bikePic': bikePic,
         'lastModified': lastModified?.millisecondsSinceEpoch,
         'isDirty': isDirty,
+        'isDeleted': isDeleted,
       };
+
+  Bike copyWith({
+    String? id,
+    int? yearModel,
+    Object? fork = const _Undefined(),
+    Object? shock = const _Undefined(),
+    int? index,
+    String? bikePic,
+    DateTime? lastModified,
+    bool? isDirty,
+    bool? isDeleted,
+  }) {
+    return Bike(
+      id: id ?? this.id,
+      yearModel: yearModel ?? this.yearModel,
+      fork: fork is _Undefined ? this.fork : fork as Fork?,
+      shock: shock is _Undefined ? this.shock : shock as Shock?,
+      index: index ?? this.index,
+      bikePic: bikePic ?? this.bikePic,
+      lastModified: lastModified ?? this.lastModified,
+      isDirty: isDirty ?? this.isDirty,
+      isDeleted: isDeleted ?? this.isDeleted,
+    );
+  }
+}
+
+// Helper class to distinguish between "not provided" and "explicitly null"
+class _Undefined {
+  const _Undefined();
 }

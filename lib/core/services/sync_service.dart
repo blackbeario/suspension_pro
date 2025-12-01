@@ -58,23 +58,34 @@ class SyncService extends _$SyncService {
 
     for (final bike in dirtyBikes) {
       try {
-        // Push to Firebase
-        await db.addUpdateBike(bike);
+        if (bike.isDeleted) {
+          // This is a tombstone - delete from Firebase
+          await db.deleteBike(bike.id);
+          print('SyncService: Deleted bike ${bike.id} from Firebase');
 
-        // Mark as clean in Hive
-        final cleanBike = Bike(
-          id: bike.id,
-          yearModel: bike.yearModel,
-          fork: bike.fork,
-          shock: bike.shock,
-          index: bike.index,
-          bikePic: bike.bikePic,
-          lastModified: bike.lastModified,
-          isDirty: false, // Mark as clean
-        );
+          // Remove tombstone from Hive
+          await bikesBox.delete(bike.id);
+          print('SyncService: Removed tombstone for bike ${bike.id}');
+        } else {
+          // Normal update - push to Firebase
+          await db.addUpdateBike(bike);
 
-        await bikesBox.put(bike.id, cleanBike);
-        print('SyncService: Synced bike ${bike.id}');
+          // Mark as clean in Hive
+          final cleanBike = Bike(
+            id: bike.id,
+            yearModel: bike.yearModel,
+            fork: bike.fork,
+            shock: bike.shock,
+            index: bike.index,
+            bikePic: bike.bikePic,
+            lastModified: bike.lastModified,
+            isDirty: false, // Mark as clean
+            isDeleted: false,
+          );
+
+          await bikesBox.put(bike.id, cleanBike);
+          print('SyncService: Synced bike ${bike.id}');
+        }
       } catch (e) {
         print('SyncService: Failed to sync bike ${bike.id}: $e');
         // Keep dirty flag so it retries next time
@@ -102,27 +113,39 @@ class SyncService extends _$SyncService {
         final bikeId = setting.bike ?? '';
         if (bikeId.isEmpty) continue;
 
-        // Push to Firebase
-        await db.updateSetting(setting);
-
-        // Mark as clean in Hive
-        final cleanSetting = Setting(
-          id: setting.id,
-          bike: setting.bike,
-          fork: setting.fork,
-          shock: setting.shock,
-          riderWeight: setting.riderWeight,
-          updated: setting.updated,
-          frontTire: setting.frontTire,
-          rearTire: setting.rearTire,
-          notes: setting.notes,
-          lastModified: setting.lastModified,
-          isDirty: false, // Mark as clean
-        );
-
         final settingKey = '$bikeId-${setting.id}';
-        await settingsBox.put(settingKey, cleanSetting);
-        print('SyncService: Synced setting $settingKey');
+
+        if (setting.isDeleted) {
+          // This is a tombstone - delete from Firebase
+          await db.deleteSetting(bikeId, setting.id);
+          print('SyncService: Deleted setting $settingKey from Firebase');
+
+          // Remove tombstone from Hive
+          await settingsBox.delete(settingKey);
+          print('SyncService: Removed tombstone for setting $settingKey');
+        } else {
+          // Normal update - push to Firebase
+          await db.updateSetting(setting);
+
+          // Mark as clean in Hive
+          final cleanSetting = Setting(
+            id: setting.id,
+            bike: setting.bike,
+            fork: setting.fork,
+            shock: setting.shock,
+            riderWeight: setting.riderWeight,
+            updated: setting.updated,
+            frontTire: setting.frontTire,
+            rearTire: setting.rearTire,
+            notes: setting.notes,
+            lastModified: setting.lastModified,
+            isDirty: false, // Mark as clean
+            isDeleted: false,
+          );
+
+          await settingsBox.put(settingKey, cleanSetting);
+          print('SyncService: Synced setting $settingKey');
+        }
       } catch (e) {
         print('SyncService: Failed to sync setting ${setting.id}: $e');
         // Keep dirty flag so it retries next time

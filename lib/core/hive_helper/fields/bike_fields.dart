@@ -7,4 +7,5 @@ class BikeFields {
 	static const int bikePic = 5;
 	static const int lastModified = 6;
 	static const int isDirty = 7;
+	static const int isDeleted = 8;
 }

@@ -33,6 +33,8 @@ class Setting extends HiveObject{
   final DateTime? lastModified;
 	@HiveField(SettingFields.isDirty)
   final bool isDirty;
+	@HiveField(SettingFields.isDeleted)
+  final bool isDeleted;
 
   Setting({
     required this.id,
@@ -46,6 +48,7 @@ class Setting extends HiveObject{
     this.notes,
     this.lastModified,
     this.isDirty = false,
+    this.isDeleted = false,
   });
 
   factory Setting.fromFirestore(DocumentSnapshot doc) {
@@ -64,6 +67,7 @@ class Setting extends HiveObject{
           ? DateTime.fromMillisecondsSinceEpoch(data['lastModified'])
           : null,
       isDirty: false, // Data from Firebase is always clean
+      isDeleted: data['isDeleted'] ?? false,
     );
   }
 
@@ -92,6 +96,7 @@ class Setting extends HiveObject{
     'riderWeight': riderWeight,
     'lastModified': lastModified?.millisecondsSinceEpoch,
     'isDirty': isDirty,
+    'isDeleted': isDeleted,
   };
 }
 
