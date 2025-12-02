@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class SusProTheme {
+class RideMetrxTheme {
   ThemeData themedata = ThemeData(
     useMaterial3: false,
-    primaryColor: Colors.grey,
+    primaryColor: Color.fromARGB(255, 2, 107, 165), // 026ba5
     primarySwatch: Colors.blue,
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: AppBarTheme(

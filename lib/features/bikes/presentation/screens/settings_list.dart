@@ -8,8 +8,8 @@ import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
 import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
 import 'package:ridemetrx/core/utilities/helpers.dart';
 import 'package:ridemetrx/features/bikes/domain/settings_notifier.dart';
+import 'package:inline_list_tile_actions/inline_list_tile_actions.dart';
 import 'setting_detail.dart';
-import 'package:flutter/cupertino.dart';
 
 class SettingsList extends ConsumerStatefulWidget {
   SettingsList({required this.bike});
@@ -20,6 +20,30 @@ class SettingsList extends ConsumerStatefulWidget {
 }
 
 class _SettingsListState extends ConsumerState<SettingsList> {
+  final List<GlobalKey<InlineListTileActionsState>> _actionKeys = [];
+  late List<Setting> settings = [];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initializeKeys();
+  }
+
+  void _closeOtherMenus(int expandedIndex) {
+    for (int i = 0; i < _actionKeys.length; i++) {
+      if (i != expandedIndex) {
+        _actionKeys[i].currentState?.close();
+      }
+    }
+  }
+
+  void _initializeKeys() {
+    settings = ref.watch(settingsNotifierProvider(widget.bike.id));
+    for (int i = 0; i < settings.length; i++) {
+      _actionKeys.add(GlobalKey<InlineListTileActionsState>());
+    }
+  }
+
   Widget _getSettings(BuildContext context, Bike bike, List<Setting> settings) {
     return ListView.builder(
       shrinkWrap: true,
@@ -35,44 +59,84 @@ class _SettingsListState extends ConsumerState<SettingsList> {
         final String forkProduct = $fork != null ? '${$fork.year + ' ' + $fork.brand + ' ' + $fork.model}' : '';
         final String shockProduct = $shock != null ? '${$shock.year + ' ' + $shock.brand + ' ' + $shock.model}' : '';
 
-        return Dismissible(
-          background: ListTile(
-            trailing: Icon(Icons.delete, color: CupertinoColors.systemRed),
-            shape: null,
-          ),
-          direction: DismissDirection.horizontal,
-          onDismissed: (direction) {
-            final settingsNotifier = ref.read(settingsNotifierProvider(bike.id).notifier);
-            settingsNotifier.deleteSetting(settings[index].id);
-          },
-          key: PageStorageKey(settings[index]),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
-                key: PageStorageKey(settings[index]),
-                child: ListTile(
-                  title: Text(settings[index].id),
-                  subtitle: Text(widget.bike.id),
-                  trailing: Icon(Icons.arrow_forward_ios),
-                ),
-                onTap: () {
-                  SettingDetails details = SettingDetails(
-                    bike: widget.bike,
-                    name: settings[index].id,
-                    fork: fork,
-                    shock: shock,
-                    frontTire: frontTire,
-                    rearTire: rearTire,
-                    notes: notes,
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InlineListTileActions(
+            key: _actionKeys[index],
+            onExpansionChanged: (isExpanded) {
+              if (isExpanded) {
+                _closeOtherMenus(index);
+              }
+            },
+            actionPosition: ActionPosition.inline,
+            actions: [
+              ActionItem(
+                icon: Icons.delete,
+                label: 'Delete',
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                onPressed: () {
+                  final settingsNotifier = ref.read(settingsNotifierProvider(bike.id).notifier);
+                  settingsNotifier.deleteSetting(settings[index].id);
+                  print('Delete tapped');
+                },
+              ),
+              ActionItem(
+                icon: Icons.copy,
+                label: 'Clone',
+                backgroundColor: Colors.amber,
+                foregroundColor: Colors.white,
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Clone feature coming soon!'),
+                      backgroundColor: Colors.amber,
+                    ),
                   );
-                  pushScreen(
-                    context,
-                    settings[index].id,
-                    [ShareButton(widget: details, forkProduct: forkProduct, shockProduct: shockProduct)],
-                    details,
-                    true,
+                },
+              ),
+              ActionItem(
+                icon: Icons.share,
+                label: 'Share',
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Share feature coming soon!'),
+                      backgroundColor: Colors.blue,
+                    ),
                   );
-                }),
+                },
+              ),
+            ],
+            child: ListTile(
+              title: Text(settings[index].id),
+              subtitle: Text(widget.bike.id),
+              onTap: () {
+                // Close all action menus before navigating
+                for (var key in _actionKeys) {
+                  key.currentState?.close();
+                }
+
+                SettingDetails details = SettingDetails(
+                  bike: widget.bike,
+                  name: settings[index].id,
+                  fork: fork,
+                  shock: shock,
+                  frontTire: frontTire,
+                  rearTire: rearTire,
+                  notes: notes,
+                );
+                pushScreen(
+                  context,
+                  settings[index].id,
+                  [ShareButton(widget: details, forkProduct: forkProduct, shockProduct: shockProduct)],
+                  details,
+                  true,
+                );
+              },
+            ),
           ),
         );
       },
@@ -82,7 +146,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
   @override
   Widget build(BuildContext context) {
     // Watch the settings provider for the current bike
-    final settings = ref.watch(settingsNotifierProvider(widget.bike.id));
+    // final settings = ref.watch(settingsNotifierProvider(widget.bike.id));
 
     return Column(
       mainAxisSize: MainAxisSize.min,

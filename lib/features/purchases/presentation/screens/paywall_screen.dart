@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:ridemetrx/core/themes/styles.dart';
 import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
 import 'package:ridemetrx/features/purchases/domain/paywall_display_manager.dart';
 
@@ -47,17 +48,13 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // Hero section
-                      const Icon(
-                        Icons.rocket_launch,
-                        size: 40,
-                        color: Colors.teal,
-                      ),
+                      Image.asset('assets/ride_metrx_logo_bw.png', height: 100),
                       const SizedBox(height: 16),
                       Text(
                         'RideMetrx Pro',
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.teal,
+                              color: Colors.blue,
                             ),
                         textAlign: TextAlign.center,
                       ),
@@ -227,11 +224,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-          color: isRecommended ? Colors.teal : Colors.grey.shade300,
+          color: isRecommended ? Colors.blue : Colors.grey.shade300,
           width: isRecommended ? 2 : 1,
         ),
         borderRadius: BorderRadius.circular(12),
-        color: isRecommended ? Colors.teal.withValues(alpha: 0.05) : Colors.white,
+        color: isRecommended ? Colors.blue.withValues(alpha: 0.05) : Colors.white,
       ),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -252,7 +249,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.teal,
+                      color: RideMetrxTheme().themedata.primaryColor,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Text(
@@ -305,7 +302,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       }
                     },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isRecommended ? Colors.teal : Colors.grey.shade700,
+                backgroundColor: isRecommended ? Colors.blue : Colors.grey.shade700,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
@@ -347,7 +344,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         children: [
           Icon(
             icon,
-            color: Colors.teal,
+            color: Colors.blue,
             size: 28,
           ),
           const SizedBox(width: 16),

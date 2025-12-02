@@ -89,7 +89,7 @@ class MyApp extends ConsumerWidget {
     return MaterialApp.router(
       routerConfig: router,
       debugShowCheckedModeBanner: false,
-      theme: SusProTheme().themedata,
+      theme: RideMetrxTheme().themedata,
     );
   }
 }

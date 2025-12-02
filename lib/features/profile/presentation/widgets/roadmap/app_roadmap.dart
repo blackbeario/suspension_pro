@@ -15,8 +15,8 @@ class AppRoadmap extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 20),
-              Text('Upcoming Features', style: TextStyle(fontSize: 24)),
+              SizedBox(height: 16),
+              Text('Features currently in development', style: TextStyle(fontSize: 16)),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -25,18 +25,24 @@ class AppRoadmap extends StatelessWidget {
                     AppRoadmapItem(
                         icon: Icons.check_circle_outline,
                         color: Colors.green,
-                        value: 'Create offine-first architecture for remote locations'),
-                    AppRoadmapItem(icon: Icons.check_circle_outline, color: Colors.green, value: 'Populate bike and settings data from Hive'),
+                        value: 'Offine-first architecture'),
                     AppRoadmapItem(
-                        icon: Icons.circle_outlined, value: 'Community database of suspension setups for sharing & importing'),
-                    AppRoadmapItem(icon: Icons.circle_outlined, value: 'Heatmaps for rough suspension setups'),
-                    AppRoadmapItem(icon: Icons.circle_outlined, value: 'Import suspension products dynamically'),
-                    AppRoadmapItem(icon: Icons.circle_outlined, value: 'Support for less common suspension products'),
+                        icon: Icons.check_circle_outline,
+                        color: Colors.green,
+                        value: 'Populate data from local db'),
+                    AppRoadmapItem(icon: Icons.circle_outlined, value: 'Clone bike settings'),
+                    AppRoadmapItem(icon: Icons.circle_outlined, value: 'Community database'),
+                    AppRoadmapItem(icon: Icons.circle_outlined, value: 'Push notifications'),
+                    AppRoadmapItem(icon: Icons.circle_outlined, value: 'Heatmap integration for rides'),
+                    AppRoadmapItem(icon: Icons.circle_outlined, value: 'Enhanced ride analytics'),
+                    AppRoadmapItem(icon: Icons.circle_outlined, value: 'Dynamic suspension products'),
+                    AppRoadmapItem(icon: Icons.circle_outlined, value: 'Support more suspension products'),
                     AppRoadmapItem(icon: Icons.circle_outlined, value: 'Custom theme options'),
                   ],
                 ),
               ),
-              SuggestionBox()
+              SuggestionBox(),
+              SizedBox(height: 32),
             ],
           ),
         ),
