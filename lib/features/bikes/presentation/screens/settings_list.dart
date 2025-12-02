@@ -41,6 +41,36 @@ class _SettingsListState extends ConsumerState<SettingsList> {
     }
   }
 
+  Future<String?> _showCloneDialog(BuildContext context, String originalName) async {
+    final controller = TextEditingController(text: '$originalName (Copy)');
+
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Clone Setting'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: 'New Setting Name',
+            hintText: 'Enter a name for the cloned setting',
+          ),
+          onSubmitted: (value) => Navigator.of(context).pop(value),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(controller.text),
+            child: const Text('Clone'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _getSettings(BuildContext context, Bike bike, List<Setting> settings) {
     return ListView.builder(
       shrinkWrap: true,
@@ -83,13 +113,38 @@ class _SettingsListState extends ConsumerState<SettingsList> {
                 label: 'Clone',
                 backgroundColor: Colors.amber,
                 foregroundColor: Colors.white,
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Clone feature coming soon!'),
-                      backgroundColor: Colors.amber,
-                    ),
-                  );
+                onPressed: () async {
+                  // Close the action menu
+                  _actionKeys[index].currentState?.close();
+
+                  // Show dialog to get new name
+                  final newName = await _showCloneDialog(context, settings[index].id);
+
+                  if (newName != null && newName.isNotEmpty) {
+                    // Clone the setting
+                    final settingsNotifier = ref.read(settingsNotifierProvider(bike.id).notifier);
+                    final clonedSetting = Setting(
+                      id: newName,
+                      bike: settings[index].bike,
+                      fork: settings[index].fork,
+                      shock: settings[index].shock,
+                      frontTire: settings[index].frontTire,
+                      rearTire: settings[index].rearTire,
+                      notes: settings[index].notes,
+                      riderWeight: settings[index].riderWeight,
+                    );
+
+                    await settingsNotifier.addUpdateSetting(clonedSetting);
+
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Setting cloned as "$newName"'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  }
                 },
               ),
               ActionItem(
