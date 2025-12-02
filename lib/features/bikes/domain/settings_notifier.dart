@@ -9,8 +9,16 @@ import 'package:hive_ce/hive.dart';
 part 'settings_notifier.g.dart';
 
 /// Stream provider for settings from Firestore for a specific bike
+/// Only streams if user is Pro
 @riverpod
 Stream<List<Setting>> settingsStream(Ref ref, String bikeId) {
+  final isPro = ref.watch(purchaseNotifierProvider).isPro;
+
+  if (!isPro) {
+    // Free users: return empty stream, no Firebase access
+    return Stream.value([]);
+  }
+
   final db = ref.watch(databaseServiceProvider);
   return db.streamSettings(bikeId);
 }
@@ -21,23 +29,27 @@ Stream<List<Setting>> settingsStream(Ref ref, String bikeId) {
 class SettingsNotifier extends _$SettingsNotifier {
   @override
   List<Setting> build(String bikeId) {
-    // Listen to settings stream and smart-merge with Hive (conflict detection)
-    ref.listen(settingsStreamProvider(bikeId), (previous, next) {
-      next.when(
-        data: (firebaseSettings) {
-          // Smart merge: Don't blindly accept Firebase data
-          _smartMergeSettings(bikeId, firebaseSettings);
-        },
-        loading: () {
-          // Keep current state while loading
-        },
-        error: (error, stack) {
-          print('Error loading settings for $bikeId: $error');
-          // Fall back to Hive data on error
-          state = _getSettingsFromHive(bikeId);
-        },
-      );
-    });
+    final isPro = ref.watch(purchaseNotifierProvider).isPro;
+
+    // Only listen to Firebase stream if user is Pro
+    if (isPro) {
+      ref.listen(settingsStreamProvider(bikeId), (previous, next) {
+        next.when(
+          data: (firebaseSettings) {
+            // Smart merge: Don't blindly accept Firebase data
+            _smartMergeSettings(bikeId, firebaseSettings);
+          },
+          loading: () {
+            // Keep current state while loading
+          },
+          error: (error, stack) {
+            print('Error loading settings for $bikeId: $error');
+            // Fall back to Hive data on error
+            state = _getSettingsFromHive(bikeId);
+          },
+        );
+      });
+    }
 
     // Return initial state from Hive (offline-first)
     return _getSettingsFromHive(bikeId);
@@ -102,6 +114,7 @@ class SettingsNotifier extends _$SettingsNotifier {
     final boxKeys = box.keys;
 
     final bikeSettings = boxKeys.where((key) => key.toString().startsWith('$bikeId-'));
+
     for (final key in bikeSettings) {
       final setting = box.get(key);
       // Skip deleted items

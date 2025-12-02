@@ -6,7 +6,7 @@ part of 'settings_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$settingsStreamHash() => r'0f70b2255be0f0545cbb917064bfc297c55a6147';
+String _$settingsStreamHash() => r'b256a0a331022be770ef664b3b683d41c1dbb11d';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,21 +30,25 @@ class _SystemHash {
 }
 
 /// Stream provider for settings from Firestore for a specific bike
+/// Only streams if user is Pro
 ///
 /// Copied from [settingsStream].
 @ProviderFor(settingsStream)
 const settingsStreamProvider = SettingsStreamFamily();
 
 /// Stream provider for settings from Firestore for a specific bike
+/// Only streams if user is Pro
 ///
 /// Copied from [settingsStream].
 class SettingsStreamFamily extends Family<AsyncValue<List<Setting>>> {
   /// Stream provider for settings from Firestore for a specific bike
+  /// Only streams if user is Pro
   ///
   /// Copied from [settingsStream].
   const SettingsStreamFamily();
 
   /// Stream provider for settings from Firestore for a specific bike
+  /// Only streams if user is Pro
   ///
   /// Copied from [settingsStream].
   SettingsStreamProvider call(
@@ -80,10 +84,12 @@ class SettingsStreamFamily extends Family<AsyncValue<List<Setting>>> {
 }
 
 /// Stream provider for settings from Firestore for a specific bike
+/// Only streams if user is Pro
 ///
 /// Copied from [settingsStream].
 class SettingsStreamProvider extends AutoDisposeStreamProvider<List<Setting>> {
   /// Stream provider for settings from Firestore for a specific bike
+  /// Only streams if user is Pro
   ///
   /// Copied from [settingsStream].
   SettingsStreamProvider(
@@ -170,7 +176,7 @@ class _SettingsStreamProviderElement
   String get bikeId => (origin as SettingsStreamProvider).bikeId;
 }
 
-String _$settingsNotifierHash() => r'9e315949976ea81163cbce9191641ee2ffbcc937';
+String _$settingsNotifierHash() => r'e0549bacb919d51f9d457bf05bcd4a2272b5b7a5';
 
 abstract class _$SettingsNotifier
     extends BuildlessAutoDisposeNotifier<List<Setting>> {

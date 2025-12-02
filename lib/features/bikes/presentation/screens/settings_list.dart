@@ -21,13 +21,6 @@ class SettingsList extends ConsumerStatefulWidget {
 
 class _SettingsListState extends ConsumerState<SettingsList> {
   final List<GlobalKey<InlineListTileActionsState>> _actionKeys = [];
-  late List<Setting> settings = [];
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _initializeKeys();
-  }
 
   void _closeOtherMenus(int expandedIndex) {
     for (int i = 0; i < _actionKeys.length; i++) {
@@ -37,10 +30,14 @@ class _SettingsListState extends ConsumerState<SettingsList> {
     }
   }
 
-  void _initializeKeys() {
-    settings = ref.watch(settingsNotifierProvider(widget.bike.id));
-    for (int i = 0; i < settings.length; i++) {
+  void _ensureKeysInitialized(int settingsCount) {
+    // Add keys if we don't have enough
+    while (_actionKeys.length < settingsCount) {
       _actionKeys.add(GlobalKey<InlineListTileActionsState>());
+    }
+    // Remove excess keys if settings were deleted
+    while (_actionKeys.length > settingsCount) {
+      _actionKeys.removeLast();
     }
   }
 
@@ -49,8 +46,8 @@ class _SettingsListState extends ConsumerState<SettingsList> {
       shrinkWrap: true,
       itemCount: settings.length,
       itemBuilder: (context, index) {
-        ComponentSetting? fork = settings[index].fork ?? null;
-        ComponentSetting? shock = settings[index].shock ?? null;
+        ComponentSetting? forkSettings = settings[index].fork ?? null;
+        ComponentSetting? shockSettings = settings[index].shock ?? null;
         String? frontTire = settings[index].frontTire ?? null;
         String? rearTire = settings[index].rearTire ?? null;
         String? notes = settings[index].notes ?? null;
@@ -122,8 +119,8 @@ class _SettingsListState extends ConsumerState<SettingsList> {
                 SettingDetails details = SettingDetails(
                   bike: widget.bike,
                   name: settings[index].id,
-                  fork: fork,
-                  shock: shock,
+                  fork: forkSettings,
+                  shock: shockSettings,
                   frontTire: frontTire,
                   rearTire: rearTire,
                   notes: notes,
@@ -145,8 +142,11 @@ class _SettingsListState extends ConsumerState<SettingsList> {
 
   @override
   Widget build(BuildContext context) {
-    // Watch the settings provider for the current bike
-    // final settings = ref.watch(settingsNotifierProvider(widget.bike.id));
+    // Watch the settings provider to get the latest data
+    final settings = ref.watch(settingsNotifierProvider(widget.bike.id));
+
+    // Ensure we have the right number of action keys
+    _ensureKeysInitialized(settings.length);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
