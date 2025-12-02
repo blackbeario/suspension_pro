@@ -16,41 +16,47 @@ class _SuggestionBoxState extends State<SuggestionBox> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text('Suggestion Box'),
-      subtitle: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              TextFormField(
-                autofocus: false,
-                onChanged: (value) => setState(() {}),
-                maxLines: 5,
-                minLines: 1,
-                decoration: InputDecoration(
-                  helperText: formSubmitted ? 'Thanks!' : null,
-                  contentPadding: EdgeInsets.all(6),
-                  filled: true,
-                  border: OutlineInputBorder(),
-                  hintText: 'Ideas for this app?',
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Suggestion Box'),
+          Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                TextFormField(
+                  autofocus: false,
+                  onChanged: (value) => setState(() {}),
+                  maxLines: 5,
+                  minLines: 1,
+                  decoration: InputDecoration(
+                    helperText: formSubmitted ? 'Thanks!' : null,
+                    contentPadding: EdgeInsets.all(6),
+                    filled: true,
+                    border: OutlineInputBorder(),
+                    hintText: 'Ideas for this app?',
+                  ),
+                  style: TextStyle(fontSize: 12, overflow: TextOverflow.fade),
+                  controller: _suggestionController,
+                  keyboardType: TextInputType.text,
                 ),
-                style: TextStyle(fontSize: 12, overflow: TextOverflow.fade),
-                controller: _suggestionController,
-                keyboardType: TextInputType.text,
-              ),
-              SizedBox(height: 20),
-              CupertinoButton(
-                disabledColor: CupertinoColors.inactiveGray,
-                color: CupertinoColors.activeBlue,
-                child: Text('Submit', style: TextStyle(color: Colors.white)),
-                onPressed: _suggestionController.text.isNotEmpty ? () => _submitSuggestion(_suggestionController.text) : null,
-              ),
-            ],
+                SizedBox(height: 20),
+                CupertinoButton(
+                  disabledColor: CupertinoColors.inactiveGray,
+                  color: CupertinoColors.activeBlue,
+                  child: Text('Submit', style: TextStyle(color: Colors.white)),
+                  onPressed: _suggestionController.text.isNotEmpty ? () => _submitSuggestion(_suggestionController.text) : null,
+                ),
+              ],
+            ),
           ),
         ),
+        ],
       ),
     );
   }

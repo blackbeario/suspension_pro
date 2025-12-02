@@ -28,6 +28,7 @@ dependencies:
   image_picker: ^1.0.7
   cached_network_image: ^3.3.1
   cupertino_icons: ^1.0.3
+  flutter_slidable: ^4.0.3
 
   # Routing
   go_router: ^14.6.2
@@ -45,6 +46,9 @@ dependencies:
   encrypt: ^5.0.3
   purchases_flutter: ^9.9.9
 
+  inline_list_tile_actions:
+    path: ../inline_list_tile_actions
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -56,10 +60,10 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
-flutter_icons:
+flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/SuspensionProIcon.jpg"
+  image_path: "assets/ride_metrx_logo.png"
 
 # The following section is specific to Flutter.
 flutter:

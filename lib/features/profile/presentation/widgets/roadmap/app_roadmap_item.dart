@@ -13,6 +13,8 @@ class AppRoadmapItem extends StatelessWidget {
       child: ListTile(
         leading: icon != null ? Icon(icon, color: color) : null,
         title: Text(value),
+        horizontalTitleGap: 0,
+        // dense: true,
       ),
     );
   }
