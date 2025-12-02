@@ -42,7 +42,7 @@ final offlineBikesProvider = AutoDisposeProvider<List<Bike>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef OfflineBikesRef = AutoDisposeProviderRef<List<Bike>>;
-String _$bikesNotifierHash() => r'3b95b8c99a1b503391456a46f4981f15a48117c1';
+String _$bikesNotifierHash() => r'ac8ad2a5df94c1a507d4248986897f24e8e214db';
 
 /// StateNotifier for managing bikes state and operations
 ///

@@ -893,10 +893,11 @@ packages:
   inline_list_tile_actions:
     dependency: "direct main"
     description:
-      path: "../inline_list_tile_actions"
-      relative: true
-    source: path
-    version: "0.1.0"
+      name: inline_list_tile_actions
+      sha256: "03ec3cd5f9e34c646a4499557b9f86bb95d8580be4e2b5b31e8c434ecdbb2615"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   integration_test:
     dependency: "direct dev"
     description: flutter

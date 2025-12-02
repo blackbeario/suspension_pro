@@ -45,9 +45,7 @@ dependencies:
   connectivity_checker: ^1.1.0
   encrypt: ^5.0.3
   purchases_flutter: ^9.9.9
-
-  inline_list_tile_actions:
-    path: ../inline_list_tile_actions
+  inline_list_tile_actions: ^0.2.0
 
 dev_dependencies:
   flutter_test:
