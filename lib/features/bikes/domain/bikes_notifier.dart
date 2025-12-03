@@ -1,14 +1,9 @@
-import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
 import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'package:ridemetrx/core/services/hive_service.dart';
-import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
 import 'package:ridemetrx/features/bikes/domain/bikes_state.dart';
 import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
 import 'package:hive_ce/hive.dart';
@@ -135,83 +130,6 @@ class BikesNotifier extends _$BikesNotifier {
     }
 
     return settingsList;
-  }
-
-  /// Upload bike image from gallery
-  Future<void> uploadBikeImage(String bikeId) async {
-    try {
-      state = state.copyWith(isSyncing: true);
-
-      final pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 300,
-        maxHeight: 300,
-      );
-
-      if (pickedFile == null) {
-        state = state.copyWith(isSyncing: false);
-        return;
-      }
-
-      await _cropAndUploadImage(bikeId, pickedFile.path);
-    } catch (e) {
-      state = state.copyWith(
-        isSyncing: false,
-        errorMessage: 'Failed to upload bike image: $e',
-      );
-    }
-  }
-
-  /// Crop and upload image to Firebase Storage
-  Future<void> _cropAndUploadImage(String bikeId, String filePath) async {
-    try {
-      final croppedImage = await ImageCropper().cropImage(
-        sourcePath: filePath,
-        compressQuality: 50,
-      );
-
-      if (croppedImage != null) {
-        await _uploadToFirebaseStorage(bikeId, File(croppedImage.path));
-      } else {
-        state = state.copyWith(isSyncing: false);
-      }
-    } catch (e) {
-      state = state.copyWith(
-        isSyncing: false,
-        errorMessage: 'Failed to crop image: $e',
-      );
-    }
-  }
-
-  /// Upload image file to Firebase Storage
-  Future<void> _uploadToFirebaseStorage(String bikeId, File imageFile) async {
-    try {
-      final uid = ref.read(userNotifierProvider).uid;
-      final storage = FirebaseStorage.instance;
-      final storageRef = storage.ref().child('userImages/$uid/bikes/$bikeId/bike.jpg');
-
-      final uploadTask = storageRef.putFile(imageFile);
-      await uploadTask.whenComplete(() async {
-        final downloadUrl = await storageRef.getDownloadURL();
-        final db = ref.read(databaseServiceProvider);
-        await db.setBikePic(bikeId, downloadUrl);
-
-        state = state.copyWith(isSyncing: false);
-      });
-    } catch (e) {
-      state = state.copyWith(
-        isSyncing: false,
-        errorMessage: 'Failed to upload to Firebase: $e',
-      );
-    }
-  }
-
-  /// Parse bike name with year model
-  String parseBikeName(Bike bike) {
-    if (bike.yearModel != null) {
-      return '${bike.yearModel} ${bike.id}';
-    }
-    return bike.id;
   }
 
   /// Delete a bike (uses tombstone pattern for sync safety)

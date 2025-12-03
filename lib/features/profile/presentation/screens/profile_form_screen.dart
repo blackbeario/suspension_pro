@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
-import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'package:ridemetrx/features/profile/presentation/widgets/profile_pic.dart';
 
 class ProfileFormScreen extends ConsumerStatefulWidget {
@@ -35,22 +34,10 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
   }
 
   Future<void> _updateUser() async {
-    final user = ref.read(userNotifierProvider);
-    final db = ref.read(databaseServiceProvider);
-
-    // Update UserNotifier state
-    ref.read(userNotifierProvider.notifier).updateProfile(
+    await ref.read(userNotifierProvider.notifier).updateProfileAndSync(
       userName: _usernameController.text,
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
-    );
-
-    // Update Firebase
-    await db.updateUser(
-      _usernameController.text,
-      _firstNameController.text,
-      _lastNameController.text,
-      user.email,
     );
   }
 

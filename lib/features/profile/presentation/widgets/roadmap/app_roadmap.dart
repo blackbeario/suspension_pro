@@ -23,14 +23,10 @@ class AppRoadmap extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppRoadmapItem(
-                        icon: Icons.check_circle_outline,
-                        color: Colors.green,
-                        value: 'Offine-first architecture'),
+                        icon: Icons.check_circle_outline, color: Colors.green, value: 'Offine-first architecture'),
                     AppRoadmapItem(
-                        icon: Icons.check_circle_outline,
-                        color: Colors.green,
-                        value: 'Populate data from local db'),
-                    AppRoadmapItem(icon: Icons.circle_outlined, value: 'Clone bike settings'),
+                        icon: Icons.check_circle_outline, color: Colors.green, value: 'Populate data from local db'),
+                    AppRoadmapItem(icon: Icons.check_circle_outline, color: Colors.green, value: 'Clone bike settings'),
                     AppRoadmapItem(icon: Icons.circle_outlined, value: 'Community database'),
                     AppRoadmapItem(icon: Icons.circle_outlined, value: 'Push notifications'),
                     AppRoadmapItem(icon: Icons.circle_outlined, value: 'Heatmap integration for rides'),

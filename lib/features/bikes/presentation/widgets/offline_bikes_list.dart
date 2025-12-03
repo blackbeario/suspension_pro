@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ridemetrx/features/bikes/presentation/screens/bikeform.dart';
+import 'package:ridemetrx/features/bikes/presentation/screens/bike_form.dart';
 import 'package:ridemetrx/features/bikes/presentation/widgets/bikes_list.dart';
 import 'package:ridemetrx/features/bikes/presentation/widgets/new_user_action.dart';
 import 'package:ridemetrx/features/connectivity/presentation/widgets/connectivity_widget_wrapper.dart';

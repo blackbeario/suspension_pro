@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridemetrx/features/bikes/presentation/widgets/share_button.dart';
@@ -43,7 +44,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
   Future<bool?> _showDeleteDialog(BuildContext context, String settingName) {
     return showAdaptiveDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AlertDialog.adaptive(
         title: const Text('Delete Setting?'),
         content: Text('Are you sure you want to delete the setting "$settingName"? This action cannot be undone.'),
         actions: [
@@ -65,14 +66,14 @@ class _SettingsListState extends ConsumerState<SettingsList> {
 
     return showAdaptiveDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AlertDialog.adaptive(
         title: const Text('Clone Setting'),
-        content: TextField(
+        content: CupertinoTextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(
-            labelText: 'New Setting Name',
-            hintText: 'Enter a name for the cloned setting',
+          decoration: BoxDecoration(
+            border: Border.all(color: CupertinoColors.systemGrey4),
+            borderRadius: BorderRadius.circular(8),
           ),
           onSubmitted: (value) => Navigator.of(context).pop(value),
         ),
@@ -91,8 +92,24 @@ class _SettingsListState extends ConsumerState<SettingsList> {
   }
 
   Widget _getSettings(BuildContext context, Bike bike, List<Setting> settings) {
-    return ListView.builder(
+    return ReorderableListView.builder(
       shrinkWrap: true,
+      onReorder: (oldIndex, newIndex) async {
+        setState(() {
+          if (newIndex > oldIndex) newIndex -= 1;
+          final setting = settings.removeAt(oldIndex);
+          settings.insert(newIndex, setting);
+
+          // Update indices for all settings
+          for (int i = 0; i < settings.length; i++) {
+            settings[i].index = i;
+          }
+        });
+
+        // Save the new order to Hive and Firebase
+        final viewModel = ref.read(settingsListViewModelProvider.notifier);
+        await viewModel.reorderSettings(settings, bike.id);
+      },
       itemCount: settings.length,
       itemBuilder: (context, index) {
         final setting = settings[index];
@@ -107,6 +124,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
         final String shockProduct = viewModel.formatShockProduct(bike);
 
         return Padding(
+          key: ValueKey(setting.id),
           padding: const EdgeInsets.all(8.0),
           child: InlineListTileActions(
             key: _actionKeys[index],
@@ -224,6 +242,18 @@ class _SettingsListState extends ConsumerState<SettingsList> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          child: ListTile(
+            tileColor: Colors.blue.shade50,
+            leading: Icon(Icons.info_outline),
+            minLeadingWidth: 0,
+            title: Text(
+              '• Add settings for each trail or condition \n• Drag and drop to reorder settings \n• Tap the menu icon to delete, clone or share',
+              style: TextStyle(fontSize: 12),
+            ),
+          ),
+        ),
         _getSettings(context, widget.bike, settings),
         SizedBox(height: 20),
         ElevatedButton(

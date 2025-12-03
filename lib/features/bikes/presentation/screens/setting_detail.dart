@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
 import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/bikes/domain/models/component_setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:ridemetrx/features/bikes/domain/models/fork.dart';
 import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
 import 'package:ridemetrx/features/bikes/presentation/widgets/settings_form_field.dart';
-import 'package:ridemetrx/features/bikes/domain/settings_notifier.dart';
+import 'package:ridemetrx/features/bikes/presentation/view_models/setting_detail_view_model.dart';
 
 class SettingDetails extends ConsumerStatefulWidget {
   SettingDetails({this.name, this.bike, this.fork, this.shock, this.frontTire, this.rearTire, this.notes});
@@ -67,25 +66,26 @@ class _SettingDetailsState extends ConsumerState<SettingDetails> {
   }
 
   Future _addUpdateSetting(bikeId, BuildContext context) async {
-    final settingsNotifier = ref.read(settingsNotifierProvider(bikeId).notifier);
+    final viewModel = ref.read(settingDetailViewModelProvider.notifier);
 
-    // If editing and the name changed, delete the old setting first
-    if (_originalSettingId != null && _originalSettingId != _settingNameController.text) {
-      await settingsNotifier.deleteSetting(_originalSettingId!);
-    }
-
-    final Setting setting = Setting(
-      id: _settingNameController.text,
-      bike: bikeId,
-      fork: ComponentSetting(hsc: _hscFork, lsc: _lscFork, hsr: _hsrFork, lsr: _lsrFork, springRate: _springRateFork),
-      shock: ComponentSetting(hsc: _hscShock, lsc: _lscShock, hsr: _hsrShock, lsr: _lsrShock, springRate: _springRateShock),
+    await viewModel.saveSetting(
+      bikeId: bikeId,
+      settingName: _settingNameController.text,
+      originalSettingId: _originalSettingId,
+      hscFork: _hscFork,
+      lscFork: _lscFork,
+      hsrFork: _hsrFork,
+      lsrFork: _lsrFork,
+      springRateFork: _springRateFork,
       frontTire: _frontTire,
+      hscShock: _hscShock,
+      lscShock: _lscShock,
+      hsrShock: _hsrShock,
+      lsrShock: _lsrShock,
+      springRateShock: _springRateShock,
       rearTire: _rearTire,
       notes: _notesController.text,
     );
-
-    // Use the settings notifier to save the setting
-    await settingsNotifier.addUpdateSetting(setting);
 
     Navigator.pop(context);
   }

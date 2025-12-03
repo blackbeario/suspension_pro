@@ -5,6 +5,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:ridemetrx/core/themes/styles.dart';
 import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
 import 'package:ridemetrx/features/purchases/domain/paywall_display_manager.dart';
+import 'package:ridemetrx/features/purchases/presentation/view_models/paywall_view_model.dart';
 
 /// Paywall screen showing Pro features and pricing
 /// Displayed when free users try to access Pro features
@@ -180,19 +181,12 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   }
 
   List<Widget> _buildOfferingPackages(Offering offering) {
-    final packages = offering.availablePackages;
+    final viewModel = ref.read(paywallViewModelProvider.notifier);
     final widgets = <Widget>[];
 
-    // Find monthly and annual packages
-    final monthlyPackage = packages.firstWhere(
-      (p) => p.packageType == PackageType.monthly,
-      orElse: () => packages.first,
-    );
-
-    final annualPackage = packages.firstWhere(
-      (p) => p.packageType == PackageType.annual,
-      orElse: () => packages.last,
-    );
+    // Get monthly and annual packages via ViewModel
+    final monthlyPackage = viewModel.getMonthlyPackage(offering);
+    final annualPackage = viewModel.getAnnualPackage(offering);
 
     // Monthly package
     widgets.add(_buildPackageCard(

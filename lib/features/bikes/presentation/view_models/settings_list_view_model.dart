@@ -67,4 +67,14 @@ class SettingsListViewModel extends _$SettingsListViewModel {
   String generateCloneName(String originalName) {
     return '$originalName (Copy)';
   }
+
+  /// Reorder settings and save to Hive and Firebase
+  Future<void> reorderSettings(List<Setting> settings, String bikeId) async {
+    final settingsNotifier = ref.read(settingsNotifierProvider(bikeId).notifier);
+
+    // Save each setting with its new index
+    for (final setting in settings) {
+      await settingsNotifier.addUpdateSetting(setting);
+    }
+  }
 }
