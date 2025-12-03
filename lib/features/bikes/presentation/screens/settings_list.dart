@@ -3,11 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridemetrx/features/bikes/presentation/widgets/share_button.dart';
 import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/bikes/domain/models/component_setting.dart';
-import 'package:ridemetrx/features/bikes/domain/models/fork.dart';
 import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
-import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
 import 'package:ridemetrx/core/utilities/helpers.dart';
 import 'package:ridemetrx/features/bikes/domain/settings_notifier.dart';
+import 'package:ridemetrx/features/bikes/presentation/view_models/settings_list_view_model.dart';
 import 'package:inline_list_tile_actions/inline_list_tile_actions.dart';
 import 'setting_detail.dart';
 
@@ -41,10 +40,30 @@ class _SettingsListState extends ConsumerState<SettingsList> {
     }
   }
 
-  Future<String?> _showCloneDialog(BuildContext context, String originalName) async {
-    final controller = TextEditingController(text: '$originalName (Copy)');
+  Future<bool?> _showDeleteDialog(BuildContext context, String settingName) {
+    return showAdaptiveDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Setting?'),
+        content: Text('Are you sure you want to delete the setting "$settingName"? This action cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
 
-    return showDialog<String>(
+  Future<String?> _showCloneDialog(BuildContext context, String defaultName) async {
+    final controller = TextEditingController(text: defaultName);
+
+    return showAdaptiveDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Clone Setting'),
@@ -76,15 +95,16 @@ class _SettingsListState extends ConsumerState<SettingsList> {
       shrinkWrap: true,
       itemCount: settings.length,
       itemBuilder: (context, index) {
-        ComponentSetting? forkSettings = settings[index].fork ?? null;
-        ComponentSetting? shockSettings = settings[index].shock ?? null;
-        String? frontTire = settings[index].frontTire ?? null;
-        String? rearTire = settings[index].rearTire ?? null;
-        String? notes = settings[index].notes ?? null;
-        Fork? $fork = bike.fork ?? null;
-        Shock? $shock = bike.shock ?? null;
-        final String forkProduct = $fork != null ? '${$fork.year + ' ' + $fork.brand + ' ' + $fork.model}' : '';
-        final String shockProduct = $shock != null ? '${$shock.year + ' ' + $shock.brand + ' ' + $shock.model}' : '';
+        final setting = settings[index];
+        final viewModel = ref.read(settingsListViewModelProvider.notifier);
+
+        final ComponentSetting? forkSettings = setting.fork;
+        final ComponentSetting? shockSettings = setting.shock;
+        final String? frontTire = setting.frontTire;
+        final String? rearTire = setting.rearTire;
+        final String? notes = setting.notes;
+        final String forkProduct = viewModel.formatForkProduct(bike);
+        final String shockProduct = viewModel.formatShockProduct(bike);
 
         return Padding(
           padding: const EdgeInsets.all(8.0),
@@ -102,10 +122,14 @@ class _SettingsListState extends ConsumerState<SettingsList> {
                 label: 'Delete',
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
-                onPressed: () {
-                  final settingsNotifier = ref.read(settingsNotifierProvider(bike.id).notifier);
-                  settingsNotifier.deleteSetting(settings[index].id);
-                  print('Delete tapped');
+                onPressed: () async {
+                  final confirmed = await _showDeleteDialog(context, setting.id);
+                  if (confirmed == true) {
+                    await viewModel.deleteSetting(
+                      settingId: setting.id,
+                      bikeId: bike.id,
+                    );
+                  }
                 },
               ),
               ActionItem(
@@ -117,26 +141,19 @@ class _SettingsListState extends ConsumerState<SettingsList> {
                   // Close the action menu
                   _actionKeys[index].currentState?.close();
 
+                  final defaultName = viewModel.generateCloneName(setting.id);
+
                   // Show dialog to get new name
-                  final newName = await _showCloneDialog(context, settings[index].id);
+                  final newName = await _showCloneDialog(context, defaultName);
 
                   if (newName != null && newName.isNotEmpty) {
-                    // Clone the setting
-                    final settingsNotifier = ref.read(settingsNotifierProvider(bike.id).notifier);
-                    final clonedSetting = Setting(
-                      id: newName,
-                      bike: settings[index].bike,
-                      fork: settings[index].fork,
-                      shock: settings[index].shock,
-                      frontTire: settings[index].frontTire,
-                      rearTire: settings[index].rearTire,
-                      notes: settings[index].notes,
-                      riderWeight: settings[index].riderWeight,
+                    final success = await viewModel.cloneSetting(
+                      originalSetting: setting,
+                      newName: newName,
+                      bikeId: bike.id,
                     );
 
-                    await settingsNotifier.addUpdateSetting(clonedSetting);
-
-                    if (context.mounted) {
+                    if (context.mounted && success) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Setting cloned as "$newName"'),
@@ -163,7 +180,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
               ),
             ],
             child: ListTile(
-              title: Text(settings[index].id),
+              title: Text(setting.id),
               subtitle: Text(widget.bike.id),
               onTap: () {
                 // Close all action menus before navigating
@@ -173,7 +190,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
 
                 SettingDetails details = SettingDetails(
                   bike: widget.bike,
-                  name: settings[index].id,
+                  name: setting.id,
                   fork: forkSettings,
                   shock: shockSettings,
                   frontTire: frontTire,
@@ -182,7 +199,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
                 );
                 pushScreen(
                   context,
-                  settings[index].id,
+                  setting.id,
                   [ShareButton(widget: details, forkProduct: forkProduct, shockProduct: shockProduct)],
                   details,
                   true,
