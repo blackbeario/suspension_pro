@@ -1,0 +1,89 @@
+// Firestore Security Rules for Community Settings Collection
+//
+// Add these rules to your firestore.rules file in Firebase Console
+//
+// To deploy:
+// 1. Go to Firebase Console > Firestore Database > Rules
+// 2. Add the rules below to your existing rules file
+// 3. Click "Publish"
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user is Pro
+    function isPro() {
+      return request.auth != null &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isPro == true;
+    }
+
+    // Community Settings Collection
+    match /community_settings/{settingId} {
+
+      // READ: Everyone can read (Free and Pro users)
+      // This allows browsing and searching community settings
+      allow read: if request.auth != null;
+
+      // CREATE: Only Pro users can create new community settings
+      allow create: if request.auth != null
+                    && isPro()
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.isPro == true
+                    && request.resource.data.upvotes == 0
+                    && request.resource.data.downvotes == 0
+                    && request.resource.data.imports == 0
+                    && request.resource.data.views == 0;
+
+      // UPDATE: Users can only update their own settings (Pro only)
+      // Also allows incrementing engagement metrics (imports, views, upvotes)
+      allow update: if request.auth != null && (
+        // Owner can update their own settings
+        (isPro() && resource.data.userId == request.auth.uid) ||
+
+        // Anyone can increment view count
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views']) &&
+         request.resource.data.views == resource.data.views + 1) ||
+
+        // Anyone can increment import count
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['imports']) &&
+         request.resource.data.imports == resource.data.imports + 1) ||
+
+        // Pro users can upvote/downvote (future feature)
+        (isPro() &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['upvotes', 'downvotes']))
+      );
+
+      // DELETE: Users can only delete their own settings (Pro only)
+      allow delete: if request.auth != null
+                    && isPro()
+                    && resource.data.userId == request.auth.uid;
+    }
+  }
+}
+
+// EXPLANATION OF RULES:
+//
+// 1. READ (Free + Pro):
+//    - All authenticated users can browse and search community settings
+//    - This enables the Free Tier MVP browsing feature
+//
+// 2. CREATE (Pro only):
+//    - Only Pro users can share settings to community
+//    - Must set userId to their own auth.uid
+//    - Must set isPro to true
+//    - Engagement metrics must start at 0 (prevents gaming the system)
+//
+// 3. UPDATE (Conditional):
+//    - Pro users can update their own settings
+//    - Any user can increment view count (by exactly 1)
+//    - Any user can increment import count (by exactly 1)
+//    - Pro users can vote (future Phase 2 feature)
+//
+// 4. DELETE (Pro only):
+//    - Users can only delete their own settings
+//
+// SECURITY FEATURES:
+// - Prevents free users from spamming community with settings
+// - Prevents metric manipulation (can only increment by 1)
+// - Users can't modify other users' settings
+// - Engagement tracking works for all users (Free can import/view)

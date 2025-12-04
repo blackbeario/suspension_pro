@@ -8,6 +8,7 @@ import 'package:ridemetrx/features/auth/presentation/screens/login_page.dart';
 import 'package:ridemetrx/features/bikes/presentation/screens/bikes_list_screen.dart';
 import 'package:ridemetrx/features/onboarding/presentation/screens/onboarding.dart';
 import 'package:ridemetrx/features/profile/presentation/screens/profile_screen.dart';
+import 'package:ridemetrx/features/community/presentation/screens/community_browser_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -66,7 +67,7 @@ GoRouter appRouter(Ref ref) {
           GoRoute(
             path: '/community',
             name: 'community',
-            builder: (context, state) => const _CommunityPlaceholder(),
+            builder: (context, state) => const CommunityBrowserScreen(),
           ),
         ],
       ),
@@ -140,51 +141,6 @@ class _AppShellState extends State<AppShell> {
             label: 'Community',
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Temporary placeholder for Community feature
-/// TODO: Replace with actual community screen when implemented
-class _CommunityPlaceholder extends StatelessWidget {
-  const _CommunityPlaceholder({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Community'),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(40.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.people_outline,
-                size: 80,
-                color: Colors.grey.shade400,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Community Coming Soon',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Browse and share suspension settings with other riders',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.grey.shade600,
-                    ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

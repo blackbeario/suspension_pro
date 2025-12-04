@@ -6,4 +6,6 @@ class HiveTypes {
 	static const int shock = 4;
 	static const int appUser = 5;
 	static const int dataConflict = 6;
+	static const int locationData = 7;
+	static const int communitySetting = 8;
 }

@@ -93,7 +93,6 @@ class _SettingsListState extends ConsumerState<SettingsList> {
 
   Widget _getSettings(BuildContext context, Bike bike, List<Setting> settings) {
     return ReorderableListView.builder(
-      shrinkWrap: true,
       onReorder: (oldIndex, newIndex) async {
         setState(() {
           if (newIndex > oldIndex) newIndex -= 1;
@@ -239,7 +238,6 @@ class _SettingsListState extends ConsumerState<SettingsList> {
     _ensureKeysInitialized(settings.length);
 
     return Column(
-      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
@@ -254,7 +252,9 @@ class _SettingsListState extends ConsumerState<SettingsList> {
             ),
           ),
         ),
-        _getSettings(context, widget.bike, settings),
+        Expanded(
+          child: _getSettings(context, widget.bike, settings),
+        ),
         SizedBox(height: 20),
         ElevatedButton(
           child: Text('Add Manual Setting'),
@@ -263,7 +263,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
           },
           style: ElevatedButton.styleFrom(fixedSize: Size(240, 50)),
         ),
-        Expanded(child: Container())
+        SizedBox(height: 20),
       ],
     );
   }

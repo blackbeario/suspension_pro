@@ -46,6 +46,7 @@ dependencies:
   encrypt: ^5.0.3
   purchases_flutter: ^9.9.9
   inline_list_tile_actions: ^0.2.0
+  timeago: ^3.7.0
 
 dev_dependencies:
   flutter_test:

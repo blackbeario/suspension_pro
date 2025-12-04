@@ -1,0 +1,8 @@
+# Firebase Service Account Key (NEVER commit this!)
+serviceAccountKey.json
+
+# Node modules
+node_modules/
+
+# NPM
+package-lock.json

@@ -28,14 +28,14 @@ class ComponentSetting {
 
   factory ComponentSetting.fromJson(Map<String, dynamic> json) {
     return ComponentSetting(
-      sag: json['sag'].toString(),
-      springRate: json['springRate'].toString(),
-      preload: json['preload'] ?? json['preload'].toString() ?? '',
-      hsc: json['HSC'] ?? json['high_speed_compression'] ?? json["compression"]["high_speed"].toString(),
-      lsc: json['LSC'] ?? json['low_speed_compression'] ?? json["compression"]["low_speed"].toString(),
-      hsr: json['HSR'] ?? json['high_speed_rebound'] ?? json["rebound"]["low_speed"].toString(),
-      lsr: json['LSR'] ?? json['low_speed_rebound'] ?? json["rebound"]["low_speed"].toString(),
-      volume_spacers: json['spacers'].toString()
+      sag: json['sag']?.toString(),
+      springRate: json['springRate']?.toString(),
+      preload: json['preload']?.toString(),
+      hsc: json['HSC']?.toString(),
+      lsc: json['LSC']?.toString(),
+      hsr: json['HSR']?.toString(),
+      lsr: json['LSR']?.toString(),
+      volume_spacers: json['spacers']?.toString()
     );
   }
 

@@ -6,13 +6,23 @@ import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'package:ridemetrx/core/services/hive_service.dart';
 import 'package:ridemetrx/features/bikes/domain/bikes_state.dart';
 import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
+import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
 import 'package:hive_ce/hive.dart';
 
 part 'bikes_notifier.g.dart';
 
-/// Stream provider for bikes from Firestore
+/// Stream provider for bikes from Firestore (Pro users only)
 @riverpod
 Stream<List<Bike>> bikesStream(Ref ref) {
+  // Only stream from Firebase if user is Pro
+  final userState = ref.watch(userNotifierProvider);
+
+  if (!userState.isPro) {
+    // Free users: return empty stream (use Hive only)
+    return Stream.value([]);
+  }
+
+  // Pro users: stream from Firebase
   final db = ref.watch(databaseServiceProvider);
   return db.streamBikes();
 }
@@ -22,6 +32,10 @@ Stream<List<Bike>> bikesStream(Ref ref) {
 class BikesNotifier extends _$BikesNotifier {
   @override
   BikesState build() {
+    // IMPORTANT: Load bikes from Hive immediately on initialization
+    // This ensures bikes are available right away for import dialogs, etc.
+    final initialBikes = _getBikesFromHive();
+
     // Listen to bikes stream and smart-merge with Hive
     ref.listen(bikesStreamProvider, (previous, next) {
       next.when(
@@ -58,7 +72,8 @@ class BikesNotifier extends _$BikesNotifier {
       );
     });
 
-    return const BikesState();
+    // Return initial state with bikes from Hive
+    return BikesState(bikes: initialBikes);
   }
 
   /// Smart merge Firebase bikes into Hive (same logic as settings)

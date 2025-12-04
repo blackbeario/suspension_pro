@@ -1,3 +1,4 @@
+import 'package:ridemetrx/features/community/domain/models/community_setting.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
@@ -36,6 +37,34 @@ class SettingsListViewModel extends _$SettingsListViewModel {
       return true;
     } catch (e) {
       print('SettingsListViewModel: Failed to clone setting: $e');
+      return false;
+    }
+  }
+
+  /// Create new setting from imported community setting
+  Future<bool> importCommunitySetting({
+    required CommunitySetting communitySetting,
+    required String newName,
+    required String bikeId,
+  }) async {
+    try {
+      final settingsNotifier = ref.read(settingsNotifierProvider(bikeId).notifier);
+
+      final importedSetting = Setting(
+        id: newName,
+        bike: bikeId,
+        fork: communitySetting.forkSettings,
+        shock: communitySetting.shockSettings,
+        frontTire: communitySetting.frontTire,
+        rearTire: communitySetting.rearTire,
+        notes: communitySetting.notes,
+        riderWeight: communitySetting.riderWeight,
+      );
+
+      await settingsNotifier.addUpdateSetting(importedSetting);
+      return true;
+    } catch (e) {
+      print('SettingsListViewModel: Failed to import setting: $e');
       return false;
     }
   }
