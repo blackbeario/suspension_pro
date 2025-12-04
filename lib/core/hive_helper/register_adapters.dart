@@ -6,6 +6,8 @@ import 'package:ridemetrx/features/bikes/domain/models/setting.dart';
 import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
 import 'package:ridemetrx/features/auth/domain/models/user.dart';
 import 'package:ridemetrx/features/sync/domain/models/data_conflict.dart';
+import 'package:ridemetrx/features/community/domain/models/community_setting.dart';
+import 'package:ridemetrx/features/community/domain/models/location_data.dart';
 
 registerAdapters() async {
   Hive.registerAdapter(BikeAdapter());
@@ -15,6 +17,8 @@ registerAdapters() async {
   Hive.registerAdapter(ShockAdapter());
   Hive.registerAdapter(AppUserAdapter());
   Hive.registerAdapter(DataConflictAdapter());
+  Hive.registerAdapter(LocationDataAdapter());
+  Hive.registerAdapter(CommunitySettingAdapter());
   await Hive.openBox<Bike>('bikes');
   await Hive.openBox<Setting>('settings');
   await Hive.openBox<AppUser>('hiveUserBox');

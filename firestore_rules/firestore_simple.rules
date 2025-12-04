@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user is Pro
+    function isPro() {
+      return request.auth != null &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isPro == true;
+    }
+
+    // Users collection - anyone authenticated can read/write their own
+    match /users/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+
+    // Bikes collection - keep your existing behavior (all authenticated users)
+    match /bikes/{userId}/userBikes/{bikeId} {
+      allow read, write: if request.auth.uid != null;
+
+      // Settings subcollection
+      match /settings/{settingId} {
+        allow read, write: if request.auth.uid != null;
+      }
+    }
+
+    // Community settings - NEW collection
+    match /community_settings/{settingId} {
+      // Everyone can read (browse community)
+      allow read: if request.auth != null;
+
+      // Pro users can create
+      allow create: if request.auth != null && isPro();
+
+      // Anyone can update to increment view/import counts
+      // Owners can update their own
+      allow update: if request.auth != null;
+
+      // Owners can delete their own
+      allow delete: if request.auth != null;
+    }
+
+    // Catch-all for any other collections (deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

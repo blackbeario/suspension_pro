@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'package:ridemetrx/features/auth/domain/models/user.dart';
 import 'package:ridemetrx/features/auth/domain/user_state.dart';
 
@@ -19,7 +20,7 @@ class UserNotifier extends _$UserNotifier {
     state = UserState.fromAppUser(user);
   }
 
-  /// Update user profile information
+  /// Update user profile information (local state only)
   void updateProfile({
     required String userName,
     required String firstName,
@@ -30,6 +31,36 @@ class UserNotifier extends _$UserNotifier {
       firstName: firstName,
       lastName: lastName,
     );
+  }
+
+  /// Update user profile and sync to Firebase
+  Future<void> updateProfileAndSync({
+    required String userName,
+    required String firstName,
+    required String lastName,
+  }) async {
+    // Update local state immediately
+    updateProfile(
+      userName: userName,
+      firstName: firstName,
+      lastName: lastName,
+    );
+
+    // Sync to Firebase
+    try {
+      final db = ref.read(databaseServiceProvider);
+      await db.updateUser(
+        userName,
+        firstName,
+        lastName,
+        state.email,
+      );
+      print('UserNotifier: Profile updated and synced to Firebase');
+    } catch (e) {
+      print('UserNotifier: Failed to sync profile to Firebase: $e');
+      // Note: Local state is already updated, so UI will show new values
+      // Failed Firebase sync can be retried later
+    }
   }
 
   /// Update profile picture

@@ -6,7 +6,7 @@ part of 'user_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userNotifierHash() => r'5cd9cdab591afad6527fb35113e242996fff260b';
+String _$userNotifierHash() => r'3ba31ed93301d9f64b61f8f9571c0ad6b936b6a0';
 
 /// StateNotifier for managing user state
 /// Replaces the UserSingleton pattern with proper Riverpod state management

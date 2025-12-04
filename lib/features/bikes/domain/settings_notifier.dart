@@ -123,6 +123,14 @@ class SettingsNotifier extends _$SettingsNotifier {
       }
     }
 
+    // Sort by index (settings without index go to the end)
+    settingsList.sort((a, b) {
+      if (a.index == null && b.index == null) return 0;
+      if (a.index == null) return 1;
+      if (b.index == null) return -1;
+      return a.index!.compareTo(b.index!);
+    });
+
     return settingsList;
   }
 
@@ -133,6 +141,24 @@ class SettingsNotifier extends _$SettingsNotifier {
 
     // Check if user has Pro subscription
     final isPro = ref.read(purchaseNotifierProvider).isPro;
+
+    // Determine index: use provided index, or assign next available
+    int? settingIndex = setting.index;
+    if (settingIndex == null) {
+      // Find the highest index and add 1
+      final currentSettings = state;
+      if (currentSettings.isNotEmpty) {
+        final maxIndex = currentSettings
+            .where((s) => s.index != null)
+            .fold<int>(
+              -1,
+              (max, s) => s.index! > max ? s.index! : max,
+            );
+        settingIndex = maxIndex + 1;
+      } else {
+        settingIndex = 0;
+      }
+    }
 
     // Create setting with appropriate flags
     final settingWithTimestamp = Setting(
@@ -148,6 +174,7 @@ class SettingsNotifier extends _$SettingsNotifier {
       lastModified: now,
       isDirty: !isPro, // Free users are dirty (local-only), Pro users start clean
       isDeleted: false,
+      index: settingIndex,
     );
 
     // Save to Hive immediately for instant UI update

@@ -1,6 +1,4 @@
 import 'package:hive_ce/hive.dart';
-import 'package:ridemetrx/core/hive_helper/hive_types.dart';
-import 'package:ridemetrx/core/hive_helper/hive_adapters.dart';
 
 part 'data_conflict.g.dart';
 

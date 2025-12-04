@@ -5,4 +5,6 @@ class HiveAdapters {
 	static const String fork = 'ForkAdapter';
 	static const String shock = 'ShockAdapter';
 	static const String appUser = 'AppUserAdapter';
+	static const String locationData = 'LocationDataAdapter';
+	static const String communitySetting = 'CommunitySettingAdapter';
 }

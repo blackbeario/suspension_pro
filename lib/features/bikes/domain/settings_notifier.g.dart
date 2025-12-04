@@ -176,7 +176,7 @@ class _SettingsStreamProviderElement
   String get bikeId => (origin as SettingsStreamProvider).bikeId;
 }
 
-String _$settingsNotifierHash() => r'e0549bacb919d51f9d457bf05bcd4a2272b5b7a5';
+String _$settingsNotifierHash() => r'e3a28bb32ad7b0b5559d33c776ddf98202259282';
 
 abstract class _$SettingsNotifier
     extends BuildlessAutoDisposeNotifier<List<Setting>> {

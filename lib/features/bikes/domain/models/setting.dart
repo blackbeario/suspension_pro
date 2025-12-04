@@ -35,6 +35,8 @@ class Setting extends HiveObject{
   final bool isDirty;
 	@HiveField(SettingFields.isDeleted)
   final bool isDeleted;
+	@HiveField(SettingFields.index)
+  int? index;
 
   Setting({
     required this.id,
@@ -49,6 +51,7 @@ class Setting extends HiveObject{
     this.lastModified,
     this.isDirty = false,
     this.isDeleted = false,
+    this.index,
   });
 
   factory Setting.fromFirestore(DocumentSnapshot doc) {
@@ -68,6 +71,7 @@ class Setting extends HiveObject{
           : null,
       isDirty: false, // Data from Firebase is always clean
       isDeleted: data['isDeleted'] ?? false,
+      index: data['index'] ?? null,
     );
   }
 
@@ -97,7 +101,40 @@ class Setting extends HiveObject{
     'lastModified': lastModified?.millisecondsSinceEpoch,
     'isDirty': isDirty,
     'isDeleted': isDeleted,
+    'index': index,
   };
+
+  Setting copyWith({
+    String? id,
+    String? bike,
+    ComponentSetting? fork,
+    ComponentSetting? shock,
+    String? riderWeight,
+    DateTime? updated,
+    String? frontTire,
+    String? rearTire,
+    String? notes,
+    DateTime? lastModified,
+    bool? isDirty,
+    bool? isDeleted,
+    int? index,
+  }) {
+    return Setting(
+      id: id ?? this.id,
+      bike: bike ?? this.bike,
+      fork: fork ?? this.fork,
+      shock: shock ?? this.shock,
+      riderWeight: riderWeight ?? this.riderWeight,
+      updated: updated ?? this.updated,
+      frontTire: frontTire ?? this.frontTire,
+      rearTire: rearTire ?? this.rearTire,
+      notes: notes ?? this.notes,
+      lastModified: lastModified ?? this.lastModified,
+      isDirty: isDirty ?? this.isDirty,
+      isDeleted: isDeleted ?? this.isDeleted,
+      index: index ?? this.index,
+    );
+  }
 }
 
 String _parseBike(bike) {
