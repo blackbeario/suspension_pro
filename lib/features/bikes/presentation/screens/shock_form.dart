@@ -7,6 +7,7 @@ import 'package:ridemetrx/features/bikes/domain/bikes_notifier.dart';
 import 'package:ridemetrx/features/bikes/presentation/widgets/hardtail_switch.dart';
 import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
+import 'package:ridemetrx/core/services/haptic_service.dart';
 
 class ShockForm extends ConsumerStatefulWidget {
   ShockForm({this.bikeId, this.shock, this.shockCallback});
@@ -202,6 +203,8 @@ class _ShockFormState extends ConsumerState<ShockForm> {
                       child:
                           Text('Save', style: TextStyle(color: Colors.white)),
                       onPressed: () async {
+                        HapticService.medium();
+
                         // If no shock (hardtail mode)
                         if (_isHardtail) {
                           _yearController.clear();

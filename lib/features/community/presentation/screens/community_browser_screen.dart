@@ -7,6 +7,7 @@ import 'package:ridemetrx/features/community/domain/models/community_state.dart'
 import 'package:ridemetrx/features/community/presentation/widgets/setting_card.dart';
 import 'package:ridemetrx/features/connectivity/domain/connectivity_notifier.dart';
 import 'package:ridemetrx/features/purchases/presentation/screens/paywall_screen.dart';
+import 'package:ridemetrx/core/services/haptic_service.dart';
 
 /// Community Settings Browser Screen
 /// Allows free users to browse, search, and import community settings
@@ -161,6 +162,7 @@ class _CommunityBrowserScreenState extends ConsumerState<CommunityBrowserScreen>
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
+              HapticService.light();
               ref.read(communityNotifierProvider.notifier).fetchSettings();
             },
           ),
@@ -168,6 +170,7 @@ class _CommunityBrowserScreenState extends ConsumerState<CommunityBrowserScreen>
           PopupMenuButton<CommunitySortBy>(
             icon: const Icon(Icons.sort),
             onSelected: (sortBy) {
+              HapticService.light();
               ref.read(communityNotifierProvider.notifier).setSortBy(sortBy);
             },
             itemBuilder: (context) => CommunitySortBy.values.map((sortBy) {
@@ -220,6 +223,7 @@ class _CommunityBrowserScreenState extends ConsumerState<CommunityBrowserScreen>
                   ? IconButton(
                       icon: const Icon(Icons.clear),
                       onPressed: () {
+                        HapticService.light();
                         _searchController.clear();
                         ref.read(communityNotifierProvider.notifier).clearFilters();
                       },
@@ -273,6 +277,7 @@ class _CommunityBrowserScreenState extends ConsumerState<CommunityBrowserScreen>
           // Header with expand/collapse button
           InkWell(
             onTap: () {
+              HapticService.light();
               setState(() {
                 _quickFiltersExpanded = !_quickFiltersExpanded;
               });
@@ -342,6 +347,7 @@ class _CommunityBrowserScreenState extends ConsumerState<CommunityBrowserScreen>
                             width: isSelected ? 2 : 1,
                           ),
                           onPressed: () {
+                            HapticService.light();
                             ref.read(communityNotifierProvider.notifier).setForkBrandFilter(
                                   isSelected ? null : brand,
                                 );
@@ -377,6 +383,7 @@ class _CommunityBrowserScreenState extends ConsumerState<CommunityBrowserScreen>
                             width: isSelected ? 2 : 1,
                           ),
                           onPressed: () {
+                            HapticService.light();
                             ref.read(communityNotifierProvider.notifier).setShockBrandFilter(
                                   isSelected ? null : brand,
                                 );
@@ -409,6 +416,7 @@ class _CommunityBrowserScreenState extends ConsumerState<CommunityBrowserScreen>
             _buildFilterChip(
               label: 'Fork: ${state.selectedForkBrand}',
               onDeleted: () {
+                HapticService.light();
                 ref.read(communityNotifierProvider.notifier).setForkBrandFilter(null);
                 setState(() {
                   _firebaseResults = null;
@@ -421,6 +429,7 @@ class _CommunityBrowserScreenState extends ConsumerState<CommunityBrowserScreen>
             _buildFilterChip(
               label: 'Shock: ${state.selectedShockBrand}',
               onDeleted: () {
+                HapticService.light();
                 ref.read(communityNotifierProvider.notifier).setShockBrandFilter(null);
                 setState(() {
                   _firebaseResults = null;
@@ -435,6 +444,7 @@ class _CommunityBrowserScreenState extends ConsumerState<CommunityBrowserScreen>
               child: ActionChip(
                 label: const Text('Clear All'),
                 onPressed: () {
+                  HapticService.light();
                   _searchController.clear();
                   ref.read(communityNotifierProvider.notifier).clearFilters();
                   setState(() {
@@ -585,7 +595,9 @@ class _CommunityBrowserScreenState extends ConsumerState<CommunityBrowserScreen>
                     )
                   : RefreshIndicator(
                       onRefresh: () async {
+                        HapticService.medium();
                         await ref.read(communityNotifierProvider.notifier).fetchSettings();
+                        HapticService.success();
                         setState(() {
                           _firebaseResults = null;
                         });

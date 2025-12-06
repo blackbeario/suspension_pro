@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridemetrx/features/community/domain/models/community_setting.dart';
 import 'package:ridemetrx/features/community/presentation/screens/setting_detail_screen.dart';
+import 'package:ridemetrx/core/services/haptic_service.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 /// Card widget displaying a community setting
@@ -20,6 +21,7 @@ class SettingCard extends ConsumerWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: InkWell(
         onTap: () {
+          HapticService.light();
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => SettingDetailScreen(setting: setting),

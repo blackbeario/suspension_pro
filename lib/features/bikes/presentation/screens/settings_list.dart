@@ -9,6 +9,7 @@ import 'package:ridemetrx/core/utilities/helpers.dart';
 import 'package:ridemetrx/features/bikes/domain/settings_notifier.dart';
 import 'package:ridemetrx/features/bikes/presentation/view_models/settings_list_view_model.dart';
 import 'package:inline_list_tile_actions/inline_list_tile_actions.dart';
+import 'package:ridemetrx/core/services/haptic_service.dart';
 import 'setting_detail.dart';
 
 class SettingsList extends ConsumerStatefulWidget {
@@ -42,6 +43,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
   }
 
   Future<bool?> _showDeleteDialog(BuildContext context, String settingName) {
+    HapticService.warning();
     return showAdaptiveDialog<bool>(
       context: context,
       builder: (context) => AlertDialog.adaptive(
@@ -53,7 +55,10 @@ class _SettingsListState extends ConsumerState<SettingsList> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () {
+              HapticService.warning();
+              Navigator.of(context).pop(true);
+            },
             child: const Text('Delete'),
           ),
         ],
@@ -94,6 +99,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
   Widget _getSettings(BuildContext context, Bike bike, List<Setting> settings) {
     return ReorderableListView.builder(
       onReorder: (oldIndex, newIndex) async {
+        HapticService.medium();
         setState(() {
           if (newIndex > oldIndex) newIndex -= 1;
           final setting = settings.removeAt(oldIndex);
@@ -140,6 +146,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
                 onPressed: () async {
+                  HapticService.light();
                   final confirmed = await _showDeleteDialog(context, setting.id);
                   if (confirmed == true) {
                     await viewModel.deleteSetting(
@@ -155,6 +162,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
                 backgroundColor: Colors.amber,
                 foregroundColor: Colors.white,
                 onPressed: () async {
+                  HapticService.light();
                   // Close the action menu
                   _actionKeys[index].currentState?.close();
 
@@ -164,6 +172,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
                   final newName = await _showCloneDialog(context, defaultName);
 
                   if (newName != null && newName.isNotEmpty) {
+                    HapticService.medium();
                     final success = await viewModel.cloneSetting(
                       originalSetting: setting,
                       newName: newName,
@@ -171,6 +180,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
                     );
 
                     if (context.mounted && success) {
+                      HapticService.success();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Setting cloned as "$newName"'),
@@ -187,6 +197,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
                 onPressed: () {
+                  HapticService.light();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Share feature coming soon!'),
@@ -200,6 +211,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
               title: Text(setting.id),
               subtitle: Text(widget.bike.id),
               onTap: () {
+                HapticService.light();
                 // Close all action menus before navigating
                 for (var key in _actionKeys) {
                   key.currentState?.close();
@@ -259,6 +271,7 @@ class _SettingsListState extends ConsumerState<SettingsList> {
         ElevatedButton(
           child: Text('Add Manual Setting'),
           onPressed: () {
+            HapticService.medium();
             pushScreen(context, 'Add Setting', null, SettingDetails(bike: widget.bike), true);
           },
           style: ElevatedButton.styleFrom(fixedSize: Size(240, 50)),

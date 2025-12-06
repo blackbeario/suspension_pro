@@ -14,6 +14,7 @@ import 'package:ridemetrx/features/purchases/presentation/screens/paywall_screen
 import 'package:ridemetrx/features/purchases/presentation/screens/subscription_management_screen.dart';
 import 'package:ridemetrx/features/suspension/presentation/screens/suspension_picker_screen.dart';
 import 'package:ridemetrx/features/suspension/domain/models/suspension_product.dart';
+import 'package:ridemetrx/core/services/haptic_service.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -27,10 +28,13 @@ class ProfileScreen extends ConsumerWidget {
       appBar: AppBar(
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => const ProfileFormScreen()),
-            ),
+            onPressed: () {
+              HapticService.light();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => const ProfileFormScreen()),
+              );
+            },
             child: const Text('Edit'),
           ),
         ],
@@ -110,11 +114,14 @@ class ProfileScreen extends ConsumerWidget {
                 title: const Text('Manage Subscription'),
                 subtitle: const Text('View Pro benefits'),
                 trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const SubscriptionManagementScreen(),
-                  ),
-                ),
+                onTap: () {
+                  HapticService.light();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const SubscriptionManagementScreen(),
+                    ),
+                  );
+                },
               ),
             ),
           if (!user.isPro)
@@ -137,20 +144,26 @@ class ProfileScreen extends ConsumerWidget {
               title: const Text('App Settings'),
               subtitle: const Text('Notifications, analytics & preferences'),
               trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const AppSettingsScreen(),
-                ),
-              ),
+              onTap: () {
+                HapticService.light();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const AppSettingsScreen(),
+                  ),
+                );
+              },
             ),
           ),
           ListTile(
             title: const Text('App Roadmap'),
             subtitle: const Text('Features in development'),
             trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => AppRoadmap()),
-            ),
+            onTap: () {
+              HapticService.light();
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => AppRoadmap()),
+              );
+            },
           ),
 
           // TODO: TEMPORARY - Remove after testing
@@ -159,37 +172,44 @@ class ProfileScreen extends ConsumerWidget {
             child: ListTile(
               title: const Text('🧪 Test: Suspension Picker'),
               trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => SuspensionPickerScreen(
-                    type: SuspensionType.fork,
-                    onSelect: (product) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Selected: ${product.displayName}'),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    },
+              onTap: () {
+                HapticService.light();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => SuspensionPickerScreen(
+                      type: SuspensionType.fork,
+                      onSelect: (product) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Selected: ${product.displayName}'),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
 
           ListTile(
             title: const Text('Privacy Policy'),
             trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () =>
-                loadURL('https://vibesoftware.io/privacy/suspension_pro'),
+            onTap: () {
+              HapticService.light();
+              loadURL('https://vibesoftware.io/privacy/suspension_pro');
+            },
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: ListTile(
               title: const Text('Terms & Conditions'),
               trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () =>
-                  loadURL('https://vibesoftware.io/terms/suspension_pro'),
+              onTap: () {
+                HapticService.light();
+                loadURL('https://vibesoftware.io/terms/suspension_pro');
+              },
             ),
           ),
           const SizedBox(height: 40),
@@ -197,7 +217,10 @@ class ProfileScreen extends ConsumerWidget {
             leading: const Icon(Icons.power_settings_new, color: Colors.red),
             tileColor: Colors.grey.shade100,
             title: const Text('Sign Out', style: TextStyle(color: Colors.red)),
-            onTap: () => _showSignOutDialog(context, ref),
+            onTap: () {
+              HapticService.light();
+              _showSignOutDialog(context, ref);
+            },
           ),
         ],
       ),
