@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:ridemetrx/core/themes/styles.dart';
 import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
 import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/bikes/domain/bikes_notifier.dart';
+import 'package:ridemetrx/features/bikes/presentation/widgets/hardtail_switch.dart';
 import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
 
@@ -140,17 +140,7 @@ class _ShockFormState extends ConsumerState<ShockForm> {
               children: <Widget>[
                 SizedBox(height: 16),
                 // Toggle switch for hardtail bikes (no rear suspension)
-                SwitchListTile.adaptive(
-                  title: Text(
-                    'Hardtail?',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                  subtitle: Text(
-                    _isHardtail
-                        ? 'Toggle off for full squishy'
-                        : 'Turn on if rocking a hardtail',
-                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-                  ),
+                HardtailSwitch(
                   value: _isHardtail,
                   onChanged: (bool value) {
                     setState(() => _isHardtail = value);

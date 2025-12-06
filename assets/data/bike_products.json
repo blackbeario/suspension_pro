@@ -1,0 +1,272 @@
+[
+  {
+    "brand": "Santa Cruz",
+    "model": "Nomad",
+    "year": "2025",
+    "category": "enduro",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6499
+  },
+  {
+    "brand": "Santa Cruz",
+    "model": "Nomad",
+    "year": "2023",
+    "category": "enduro",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6299
+  },
+  {
+    "brand": "Santa Cruz",
+    "model": "Hightower",
+    "year": "2024",
+    "category": "trail",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 5499
+  },
+  {
+    "brand": "Santa Cruz",
+    "model": "Megatower",
+    "year": "2024",
+    "category": "enduro",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6299
+  },
+  {
+    "brand": "Santa Cruz",
+    "model": "Bronson",
+    "year": "2024",
+    "category": "trail",
+    "wheelSize": "27.5\"",
+    "discontinued": false,
+    "msrp": 5699
+  },
+  {
+    "brand": "Santa Cruz",
+    "model": "5010",
+    "year": "2024",
+    "category": "trail",
+    "wheelSize": "27.5\"",
+    "discontinued": false,
+    "msrp": 5299
+  },
+  {
+    "brand": "Specialized",
+    "model": "Stumpjumper",
+    "year": "2024",
+    "category": "trail",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 5500
+  },
+  {
+    "brand": "Specialized",
+    "model": "Enduro",
+    "year": "2024",
+    "category": "enduro",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6200
+  },
+  {
+    "brand": "Specialized",
+    "model": "Demo",
+    "year": "2023",
+    "category": "dh",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6800
+  },
+  {
+    "brand": "Specialized",
+    "model": "Epic",
+    "year": "2024",
+    "category": "xc",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 5800
+  },
+  {
+    "brand": "Trek",
+    "model": "Slash",
+    "year": "2024",
+    "category": "enduro",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6100
+  },
+  {
+    "brand": "Trek",
+    "model": "Remedy",
+    "year": "2023",
+    "category": "trail",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 5400
+  },
+  {
+    "brand": "Trek",
+    "model": "Fuel EX",
+    "year": "2024",
+    "category": "trail",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 5200
+  },
+  {
+    "brand": "Yeti",
+    "model": "SB150",
+    "year": "2024",
+    "category": "enduro",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 7200
+  },
+  {
+    "brand": "Yeti",
+    "model": "SB140",
+    "year": "2024",
+    "category": "trail",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6800
+  },
+  {
+    "brand": "Yeti",
+    "model": "SB130",
+    "year": "2023",
+    "category": "trail",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6500
+  },
+  {
+    "brand": "Pivot",
+    "model": "Switchblade",
+    "year": "2024",
+    "category": "trail",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6200
+  },
+  {
+    "brand": "Pivot",
+    "model": "Mach 6",
+    "year": "2024",
+    "category": "trail",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6800
+  },
+  {
+    "brand": "Pivot",
+    "model": "Firebird",
+    "year": "2023",
+    "category": "enduro",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 7200
+  },
+  {
+    "brand": "Giant",
+    "model": "Trance",
+    "year": "2024",
+    "category": "trail",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 4800
+  },
+  {
+    "brand": "Giant",
+    "model": "Reign",
+    "year": "2024",
+    "category": "enduro",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 5400
+  },
+  {
+    "brand": "Canyon",
+    "model": "Spectral",
+    "year": "2024",
+    "category": "trail",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 4200
+  },
+  {
+    "brand": "Canyon",
+    "model": "Torque",
+    "year": "2024",
+    "category": "enduro",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 4800
+  },
+  {
+    "brand": "Ibis",
+    "model": "Ripmo",
+    "year": "2024",
+    "category": "trail",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6400
+  },
+  {
+    "brand": "Ibis",
+    "model": "Mojo",
+    "year": "2023",
+    "category": "trail",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6200
+  },
+  {
+    "brand": "Evil",
+    "model": "Offering",
+    "year": "2024",
+    "category": "trail",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6600
+  },
+  {
+    "brand": "Evil",
+    "model": "Wreckoning",
+    "year": "2023",
+    "category": "enduro",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 6800
+  },
+  {
+    "brand": "Transition",
+    "model": "Sentinel",
+    "year": "2024",
+    "category": "enduro",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 5800
+  },
+  {
+    "brand": "Transition",
+    "model": "Scout",
+    "year": "2023",
+    "category": "trail",
+    "wheelSize": "27.5\"",
+    "discontinued": false,
+    "msrp": 5200
+  },
+  {
+    "brand": "Commencal",
+    "model": "Meta AM",
+    "year": "2024",
+    "category": "enduro",
+    "wheelSize": "29\"",
+    "discontinued": false,
+    "msrp": 4600
+  }
+]

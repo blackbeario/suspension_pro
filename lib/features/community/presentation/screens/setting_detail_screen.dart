@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridemetrx/features/community/domain/models/community_setting.dart';
 import 'package:ridemetrx/features/community/domain/community_notifier.dart';
-import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/bikes/domain/bikes_notifier.dart';
 import 'package:timeago/timeago.dart' as timeago;
 

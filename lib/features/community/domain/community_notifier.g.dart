@@ -6,7 +6,7 @@ part of 'community_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$communityNotifierHash() => r'ae9d4e94faf2b423e48aefc697582cb6cfd7b650';
+String _$communityNotifierHash() => r'45cb84817418f1c347f08fee4cc6296910b2b6d2';
 
 /// Manages community settings state and operations
 /// Handles fetching, caching, searching, and importing settings

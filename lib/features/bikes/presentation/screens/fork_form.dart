@@ -118,20 +118,6 @@ class _ForkFormState extends ConsumerState<ForkForm> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                // Container(
-                //     width: double.infinity,
-                //     decoration: BoxDecoration(color: Colors.white),
-                //     child: Container(
-                //         margin: EdgeInsets.only(top: 0),
-                //         padding: EdgeInsets.all(2),
-                //         width: 75,
-                //         height: 75,
-                //         decoration: BoxDecoration(
-                //           color: Colors.grey.withValues(alpha: 0.25),
-                //           shape: BoxShape.circle,
-                //         ),
-                //         child: Image.asset('assets/fork.png')),
-                //   ),
                 TextFormField(
                     validator: (_yearController) {
                       if (_yearController == null || _yearController.isEmpty)

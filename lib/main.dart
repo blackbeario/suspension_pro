@@ -13,6 +13,7 @@ import 'package:ridemetrx/core/services/sync_service.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:ridemetrx/features/profile/domain/app_settings_notifier.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +28,14 @@ Future<void> main() async {
   await _initializeRevenueCat();
 
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  runApp(ProviderScope(child: MyApp(showHome: showHome)));
+  runApp(
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+      child: MyApp(showHome: showHome),
+    ),
+  );
 }
 
 /// Initialize RevenueCat SDK with platform-specific API keys
