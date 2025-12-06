@@ -15,6 +15,7 @@ import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'package:ridemetrx/core/utilities/helpers.dart';
 import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
 import 'package:ridemetrx/features/purchases/presentation/screens/paywall_screen.dart';
+import 'package:ridemetrx/core/services/haptic_service.dart';
 
 class BikesList extends ConsumerStatefulWidget {
   const BikesList({Key? key, required this.bikes}) : super(key: key);
@@ -69,6 +70,7 @@ class _BikesListState extends ConsumerState<BikesList> {
                 children: [
                   ReorderableListView.builder(
                     onReorder: (oldIndex, newIndex) {
+                      HapticService.medium();
                       setState(() {
                         if (newIndex > oldIndex) newIndex -= 1;
                         final bike = bikes.removeAt(oldIndex);
@@ -96,6 +98,7 @@ class _BikesListState extends ConsumerState<BikesList> {
                         ),
                         direction: DismissDirection.endToStart,
                         confirmDismiss: (direction) async {
+                          HapticService.medium();
                           return await _confirmDelete(context, bike.id, null);
                         },
                         key: ValueKey(bike.id),
@@ -108,6 +111,9 @@ class _BikesListState extends ConsumerState<BikesList> {
                           child: Theme(
                             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                             child: ExpansionTile(
+                              onExpansionChanged: (expanded) {
+                                HapticService.light();
+                              },
                               leading: bike.bikePic == null || bike.bikePic!.isEmpty
                                   ? Stack(
                                       children: [
@@ -115,6 +121,7 @@ class _BikesListState extends ConsumerState<BikesList> {
                                           padding: const EdgeInsets.only(bottom: 0),
                                           child: const Icon(Icons.add_a_photo, size: 28),
                                           onPressed: () async {
+                                            HapticService.medium();
                                             final isPro = ref.read(purchaseNotifierProvider).isPro;
                                             if (isPro) {
                                               final bikeImageViewModel = ref.read(bikeImageViewModelProvider.notifier);
@@ -200,6 +207,7 @@ class _BikesListState extends ConsumerState<BikesList> {
                                                   style: const TextStyle(color: Colors.black54),
                                                 ),
                                                 onTap: () {
+                                                  HapticService.light();
                                                   pushScreen(
                                                     context,
                                                     '${fork.brand} ${fork.model}',
@@ -217,7 +225,10 @@ class _BikesListState extends ConsumerState<BikesList> {
                                                 size: 16,
                                                 color: Colors.black38,
                                               ),
-                                              onPressed: () => _confirmDelete(context, bike.id, 'fork'),
+                                              onPressed: () {
+                                                HapticService.light();
+                                                _confirmDelete(context, bike.id, 'fork');
+                                              },
                                             ),
                                           ],
                                         ),
@@ -246,6 +257,7 @@ class _BikesListState extends ConsumerState<BikesList> {
                                             ],
                                           ),
                                           onPressed: () {
+                                            HapticService.light();
                                             pushScreen(
                                               context,
                                               'Add Fork',
@@ -289,6 +301,7 @@ class _BikesListState extends ConsumerState<BikesList> {
                                                   style: const TextStyle(color: Colors.black54),
                                                 ),
                                                 onTap: () {
+                                                  HapticService.light();
                                                   pushScreen(
                                                     context,
                                                     '${shock.brand} ${shock.model}',
@@ -306,7 +319,10 @@ class _BikesListState extends ConsumerState<BikesList> {
                                                 size: 16,
                                                 color: Colors.black38,
                                               ),
-                                              onPressed: () => _confirmDelete(context, bike.id, 'shock'),
+                                              onPressed: () {
+                                                HapticService.light();
+                                                _confirmDelete(context, bike.id, 'shock');
+                                              },
                                             ),
                                           ],
                                         ),
@@ -334,6 +350,7 @@ class _BikesListState extends ConsumerState<BikesList> {
                                             ],
                                           ),
                                           onPressed: () {
+                                            HapticService.light();
                                             pushScreen(
                                               context,
                                               'Add Shock',
@@ -357,6 +374,7 @@ class _BikesListState extends ConsumerState<BikesList> {
                                       trailing: Icon(Icons.arrow_forward_ios, color: Colors.black38),
                                     ),
                                     onTap: () {
+                                      HapticService.light();
                                       pushScreen(context, bike.id, null, SettingsList(bike: bike), false);
                                       setState(() => _selectedBike = bike);
                                     },
@@ -372,7 +390,10 @@ class _BikesListState extends ConsumerState<BikesList> {
                   const Divider(),
                   ElevatedButton(
                     child: const Text('Add Bike'),
-                    onPressed: () => pushScreen(context, 'Add Bike', null, BikeWizardScreen(), true),
+                    onPressed: () {
+                      HapticService.medium();
+                      pushScreen(context, 'Add Bike', null, BikeWizardScreen(), true);
+                    },
                   ),
                   const SizedBox(height: 20),
                 ],
@@ -385,6 +406,7 @@ class _BikesListState extends ConsumerState<BikesList> {
   }
 
   Future<bool> _confirmDelete(BuildContext context, String bikeId, String? component) {
+    HapticService.warning();
     final db = ref.read(databaseServiceProvider);
     final bikesNotifier = ref.read(bikesNotifierProvider.notifier);
     String settingName = component != null ? component : bikeId;

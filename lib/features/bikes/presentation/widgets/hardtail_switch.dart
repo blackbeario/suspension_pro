@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ridemetrx/core/services/haptic_service.dart';
 
 /// Reusable hardtail switch widget for bike forms
 class HardtailSwitch extends StatelessWidget {
@@ -25,7 +26,10 @@ class HardtailSwitch extends StatelessWidget {
         style: TextStyle(fontSize: 13, color: Colors.grey[600]),
       ),
       value: value,
-      onChanged: onChanged,
+      onChanged: (newValue) {
+        HapticService.light();
+        onChanged(newValue);
+      },
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/bikes/domain/bikes_notifier.dart';
 import 'package:ridemetrx/core/providers/service_providers.dart';
 import 'package:ridemetrx/features/purchases/domain/purchase_notifier.dart';
+import 'package:ridemetrx/core/services/haptic_service.dart';
 
 class ForkForm extends ConsumerStatefulWidget {
   ForkForm({this.bikeId, this.fork, this.forkCallback});
@@ -203,6 +204,7 @@ class _ForkFormState extends ConsumerState<ForkForm> {
                     child: widget.bikeId != '' ? Text('Save') : Text('Continue'),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
+                        HapticService.medium();
                         widget.bikeId != ''
                             ? _updateFork(widget.bikeId, context)
                             : widget.forkCallback!({

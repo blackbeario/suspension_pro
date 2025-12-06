@@ -4,6 +4,7 @@ import 'package:ridemetrx/features/bikes/domain/models/bike.dart';
 import 'package:ridemetrx/features/bikes/domain/models/fork.dart';
 import 'package:ridemetrx/features/bikes/domain/models/shock.dart';
 import 'package:ridemetrx/features/bikes/presentation/view_models/bike_form_view_model.dart';
+import 'package:ridemetrx/core/services/haptic_service.dart';
 import 'fork_form.dart';
 import 'shock_form.dart';
 import 'package:flutter/cupertino.dart';
@@ -226,7 +227,10 @@ class _BikeFormState extends ConsumerState<BikeForm> {
                 ? CupertinoButton(
                     color: CupertinoColors.quaternaryLabel,
                     child: Text('Save'),
-                    onPressed: _bikeController.text.isNotEmpty ? () async => await _addUpdateBike() : null)
+                    onPressed: _bikeController.text.isNotEmpty ? () async {
+                      HapticService.medium();
+                      await _addUpdateBike();
+                    } : null)
                 : Container(),
           ],
         ),
