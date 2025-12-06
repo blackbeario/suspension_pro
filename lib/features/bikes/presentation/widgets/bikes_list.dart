@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:ridemetrx/features/bikes/presentation/screens/bike_form.dart';
+import 'package:ridemetrx/features/bikes/presentation/screens/bike_wizard_screen.dart';
 import 'package:ridemetrx/features/bikes/presentation/screens/fork_form.dart';
 import 'package:ridemetrx/features/bikes/presentation/screens/settings_list.dart';
 import 'package:ridemetrx/features/bikes/presentation/screens/shock_form.dart';
@@ -113,7 +113,7 @@ class _BikesListState extends ConsumerState<BikesList> {
                                       children: [
                                         CupertinoButton(
                                           padding: const EdgeInsets.only(bottom: 0),
-                                          child: const Icon(Icons.photo_camera),
+                                          child: const Icon(Icons.add_a_photo, size: 28),
                                           onPressed: () async {
                                             final isPro = ref.read(purchaseNotifierProvider).isPro;
                                             if (isPro) {
@@ -372,7 +372,7 @@ class _BikesListState extends ConsumerState<BikesList> {
                   const Divider(),
                   ElevatedButton(
                     child: const Text('Add Bike'),
-                    onPressed: () => pushScreen(context, 'Add Bike', null, BikeForm(), true),
+                    onPressed: () => pushScreen(context, 'Add Bike', null, BikeWizardScreen(), true),
                   ),
                   const SizedBox(height: 20),
                 ],

@@ -6,9 +6,9 @@ part of 'bikes_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$bikesStreamHash() => r'3628ca40a670a92b89153756ea2a9902deead48f';
+String _$bikesStreamHash() => r'71e6cf4008d28b9c754e9610daa78f01c7176674';
 
-/// Stream provider for bikes from Firestore
+/// Stream provider for bikes from Firestore (Pro users only)
 ///
 /// Copied from [bikesStream].
 @ProviderFor(bikesStream)
@@ -42,7 +42,7 @@ final offlineBikesProvider = AutoDisposeProvider<List<Bike>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef OfflineBikesRef = AutoDisposeProviderRef<List<Bike>>;
-String _$bikesNotifierHash() => r'6335fd9ffa9bf1f77c87798836436257e0f902f9';
+String _$bikesNotifierHash() => r'80ccc53cd224501b11380b8147ff4e06aa3a7b00';
 
 /// StateNotifier for managing bikes state and operations
 ///

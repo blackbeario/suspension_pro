@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ridemetrx/features/bikes/presentation/screens/bike_form.dart';
+import 'package:ridemetrx/features/bikes/presentation/screens/bike_wizard_screen.dart';
 import 'package:ridemetrx/features/bikes/presentation/widgets/bikes_list.dart';
 import 'package:ridemetrx/features/bikes/presentation/widgets/new_user_action.dart';
 import 'package:ridemetrx/features/connectivity/presentation/widgets/connectivity_widget_wrapper.dart';
@@ -108,7 +108,7 @@ class _OfflineBikesListState extends ConsumerState<OfflineBikesList> {
                             showAppBar: true,
                             title: 'Add Your First Bike',
                             icon: Icon(Icons.pedal_bike),
-                            screen: BikeForm(),
+                            screen: BikeWizardScreen(),
                             showIcon: true,
                           ),
                           if (shouldShowPaywall)

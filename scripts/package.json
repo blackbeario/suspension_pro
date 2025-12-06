@@ -5,7 +5,9 @@
   "main": "seed_community_data.js",
   "scripts": {
     "seed": "node seed_community_data.js",
-    "seed:delete": "node seed_community_data.js --delete"
+    "seed:delete": "node seed_community_data.js --delete",
+    "seed:suspension": "node seed_suspension_products.js",
+    "seed:suspension:delete": "node seed_suspension_products.js --delete"
   },
   "keywords": [
     "firebase",

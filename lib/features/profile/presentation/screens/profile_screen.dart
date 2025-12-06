@@ -7,10 +7,13 @@ import 'package:ridemetrx/features/auth/domain/user_notifier.dart';
 import 'package:ridemetrx/features/auth/presentation/auth_view_model.dart';
 import 'package:ridemetrx/core/utilities/helpers.dart';
 import 'package:ridemetrx/features/profile/presentation/screens/profile_form_screen.dart';
+import 'package:ridemetrx/features/profile/presentation/screens/app_settings_screen.dart';
 import 'package:ridemetrx/features/profile/presentation/widgets/roadmap/app_roadmap.dart';
 import 'package:ridemetrx/features/purchases/domain/paywall_display_manager.dart';
 import 'package:ridemetrx/features/purchases/presentation/screens/paywall_screen.dart';
 import 'package:ridemetrx/features/purchases/presentation/screens/subscription_management_screen.dart';
+import 'package:ridemetrx/features/suspension/presentation/screens/suspension_picker_screen.dart';
+import 'package:ridemetrx/features/suspension/domain/models/suspension_product.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -132,31 +135,62 @@ class ProfileScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: ListTile(
               title: const Text('App Settings'),
+              subtitle: const Text('Notifications, analytics & preferences'),
               trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {}, // TODO: create app user settings screen
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const AppSettingsScreen(),
+                ),
+              ),
             ),
           ),
           ListTile(
             title: const Text('App Roadmap'),
+            subtitle: const Text('Features in development'),
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => AppRoadmap()),
             ),
           ),
+
+          // TODO: TEMPORARY - Remove after testing
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: ListTile(
-              title: const Text('Privacy Policy'),
+              title: const Text('🧪 Test: Suspension Picker'),
               trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () =>
-                  loadURL('https://vibesoftware.io/privacy/suspension_pro'),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => SuspensionPickerScreen(
+                    type: SuspensionType.fork,
+                    onSelect: (product) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Selected: ${product.displayName}'),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
             ),
           ),
+
           ListTile(
-            title: const Text('Terms & Conditions'),
+            title: const Text('Privacy Policy'),
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () =>
-                loadURL('https://vibesoftware.io/terms/suspension_pro'),
+                loadURL('https://vibesoftware.io/privacy/suspension_pro'),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: ListTile(
+              title: const Text('Terms & Conditions'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () =>
+                  loadURL('https://vibesoftware.io/terms/suspension_pro'),
+            ),
           ),
           const SizedBox(height: 40),
           ListTile(

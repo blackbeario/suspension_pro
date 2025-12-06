@@ -44,7 +44,7 @@ class _CommunityBrowserScreenState extends ConsumerState<CommunityBrowserScreen>
 
   /// Search all settings in Firebase (Pro feature)
   Future<void> _searchAllSettingsInFirebase() async {
-    final userState = ref.read(userNotifierProvider);
+    // final userState = ref.read(userNotifierProvider);
     final query = _searchController.text;
 
     if (query.isEmpty) return;
